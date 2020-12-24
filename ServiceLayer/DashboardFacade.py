@@ -9,8 +9,8 @@ class DashboardFacade:
         self.analysisManager=AnalysisManagerInterface()
         self.externalSystemsManager=ExternalSystemsAPIsManagerInterface()
         self.usersManager=UsersManagerInterface(username, password)
-        self.trends_timer = threading.Timer(12.0*60, self.retrieveGoogleTrendsData)
-        self.snopes_timer = threading.Timer(12.0*60, self.retrieveSnopesData)
+        self.trends_timer = threading.Timer(12.0*360, self.retrieveGoogleTrendsData)
+        self.snopes_timer = threading.Timer(12.0*360, self.retrieveSnopesData)
 
 
 # ------------------------------- Retrieve Data & External Systems -----------------------------
