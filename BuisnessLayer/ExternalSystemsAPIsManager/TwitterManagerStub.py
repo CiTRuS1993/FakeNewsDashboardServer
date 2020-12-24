@@ -1,4 +1,5 @@
 import threading
+import time
 
 
 class TwitterManagerStub:
@@ -13,11 +14,12 @@ class TwitterManagerStub:
 
     def search_tweets_by_keywords(self, keywords, token=None, on_finished=lambda tweets: print("find")):
         tweets = {}
-        for keyword in keywords.split(','):
-            if keyword in self.unprocessed_tweets.keys():
+        for keyword in keywords:
+            if keyword in tweets.keys():
                 tweets[keyword].append("hey I'm a tweet!")
             else:
                 tweets[keyword] = ["hey I'm also a tweet!"]
+            time.sleep(1)
         on_finished(tweets)
         return tweets
 
@@ -28,7 +30,7 @@ class TwitterManagerStub:
         def search_trends():
             while self.search:
                 for trend in trends:
-                    new_tweets = self.search_tweets_by_keywords(trend, self.tokens.pop())
+                    new_tweets = self.search_tweets_by_keywords(trend, self.tokens[0])
                     for key in new_tweets.keys():
                         self.unprocessed_tweets[key] = new_tweets[key]
 
