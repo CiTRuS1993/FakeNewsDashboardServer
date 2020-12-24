@@ -8,13 +8,13 @@ class UsersManagerInterface:
         self.userManagerLogic=UserManagerFacade(username, password)
 
     def saveSearchTweetsByKeywords(self, username, search_id):
-        pass
+        return self.userManagerLogic.save_search_tweets_by_keywords(username, search_id)
 
     def login(self, username, password):
-        pass
+        return self.userManagerLogic.login(username, password)
 
     def register(self, username, password):
-        pass
+        return self.userManagerLogic.register(username, password)
 
     def classifyTweets(self, username, classify_id):
         pass
@@ -27,7 +27,8 @@ class UsersManagerInterface:
 
     def deleteUser(self, admin_username, username_to_delete):
         if self.userManagerLogic.is_admin(admin_username):
-            self.userManagerLogic.delete_user(username_to_delete)
+            return self.userManagerLogic.delete_user(username_to_delete)
+        return False # TODO- exception?
 
     def viewUserSearchHistory(self, username, username_to_view):
         if self.userManagerLogic.is_admin(username) or username == username_to_view:

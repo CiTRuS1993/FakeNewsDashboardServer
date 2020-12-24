@@ -1,22 +1,22 @@
+from BuisnessLayer.ExternalSystemsAPIsManager.ExternalSystemsFacade import ExternalSystemsFacade
+
 class ExternalSystemsAPIsManagerInterface:
 
     def __init__(self):
-        # connect Twitter
+        self.extrenalManagerLogic=ExternalSystemsFacade()
         # timer
-        # write init func?
-        pass
 
     def searchTweetsByKeywords(self, keyword, token):
-        pass
+        return self.extrenalManagerLogic.search_tweets_by_keywords(keyword, token)
 
     def retrieveGoogleTrendsData(self):
-        pass
+        return self.extrenalManagerLogic.retrieve_google_trends_data()
 
     def retrieveSnopesData(self):
-        pass
+        return self.extrenalManagerLogic.retrieve_snopes_data() # maybe wrong func name
 
-    # list of tokens as strings
+    # tokens is list of strings
     def editTwittersTokens(self, tokens):
-        pass
+        return self.extrenalManagerLogic.edit_twitters_tokens(tokens)
 
 
