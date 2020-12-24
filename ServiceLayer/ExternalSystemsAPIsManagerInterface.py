@@ -1,2 +1,5 @@
 class ExternalSystemsAPIsManagerInterface:
-    pass
+
+    def __init__(self):
+        # connect Twitter
+        pass
