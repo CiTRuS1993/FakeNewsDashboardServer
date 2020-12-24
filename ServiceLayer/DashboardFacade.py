@@ -15,7 +15,6 @@ class DashboardFacade:
 
 # ------------------------------- Retrieve Data & External Systems -----------------------------
 
-# search tweets
     # gets all data related to the dashboard
     def retrieveFakeNewsData(self):
         return self.analysisManager.retrieveFakeNewsData()
@@ -31,12 +30,12 @@ class DashboardFacade:
     # each 12 hours retrieve the new Google Trends topics
     def retrieveGoogleTrendsData(self):
         new_trends= self.externalSystemsManager.retrieveGoogleTrendsData()
-        self.analysisManager.classifyTrends(new_trends)
+        return self.analysisManager.classifyTrends(new_trends)
 
     # each 12 hours retrieve the new Snopes claims
     def retrieveSnopesData(self):
         new_claims= self.externalSystemsManager.retrieveSnopesData()
-        self.analysisManager.classifySnopes(new_claims)
+        return self.analysisManager.classifySnopes(new_claims)
 
     def configClassifier(self, username, classifier, configuration):
         if self.usersManager.is_admin(username):
@@ -52,21 +51,25 @@ class DashboardFacade:
             return True
         return False
 
-    def tagTweet(self, username, tweet, isFake):
-        if (self.usersManager.userExists(username)):
-            # TODO - analysis?
-            pass
+    def tagTweet(self, username, tweet_id, isFake):
+        if self.usersManager.userExists(username):
+            self.analysisManager.tagTweets(tweet_id, isFake)
+            self.usersManager.tagTweet(username, tweet_id)
+            # TODO- what to return?
 
     def viewUserSearchHistory (self, username, username_to_view):
         return self.usersManager.viewUserSearchHistory(username,username_to_view)
 
     def editTwittersTokens(self, username, tokens):
         if self.usersManager.is_admin(username):
-            self.externalSystemsManager.editTwittersTokens(tokens)
+            return self.externalSystemsManager.editTwittersTokens(tokens)
+        return False #TODO- exception?
 
     def classifyTweets(self, username, file):
-        #TODO
-        pass
+        if (self.usersManager.userExists(username)):
+            classify_id=self.analysisManager.classifyTweets(file)
+            return self.usersManager.classifyTweets(username, classify_id)
+        return False #TODO- exception?
 
 # ----------------------------------- Manage Users --------------------------------------------
 

@@ -4,8 +4,7 @@ from BuisnessLayer.AnalysisManager.AnalysisManager import AnalysisManager
 class AnalysisManagerInterface:
 
     def __init__(self):
-        analysisManagerLogic=AnalysisManager()
-        pass
+        self.analysisManagerLogic=AnalysisManager()
 
     def getGoogleTrendsStatistics(self):
         pass

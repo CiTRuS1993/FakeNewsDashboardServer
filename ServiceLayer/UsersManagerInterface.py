@@ -8,13 +8,13 @@ class UsersManagerInterface:
         self.userManagerLogic=UserManagerFacade(username, password)
 
     def saveSearchTweetsByKeywords(self, username, search_id):
-        pass
+        return self.userManagerLogic.save_search_tweets_by_keywords(username, search_id)
 
     def login(self, username, password):
-        pass
+        return self.userManagerLogic.login(username, password)
 
     def register(self, username, password):
-        pass
+        return self.userManagerLogic.register(username, password)
 
     def classifyTweets(self, username, classify_id):
         pass
