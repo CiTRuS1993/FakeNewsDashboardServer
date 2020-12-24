@@ -27,3 +27,6 @@ class AnalysisManagerInterface:
     def classifySnopes(self, claims):
         pass
 
+    def tagTweets(self, tweet_id, isFake):
+        pass
+

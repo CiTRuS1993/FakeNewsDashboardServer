@@ -74,12 +74,12 @@ class DashboardFacade:
 # ----------------------------------- Manage Users --------------------------------------------
 
     def register(self, username, password):
-        self.usersManager.register(username,password)
+        return self.usersManager.register(username,password)
 
     def login(self, username, password):
-        self.usersManager.login(username,password)
+        return self.usersManager.login(username,password)
 
     def deleteUser(self, admin_username, username_to_delete):
-        self.usersManager.deleteUser(admin_username, username_to_delete)
+        return self.usersManager.deleteUser(admin_username, username_to_delete)
 
 
