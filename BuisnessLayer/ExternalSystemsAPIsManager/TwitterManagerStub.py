@@ -33,6 +33,8 @@ class TwitterManagerStub:
                     new_tweets = self.search_tweets_by_keywords(trend, self.tokens[0])
                     for key in new_tweets.keys():
                         self.unprocessed_tweets[key] = new_tweets[key]
+                    if not self.search:
+                        return
 
         search_thread = threading.Thread(target=search_trends)
         self.search = True
