@@ -14,7 +14,10 @@ class ExternalSystemsFacade:
         return self.twitterManager.search_tweets_by_keywords(keyword)
 
     def retrieve_google_trends_data(self):
-        return self.twitterManager.unprocessed_tweets
+        self.twitterManager.stop()
+        tweets = self.twitterManager.get_unprocessed_tweets()
+        self.twitterManager.search_tweets_by_trends(self.googleTrendsManager.get_trends())
+        return tweets
 
     def edit_twitters_tokens(self, tokens):
         return self.twitterManager.edit_tokens(tokens)
