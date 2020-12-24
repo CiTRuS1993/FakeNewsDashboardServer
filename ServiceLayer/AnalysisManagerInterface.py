@@ -1,2 +1,8 @@
+from BuisnessLayer.AnalysisManager.AnalysisManager import AnalysisManager
+
+
 class AnalysisManagerInterface:
-    pass
+
+    def __init__(self):
+        analysisManagerLogic=AnalysisManager()
+        pass

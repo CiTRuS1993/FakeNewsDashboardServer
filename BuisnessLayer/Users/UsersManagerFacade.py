@@ -7,7 +7,7 @@ class UserManagerFacade:
             sys.exit("Wrong username or password!")
 
     def init_users_db(self):
-        return {"username": "username","password": "pass" }
+        return {"username": "username","password": "pass"}
 
     def admin_exists(self, username, password):
         if username in self.users_by_name_list.keys():
