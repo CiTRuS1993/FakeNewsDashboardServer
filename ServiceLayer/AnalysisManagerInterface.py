@@ -7,7 +7,7 @@ class AnalysisManagerInterface:
         self.analysisManagerLogic=AnalysisManager()
 
     def getGoogleTrendsStatistics(self):
-        pass
+        return self.analysisManagerLogic.getGoogleTrendsStatistics()
 
     def getSnopesStatistics(self):
         pass
@@ -16,13 +16,13 @@ class AnalysisManagerInterface:
         pass
 
     def retrieveFakeNewsData(self):
-        pass
+        return self.analysisManagerLogic.retrieveFakeNewsData()
 
     def configClassifier(self, classifier, configuration):
         pass
 
     def classifyTrends(self, trends):
-        pass
+        return self.analysisManagerLogic.classifyTrends(trends)
 
     def classifySnopes(self, claims):
         pass

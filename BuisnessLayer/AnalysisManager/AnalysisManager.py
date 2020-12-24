@@ -5,7 +5,6 @@ from BuisnessLayer.AnalysisManager.ClassifierAdapter import ClassifierAdapter
 
 class AnalysisManager:
 
-
     def __init__(self):
         self.dashboard_statistics = {}
         self.trends_statistics = {}
@@ -30,9 +29,10 @@ class AnalysisManager:
     def classifyTrends(self, trends):
         def callback(processed):
             self.dashboard_statistics = processed
+
         analyze_thread = threading.Thread(target=self.adapter.analyze, args=(trends, callback))
         analyze_thread.start()
+        return True
 
     def classifySnopes(self, claims):
         pass
-

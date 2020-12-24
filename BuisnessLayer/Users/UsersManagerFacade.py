@@ -5,9 +5,10 @@ from BuisnessLayer.Users.User import User
 class UserManagerFacade:
 
     def __init__(self, username, password):
-        self.users_by_name_list = self.initUsersDB()
-        if not self.adminExists(username, password):
-            sys.exit("Wrong username or password!")
+        pass
+        # self.users_by_name_list = self.initUsersDB()
+        # if not self.adminExists(username, password):
+        #     sys.exit("Wrong username or password!")
 
     def init_users_db(self):
         return {"username": "username", "password": "pass"}
@@ -46,7 +47,7 @@ class UserManagerFacade:
 
     def is_admin(self, username):
         if username in self.users_by_name_list.keys():
-            return self.users_by_name_list[username].get_role == "admin"
+            return self.users_by_name_list[username].get_role() == "admin"
 
     def validate_user(self, username, password):
         if username in self.users_by_name_list.keys():

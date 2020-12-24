@@ -1,9 +1,12 @@
+import time
 import unittest
+
+from ServiceLayer.DashboardFacade import DashboardFacade
 
 
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        pass
+        self.dashboard = DashboardFacade("hadar","pass")
     # ------------------------------- Retrieve Data & External Systems -----------------------------
 
     # gets all data related to the dashboard
@@ -20,7 +23,10 @@ class MyTestCase(unittest.TestCase):
 
     # each 12 hours retrieve the new Google Trends topics
     def test_retrieveGoogleTrendsData(self):
-        self.assertEqual(True, False)
+        time.sleep(4)
+        self.dashboard.retrieveGoogleTrendsData()
+        time.sleep(4)
+        print(self.dashboard.retrieveFakeNewsData())
 
     # each 12 hours retrieve the new Snopes claims
     def test_retrieveSnopesData(self):
