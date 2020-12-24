@@ -1,0 +1,2 @@
+class ExternalSystemsAPIsManagerInterface:
+    pass
