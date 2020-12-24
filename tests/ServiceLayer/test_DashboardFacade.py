@@ -1,45 +1,61 @@
-from unittest import TestCase
+import unittest
 
 
-class TestDashboardFacade(TestCase):
-    def test_retrieve_fake_news_data(self):
-        self.fail()
+class MyTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        pass
+    # ------------------------------- Retrieve Data & External Systems -----------------------------
 
-    def test_google_trends_statistics(self):
-        self.fail()
+    # gets all data related to the dashboard
+    def test_retrieveFakeNewsData(self):
+        self.assertEqual(True, False)
 
-    def test_snopes_statistics(self):
-        self.fail()
+    # gets all data related to the Google Trends window
+    def test_googleTrendsStatistics(self):
+        self.assertEqual(True, False)
 
-    def test_retrieve_google_trends_data(self):
-        self.fail()
+    # gets all data related to the Snopes window
+    def test_snopesStatistics(self):
+        self.assertEqual(True, False)
 
-    def test_retrieve_snopes_data(self):
-        self.fail()
+    # each 12 hours retrieve the new Google Trends topics
+    def test_retrieveGoogleTrendsData(self):
+        self.assertEqual(True, False)
 
-    def test_config_classifier(self):
-        self.fail()
+    # each 12 hours retrieve the new Snopes claims
+    def test_retrieveSnopesData(self):
+        self.assertEqual(True, False)
 
-    def test_search_tweets_by_keywords(self):
-        self.fail()
+    def test_configClassifier(self):
+        self.assertEqual(True, False)
 
-    def test_tag_tweet(self):
-        self.fail()
+    # ----------------------------------- Users Options ------------------------------------------
 
-    def test_view_user_search_history(self):
-        self.fail()
+    def test_searchTweetsByKeywords(self):
+        self.assertEqual(True, False)
 
-    def test_edit_twitters_tokens(self):
-        self.fail()
+    def test_tagTweet(self):
+        self.assertEqual(True, False)
 
-    def test_classify_tweets(self):
-        self.fail()
+    def test_viewUserSearchHistory(self):
+        self.assertEqual(True, False)
+
+    def test_editTwittersTokens(self):
+        self.assertEqual(True, False)
+
+    def test_classifyTweets(self):
+        self.assertEqual(True, False)
+
+    # ----------------------------------- Manage Users --------------------------------------------
 
     def test_register(self):
-        self.fail()
+        self.assertEqual(True, False)
 
     def test_login(self):
-        self.fail()
+        self.assertEqual(True, False)
 
-    def test_delete_user(self):
-        self.fail()
+    def test_deleteUser(self):
+        self.assertEqual(True, False)
+
+if __name__ == '__main__':
+    unittest.main()

@@ -17,13 +17,13 @@ class UsersManagerInterface:
         return self.userManagerLogic.register(username, password)
 
     def classifyTweets(self, username, classify_id):
-        pass
+        return self.userManagerLogic.classify_tweets(username, classify_id)
 
     def tagTweet(self, username, tweet_id):
-        pass
+        return self.userManagerLogic.tag_tweet(username, tweet_id)
 
     def validateUser(self, username, password):
-        pass
+        return self.userManagerLogic.validate_user(username, password)
 
     def deleteUser(self, admin_username, username_to_delete):
         if self.userManagerLogic.is_admin(admin_username):

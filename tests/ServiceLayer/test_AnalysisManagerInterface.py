@@ -1,24 +1,33 @@
-from unittest import TestCase
+import unittest
 
 
-class TestAnalysisManagerInterface(TestCase):
-    def test_get_google_trends_statistics(self):
-        self.fail()
+class MyTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        pass
 
-    def test_get_snopes_statistics(self):
-        self.fail()
+    def test_getGoogleTrendsStatistics(self):
+        self.assertEqual(True, False)
 
-    def test_classify_tweets(self):
-        self.fail()
+    def test_getSnopesStatistics(self):
+        self.assertEqual(True, False)
 
-    def test_retrieve_fake_news_data(self):
-        self.fail()
+    def test_classifyTweets(self):
+        self.assertEqual(True, False)
 
-    def test_config_classifier(self):
-        self.fail()
+    def test_retrieveFakeNewsData(self):
+        self.assertEqual(True, False)
 
-    def test_classify_trends(self):
-        self.fail()
+    def test_configClassifier(self):
+        self.assertEqual(True, False)
 
-    def test_classify_snopes(self):
-        self.fail()
+    def test_classifyTrends(self):
+        self.assertEqual(True, False)
+
+    def test_classifySnopes(self):
+        self.assertEqual(True, False)
+
+    def test_tagTweets(self):
+        self.assertEqual(True, False)
+
+if __name__ == '__main__':
+    unittest.main()
