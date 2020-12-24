@@ -8,7 +8,7 @@ class User:
         self.search_history = search_history
         self.classify_id = classify_id
         self.tagged_tweets = tagged_tweets
-        self.logged_in = False;
+        self.logged_in = False
 
     def save_search_tweets_by_keywords(self, search_id):
         self.search_history.append(search_id)

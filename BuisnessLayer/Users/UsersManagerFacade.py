@@ -10,7 +10,8 @@ class UserManagerFacade:
             sys.exit("Wrong username or password!")
 
     def initUsersDB(self):
-        return {"username": "username", "sapir" : User(0,"sap","111",{},[],-1)}
+        return {"username": User("registered",0,"username","111",[],[],-1),
+                "sapir" : User("admin",1,"sapir", "sap3232",[],[],-1)}
 
     def admin_exists(self, username, password):
         if username in self.users_by_name_list.keys():
@@ -42,7 +43,7 @@ class UserManagerFacade:
 
     def register(self, username, password):
         if username not in self.users_by_name_list.keys():
-            self.users_by_name_list[username] = User(self, "Registered", len(self.users_by_name_list)+1, password, {}, [])
+            self.users_by_name_list[username] = User("Registered", len(self.users_by_name_list)+1,username, password, {}, [],-1)
             return True
         return False
 
