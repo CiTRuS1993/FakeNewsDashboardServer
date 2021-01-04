@@ -12,7 +12,7 @@ class TwitterManagerStub:
     def connect(self):
         pass
 
-    def search_tweets_by_keywords(self, keywords, token=None, on_finished=lambda tweets: print("find")):
+    def search_tweets_by_keywords(self, keywords, token=None, on_finished=lambda tweets: print(tweets)):
         tweets = {}
         for keyword in keywords:
             if keyword in tweets.keys():
