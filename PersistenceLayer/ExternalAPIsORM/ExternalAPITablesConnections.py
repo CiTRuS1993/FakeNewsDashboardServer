@@ -11,6 +11,7 @@ SearchTweetConnection = Table('SearchTweetConnection',
                               Column('tweet', String, ForeignKey('tweets.id')),
                               Column('search', Integer, ForeignKey('search.search_id')))
 
+
 SnopesTweetsConnection = Table('SnopesTweetsConnection',
                                Base.metadata,
                                Column('tweet', String, ForeignKey('tweets.id')),
