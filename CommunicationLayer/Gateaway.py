@@ -3,10 +3,8 @@ import time
 from flask import Flask, abort, request, jsonify, g, url_for
 from flask_cors import CORS
 
+from CommunicationLayer import app
 from ServiceLayer.DashboardFacade import DashboardFacade
-
-app = Flask(__name__)
-cors = CORS(app)
 
 dashboard_facade = DashboardFacade("username", "123")
 time.sleep(10)
