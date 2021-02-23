@@ -1,15 +1,19 @@
 import sys
 from BuisnessLayer.Users.User import User
+from PersistenceLayer.UsersORM.UsersORMFacade import UsersORMFacade
 
 
 class UserManagerFacade:
 
     def __init__(self, username, password):
+        self.users_db = UsersORMFacade()
         self.users_by_name_list = self.initUsersDB()
+
         if not self.admin_exists(username, password):
             sys.exit("Wrong username or password!")
 
     def initUsersDB(self):
+        return self.users_db.get_all_users()
         return {"username": User("registered",0,"username","111",[],[],-1),
                 "sapir" : User("admin",1,"sapir", "sap3232",[],[],-1)}
 

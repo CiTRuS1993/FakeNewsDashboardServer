@@ -10,7 +10,7 @@ from ..tablesConnections import TopicsTrendsConnection
 
 class TrendsORM(Base,BaseORM):
     __tablename__ = "trends"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer,autoincrement=True, primary_key=True, index=True)
     content = Column(String)
     date = Column(String)
     tweets = relationship('TweetORM', secondary=TrendsTweetsConnection, backref='trend')
