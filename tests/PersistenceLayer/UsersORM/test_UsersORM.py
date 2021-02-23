@@ -3,7 +3,9 @@ from unittest import TestCase
 from PersistenceLayer.database import session, SQLALCHEMY_DATABASE_URL
 
 from PersistenceLayer.UsersORM.UserOrm import UserOrm
+import json
 
+import jsonpickle
 
 class TestUsersORM(TestCase):
     def setUp(self) -> None:
