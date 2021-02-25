@@ -1,7 +1,8 @@
 import unittest
-
-from PersistenceLayer.UsersORM import UserOrm
 from PersistenceLayer.database import session
+# from PersistenceLayer.database import session
+from PersistenceLayer.UsersORM import UserOrm
+
 from .ExternalAPIsORM.test_ExtarnalAPIsORM import TestExternalAPIsORM
 from .AnalysisORM.test_AnalysedTopics import TestAnalysedTopics
 from .AnalysisORM.test_AnalysedTweets import TestAnalysedTweets

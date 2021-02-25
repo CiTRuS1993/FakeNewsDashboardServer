@@ -2,7 +2,9 @@ import os
 import unittest
 from PersistenceLayer.ExternalAPIsORM import *
 from PersistenceLayer.database import session, SQLALCHEMY_DATABASE_URL
+import json
 
+import jsonpickle
 
 class TestExternalAPIsORM(unittest.TestCase):
     def setUp(self) -> None:
