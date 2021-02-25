@@ -21,8 +21,8 @@ class AnalysisManagerInterface:
     def configClassifier(self, classifier, configuration):
         pass
 
-    def classifyTrends(self, trends):
-        return self.analysisManagerLogic.classifyTrends(trends)
+    def classifyTrends(self, trends_tweets):
+        return self.analysisManagerLogic.classifyTrends(trends_tweets)
 
     def classifySnopes(self, claims):
         pass
