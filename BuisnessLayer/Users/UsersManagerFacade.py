@@ -18,12 +18,12 @@ class UserManagerFacade:
                 "sapir" : User("admin",1,"sapir", "sap3232",[],[],-1)}
 
     def admin_exists(self, username, password):
-        if username in self.users_by_name_list.keys():
+        if username in list(map(lambda user:user['username'],self.users_by_name_list)):
             return True
         return False
 
     def save_search_tweets_by_keywords(self, username, search_id):
-        if username in self.users_by_name_list.keys():
+        if username in list(map(lambda user:user['username'],self.users_by_name_list)):
             self.users_by_name_list[username].save_search_tweets_by_keywords(search_id)
             return True
         return False
