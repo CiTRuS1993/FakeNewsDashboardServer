@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class Trend:
     id: int
+    keywords: str
     claims: list
 
 

@@ -42,6 +42,9 @@ class DashboardFacade:
             return self.analysisManager.configClassifier(classifier, configuration)
         return False #TODO- exception?
 
+    def getTemperature(self):
+        return self.analysisManager.getTemperature()
+
 # ----------------------------------- Users Options ------------------------------------------
 
     def searchTweetsByKeywords(self, username, keyword, token=None):
@@ -81,5 +84,10 @@ class DashboardFacade:
 
     def deleteUser(self, admin_username, username_to_delete):
         return self.usersManager.deleteUser(admin_username, username_to_delete)
+
+    def get_emotions(self):
+        return self.analysisManager.get_emotions()
+
+
 
 

@@ -1,4 +1,5 @@
 import time
+from dataclasses import asdict
 
 from flask import Flask, abort, request, jsonify, g, url_for
 from flask_cors import CORS
@@ -28,67 +29,62 @@ def analyze():
 
 @app.route('/getTemp', methods=['get'])
 def get_temp():
-    return jsonify({'sentiment': 42, 'fakiness': 38, 'authenticity': 15})
+    return jsonify(dashboard_facade.getTemperature())
+    # return jsonify({'sentiment': 42, 'fakiness': 38, 'authenticity': 15})
 
 
 @app.route('/getEmotions', methods=['get'])
-def get_emotion():
-    return jsonify({'emotions': [
-        {'y': 32, 'label': "Anger"},
-        {'y': 22, 'label': "Disgust"},
-        {'y': 15, 'label': "Sad"},
-        {'y': 19, 'label': "Happy"},
-        {'y': 5, 'label': "Surprise"},
-        {'y': 16, 'label': "Fear"}
-    ]})
+def get_emotions():
+    return jsonify(dashboard_facade.get_emotions())
 
 
 @app.route('/getTrends')
-def get_trends():
-    return jsonify({"Donald Trump": {'words': [
-        {
-            'text': 'told',
-            'value': 64,
-        },
-        {
-            'text': 'mistake',
-            'value': 11,
-        },
-        {
-            'text': 'thought',
-            'value': 16,
-        },
-        {
-            'text': 'bad',
-            'value': 17,
-        },
-    ], 'statistics': {
-        'mainEmo': "fear", 'avgSentiment': -1, 'avgAuthenticity': 17, 'avgFakiness': 78
-    }},
-        "some Trends": {'words': [
-            {'text': 'foos',
-             'value': 23},
-            {'text': 'other',
-             'value': 50},
-            {
-                'text': 'thought',
-                'value': 16,
-            },
-            {
-                'text': 'bad',
-                'value': 17,
-            },
-        ], 'statistics': {
-            'mainEmo': "happy", 'avgSentiment': 3, 'avgAuthenticity': 87, 'avgFakiness': 2
-        }}
-    })
+def get_trends(): # check and fix the format
+    return jsonify(dashboard_facade.retrieveGoogleTrendsData()) # TODO
+# {"Donald Trump": {'words': [
+#         {
+#             'text': 'told',
+#             'value': 64,
+#         },
+#         {
+#             'text': 'mistake',
+#             'value': 11,
+#         },
+#         {
+#             'text': 'thought',
+#             'value': 16,
+#         },
+#         {
+#             'text': 'bad',
+#             'value': 17,
+#         },
+#     ], 'statistics': {
+#         'mainEmo': "fear", 'avgSentiment': -1, 'avgAuthenticity': 17, 'avgFakiness': 78
+#     }},
+#         "some Trends": {'words': [
+#             {'text': 'foos',
+#              'value': 23},
+#             {'text': 'other',
+#              'value': 50},
+#             {
+#                 'text': 'thought',
+#                 'value': 16,
+#             },
+#             {
+#                 'text': 'bad',
+#                 'value': 17,
+#             },
+#         ], 'statistics': {
+#             'mainEmo': "happy", 'avgSentiment': 3, 'avgAuthenticity': 87, 'avgFakiness': 2
+#         }}
+#     }
 
 
 @app.route('/getEmotionsTweet')
 def get_emotions_tweet():
     emotion = request.args.get('emotion')
-    return jsonify({'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake"},
-                               {'id': "1361577298282094592", 'emotion': "happy", 'real': "true"}]})
+    return jsonify({'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake",'sentiment': 3},
+                               {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': 3}]})
 
 
 @app.route('/getSentiment')
@@ -139,10 +135,10 @@ def get_sentiment():
 
 
 @app.route('/getTopic')
-def get_topic():
+def get_topic(): # TODO- does t a topic(claim of some trends)? where do we send the claims?
     t = request.args.get('topic')
-    return jsonify({'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake"},
-                               {'id': "1361577298282094592", 'emotion': "happy", 'real': "true"}],
+    return jsonify({'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
+                               {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': -2}],
                     'emotions': [{'y': 32, 'label': "Anger"},
                                  {'y': 22, 'label': "Disgust"},
                                  {'y': 15, 'label': "Sad"},
@@ -153,3 +149,4 @@ def get_topic():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True, ssl_context='adhoc')   TODO- https

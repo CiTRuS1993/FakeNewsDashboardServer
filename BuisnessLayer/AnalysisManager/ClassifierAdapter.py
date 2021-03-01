@@ -33,9 +33,9 @@ class ClassifierAdapter:
                 for tweet in topic.tweets:
                     rand = randrange(100)
                     if rand < 50:
-                        prediction = "wow it's fake"
+                        prediction = "fake"
                     else:
-                        prediction = "100% true"
+                        prediction = "true"
                     sentiment = randint(-3, 3)
                     rand = randrange(6)
                     emotion = get_emotion_by_id(rand)
@@ -72,9 +72,9 @@ class ClassifierAdapter:
             for tweet in data[claim]:
                 rand = randrange(100)
                 if rand < 50:
-                    prediction = "wow it's fake"
+                    prediction = "fake"
                 else:
-                    prediction = "100% true"
+                    prediction = "true"
                 sentiment = randint(-3, 3)
                 rand = randrange(6)
                 emotion = get_emotion_by_id(rand)
