@@ -1,5 +1,5 @@
 from BuisnessLayer.ExternalSystemsAPIsManager.GoogleTrendsManager import GoogleTrendsManager
-from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManagerStub import TwitterManagerStub
+from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager import TwitterManagerStub
 
 
 class ExternalSystemsFacade:
