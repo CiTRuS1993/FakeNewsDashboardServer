@@ -9,6 +9,7 @@ class GoogleTrendsManager:
         self.ExternalOrm = ExternalAPIsORMFacade()
         self.connect()
 
+
     def connect(self):
         self.trends = {}
         trends = self.pytrends.trending_searches().values.tolist()
