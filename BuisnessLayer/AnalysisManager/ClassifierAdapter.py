@@ -1,5 +1,8 @@
 import time
-from random import random
+from random import random, randint, randrange
+
+from BuisnessLayer.AnalysisManager.DataObjects import AnalyzedTweet, Claim
+
 
 def get_emotion_by_id(id):
     if id == 1:
@@ -15,23 +18,81 @@ def get_emotion_by_id(id):
     else:
         return 'Fear'
 
-
+# ours, should write also stub
 class ClassifierAdapter:
     def __init__(self):
         pass
 
-    def analyze(self, data, callback):  # data is tweets
+    def analyze_trends(self, trends_dict, callback):  # trends_dict is type of dict {<trend name> : <Trend>}
         processed_data = {}
-        for key in data.keys():
-            rand = random.randint(100)
-            if rand < 50:
-                processed_data[key]['fake'] = "wow it's fake"
-            else:
-                processed_data[key]['fake'] = "100% true"
-            processed_data[key]['sentiment'] = random.randint(-3, 3)
-            rand = random.randint(6)
-            processed_data[key]['emotional'] = get_emotion_by_id(rand)
+        for trend in trends_dict.keys():
+            if trend not in processed_data:
+                processed_data[trend]= list()
+            for topic in trends_dict[trend].claims:
+                tweets = list()
+                for tweet in topic.tweets:
+                    rand = randrange(100)
+                    if rand < 50:
+                        prediction = "wow it's fake"
+                    else:
+                        prediction = "100% true"
+                    sentiment = randint(-3, 3)
+                    rand = randrange(6)
+                    emotion = get_emotion_by_id(rand)
+                    analyzed_tweet = AnalyzedTweet(tweet, emotion, sentiment, prediction)
+                    tweets.append(analyzed_tweet)
+                processed_data[trend].append(Claim(topic, tweets))
 
         time.sleep(1)
-        callback(processed_data)
+        return callback(processed_data)
+
+    def analyze_snopes(self, data, callback):  # data is type of dict {<claim name> : list <tweets>}
+        # print(data)
+        # processed_data = {}
+        # for key in data.keys():
+        #     if key not in processed_data:
+        #         processed_data[key]={}
+        #     for tweet in data[key].keys():
+        #         processed_data[key][tweet]={}
+        #         rand = randrange(100)
+        #         if rand < 50:
+        #             processed_data[key][tweet]['prediction'] = "wow it's fake"
+        #         else:
+        #             processed_data[key][tweet]['prediction'] = "100% true"
+        #         sentiment = randint(-3, 3)
+        #         processed_data[key][tweet]['sentiment'] = sentiment
+        #         rand = randrange(6)
+        #         processed_data[key][tweet]['emotional'] = get_emotion_by_id(rand)
+
+        processed_data = {}
+        for claim in data.keys():
+            # if claim not in processed_data:
+            #     processed_data[claim]= list()
+            tweets = list()
+            for tweet in data[claim]:
+                rand = randrange(100)
+                if rand < 50:
+                    prediction = "wow it's fake"
+                else:
+                    prediction = "100% true"
+                sentiment = randint(-3, 3)
+                rand = randrange(6)
+                emotion = get_emotion_by_id(rand)
+
+                analyzed_tweet = AnalyzedTweet(tweet, emotion, sentiment, prediction)
+                tweets.append(analyzed_tweet)
+            processed_data[claim].append(Claim(claim, tweets))
+
+        time.sleep(1)
+        return callback(processed_data)
+
+    def get_claims_from_trend(self, trends_tweets):
+        claims = {}
+        for tweet in trends_tweets:
+            rand = randrange(10)
+            if rand < 5:
+                claims["claim1"] = tweet
+            else:
+                claims["claim2"] = tweet
+        return claims
 

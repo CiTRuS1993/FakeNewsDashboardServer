@@ -1,36 +1,36 @@
 from unittest import TestCase
+from ServiceLayer.AnalysisManagerInterface import AnalysisManagerInterface
 
-# TODO
 
 class TestAnalysisManagerInterface(TestCase):
-    def test_classify_trends(self):
-        trends = ['Donald Trump', 'Covid19', 'Elections']
-        claims = []
-        self.fail()
+    def setUp(self) -> None:
+        self.analysisManager = AnalysisManagerInterface()
+        self.trends = ['Donald Trump', 'Covid19', 'Elections']
+        self.trends_tweets = {'Donald Trump': set(['tweet1', 'tweet2','tweet3']),
+                              'Covid19': set(['tweet1', 'tweet2','tweet3']),
+                              'Elections': set(['tweet1', 'tweet2','tweet3'])}
+        self.claims = ['claim1', 'claim2', 'claim3']
+        self.snopes = {'claim1': set(['tweet1', 'tweet2','tweet3']),
+                       'claim2': set(['tweet1', 'tweet2','tweet3']),
+                       'claim3': set(['tweet1', 'tweet2','tweet3'])}
 
-    def test_get_claims_from_trend(self):
-        self.fail()
+# TODO -  integration
+    def test_classify_trends(self):
+        self.assertEqual([], self.analysisManager.getGoogleTrendsStatistics())
+        # self.assertEqual(self.claims, self.analysisManager.classifyTrends(self.trends_tweets))
+        self.assertTrue(len(self.analysisManager.classifyTrends(self.trends_tweets))>0)
 
     def test_classify_snopes(self):
-        claims = []
         self.fail()
 
-    def test_tag_tweets(self):
-        self.fail()
 
-    def test_get_google_trends_statistics(self):
-        self.fail()
+    # TODO
 
-    def test_get_snopes_statistics(self):
-        self.fail()
+    # def test_classify_tweets(self):
+    #     self.fail()
 
-    def test_classify_tweets(self):
-        self.fail()
-
-    def test_retrieve_fake_news_data(self):
-        self.fail()
-
-# TODO
     # def test_config_classifier(self):
     #     self.fail()
 
+    # def test_tag_tweets(self):
+    #     self.fail()
