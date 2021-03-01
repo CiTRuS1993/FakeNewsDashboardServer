@@ -8,6 +8,7 @@ class UsersORMFacade:
     def __init__(self):
         from ..database import session
         self.session = session
+        self.add_user('username', '123', 'us@gmail.com', 'admin')
 
     def get_all_users(self):
         users = jsonpickle.dumps(self.session.query(UserOrm).all())
