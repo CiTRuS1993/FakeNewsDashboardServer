@@ -1,11 +1,13 @@
 from BuisnessLayer.ExternalSystemsAPIsManager.GoogleTrendsManager import GoogleTrendsManager
-from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager import TwitterManagerStub
+from BuisnessLayer.ExternalSystemsAPIsManager.snopesManager import SnopesManager
+from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager import TwitterManager
 
 
 class ExternalSystemsFacade:
     def __init__(self):
         self.googleTrendsManager = GoogleTrendsManager()
-        self.twitterManager = TwitterManagerStub()
+        self.twitterManager = TwitterManager()
+        self.snopesManager = SnopesManager()
         self.googleTrendsManager.connect()
         self.twitterManager.connect()
         self.twitterManager.search_tweets_by_trends(self.googleTrendsManager.get_trends())
@@ -21,3 +23,7 @@ class ExternalSystemsFacade:
 
     def edit_twitters_tokens(self, tokens):
         return self.twitterManager.edit_tokens(tokens)
+
+    def retrieve_snopes_data(self):
+        # TODO - retrieve tweets
+        return self.snopesManager.get_snopes() # maybe another func?

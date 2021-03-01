@@ -5,7 +5,7 @@ from BuisnessLayer.Users.UsersManagerFacade import UserManagerFacade
 
 class testUserManager(TestCase):
     def setUp(self) -> None:
-        self.UserManagerFacade = UserManagerFacade("username", "pass")
+        self.UserManagerFacade = UserManagerFacade("username", "123")
 
     def test_register(self):
         self.assertFalse(self.UserManagerFacade.register("sapir", "sap3232"))

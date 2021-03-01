@@ -13,3 +13,4 @@ class SnopesORM(Base, BaseORM):
     Verdict = Column(String)
     Date = Column(String)
     snope_tweets = relationship('TweetORM', secondary=SnopesTweetsConnection, backref='snope')
+    analyzed = relationship("AnalysedClaims", uselist=False, back_populates="claim")

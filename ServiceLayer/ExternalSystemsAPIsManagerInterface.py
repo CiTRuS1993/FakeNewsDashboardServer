@@ -13,7 +13,7 @@ class ExternalSystemsAPIsManagerInterface:
         return self.extrenalManagerLogic.retrieve_google_trends_data()
 
     def retrieveSnopesData(self):
-        return self.extrenalManagerLogic.retrieve_snopes_data() # maybe wrong func name
+        return self.extrenalManagerLogic.retrieve_snopes_data()
 
     # tokens is list of strings
     def editTwittersTokens(self, tokens):
