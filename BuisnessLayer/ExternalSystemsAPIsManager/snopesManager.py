@@ -10,7 +10,6 @@ import schedule as schedule
 class SnopesManager:
     def __init__(self):
         if os.path.exists("snopes.csv"):
-
             self.snopes = pd.read_csv('snopes.csv')[['claim', 'rating']].dropna().to_dict('index')
         else:
             self.snopes = {}

@@ -13,17 +13,22 @@ class UserManagerFacade:
             sys.exit("Wrong username or password!")
 
     def initUsersDB(self):
-        return self.users_db.get_all_users()
-        return {"username": User("registered",0,"username","111",[],[],-1),
-                "sapir" : User("admin",1,"sapir", "sap3232",[],[],-1)}
+        users = self.users_db.get_all_users()
+        users_dict = {}
+        for user in users:
+            users_dict[user['username']] = user
+        # users = {"username": User("registered", 0, "username", "111", [], [], -1),
+        #          "sapir": User("admin", 1, "sapir", "sap3232", [], [], -1)}
+        return users_dict
 
     def admin_exists(self, username, password):
-        if username in list(map(lambda user:user['username'],self.users_by_name_list)):
-            return True
+        if username in self.users_by_name_list.keys():
+            if self.users_by_name_list[username]['password'] == password:
+                return True
         return False
 
     def save_search_tweets_by_keywords(self, username, search_id):
-        if username in list(map(lambda user:user['username'],self.users_by_name_list)):
+        if username in self.users_by_name_list.keys():
             self.users_by_name_list[username].save_search_tweets_by_keywords(search_id)
             return True
         return False
@@ -47,7 +52,8 @@ class UserManagerFacade:
 
     def register(self, username, password):
         if username not in self.users_by_name_list.keys():
-            self.users_by_name_list[username] = User("Registered", len(self.users_by_name_list)+1,username, password, {}, [],-1)
+            self.users_by_name_list[username] = User("Registered", len(self.users_by_name_list) + 1, username, password,
+                                                     {}, [], -1)
             return True
         return False
 

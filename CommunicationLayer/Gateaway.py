@@ -9,7 +9,6 @@ from ServiceLayer.DashboardFacade import DashboardFacade
 dashboard_facade = DashboardFacade("citrus", "123")
 time.sleep(10)
 
-
 @app.route('/get_fake_news_data', methods=['GET'])
 def get_fake_news_data():
     return jsonify(dashboard_facade.retrieveFakeNewsData())
