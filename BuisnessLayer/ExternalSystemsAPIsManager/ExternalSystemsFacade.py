@@ -1,12 +1,12 @@
 from BuisnessLayer.ExternalSystemsAPIsManager.GoogleTrendsManager import GoogleTrendsManager
-from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManagerStub import TwitterManagerStub
 from BuisnessLayer.ExternalSystemsAPIsManager.snopesManager import SnopesManager
+from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager import TwitterManager
 
 
 class ExternalSystemsFacade:
     def __init__(self):
         self.googleTrendsManager = GoogleTrendsManager()
-        self.twitterManager = TwitterManagerStub()
+        self.twitterManager = TwitterManager()
         self.snopesManager = SnopesManager()
         self.googleTrendsManager.connect()
         self.twitterManager.connect()
