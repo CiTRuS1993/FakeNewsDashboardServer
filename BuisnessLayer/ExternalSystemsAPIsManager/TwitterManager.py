@@ -49,7 +49,7 @@ class TwitterManager:
         tweets = {}
         for keyword in keywords:
             try:
-                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items():
+                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items(1000):
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
                     tweets[trend_id].append(tweet)
