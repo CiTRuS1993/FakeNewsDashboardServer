@@ -6,8 +6,8 @@ class GoogleTrendsManager:
     def __init__(self):
         self.pytrends = TrendReq(hl='en-US', tz=360)
         self.trends = []
-        self.connect()
         self.ExternalOrm = ExternalAPIsORMFacade()
+        self.connect()
 
     def connect(self):
         self.trends = {}

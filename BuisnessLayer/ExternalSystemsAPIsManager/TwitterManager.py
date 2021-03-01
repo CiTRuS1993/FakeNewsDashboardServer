@@ -1,3 +1,4 @@
+import random
 import threading
 import time
 import tweepy
@@ -9,15 +10,19 @@ class TwitterManager:
         self.unprocessed_tweets = {}
         self.tokens= {}
         self.search = False
-        token= Token(consumer_key= 'tWsXjgFakSqxuoB1lfRaJMBX4',consumer_secret = 'CmyellBME94ZCmU2MxcSrd0qcj9BZMWRnIApnoOAQC8oXJqkeQ',
+        self.token= Token(consumer_key= 'tWsXjgFakSqxuoB1lfRaJMBX4',consumer_secret = 'CmyellBME94ZCmU2MxcSrd0qcj9BZMWRnIApnoOAQC8oXJqkeQ',
         access_token = '1353027459139174401-pe4YnxZsHfFav8ZbmZIXuyyNbhgAwd',access_secret = 'fAvqCeXtcCK6iYZFNVJkbLYBPPJaUjmfyBBtPfhSe956B')
+        self.tokens[0]=self.token
         self.api = None
 
-    def connect(self,token):
-        auth = OAuthHandler(token.consumer_key,token.consumer_secret)
-        auth.set_access_token(token.access_token,token.access_secret)
-        auth = tweepy.OAuthHandler(token.consumer_key,token.consumer_secret)
-        auth.set_access_token(token.access_token, token.access_secret)
+    def connect(self):
+        to_select = self.tokens.keys()
+        num = random.randint(0, len(to_select)-1)
+
+        auth = OAuthHandler(self.tokens[num].consumer_key, self.tokens[num].consumer_secret)
+        auth.set_access_token(self.tokens[num].access_token, self.tokens[num].access_secret)
+        auth = tweepy.OAuthHandler(self.tokens[num].consumer_key,self.tokens[num].consumer_secret)
+        auth.set_access_token(self.token.access_token, self.token.access_secret)
         self.api = tweepy.API(auth)
 
     def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: print(tweets)):
