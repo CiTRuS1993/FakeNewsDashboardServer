@@ -14,7 +14,7 @@ class GoogleTrendsManager:
         self.trends = {}
         trends = self.pytrends.trending_searches().values.tolist()
         for trend in trends:
-            self.trends[self.ExternalOrm.add_trend(trend, "01/03/21")] = {'keywords':trend}
+            self.trends[self.ExternalOrm.add_trend(trend[0], "01/03/21")] = {'keywords':trend}
 
     def get_trends(self):
         return self.trends

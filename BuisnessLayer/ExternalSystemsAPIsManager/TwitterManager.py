@@ -5,33 +5,58 @@ import tweepy
 from attr import dataclass
 from tweepy import OAuthHandler
 
+
+
+@dataclass
+class Token:
+    id: int
+    consumer_key: str
+    consumer_secret: str
+    access_token: str
+    access_secret: str
+
+#consumer_key = 'nMRLa7RAv9lT6j8akRWCy6UGD'
+#consumer_secret = 'jHZYUnXNj6oSQTXqMicZ077NCOfMD7atDcjBLszAy6qfDlJBml'
+#access_token = '1315318156509040641-CM8vvE8fApKSpq8NKgXES4HCYAJK3X'
+#access_secret = 'rQSQvP8RYn36vP6uN49lEquujq9muVYwOGmcyv9pFkAxA'
+
 class TwitterManager:
     def __init__(self):
         self.unprocessed_tweets = {}
         self.tokens= {}
         self.search = False
-        self.token= Token(consumer_key= 'tWsXjgFakSqxuoB1lfRaJMBX4',consumer_secret = 'CmyellBME94ZCmU2MxcSrd0qcj9BZMWRnIApnoOAQC8oXJqkeQ',
-        access_token = '1353027459139174401-pe4YnxZsHfFav8ZbmZIXuyyNbhgAwd',access_secret = 'fAvqCeXtcCK6iYZFNVJkbLYBPPJaUjmfyBBtPfhSe956B')
+        self.token= Token(id=0, consumer_key= 'tWsXjgFakSqxuoB1lfRaJMBX4',consumer_secret = 'CmyellBME94ZCmU2MxcSrd0qcj9BZMWRnIApnoOAQC8oXJqkeQ',
+                        access_token = '1353027459139174401-pe4YnxZsHfFav8ZbmZIXuyyNbhgAwd',access_secret = 'fAvqCeXtcCK6iYZFNVJkbLYBPPJaUjmfyBBtPfhSe956B')
         self.tokens[0]=self.token
+        self.tokens[1]= Token(id=1, consumer_key= 'nMRLa7RAv9lT6j8akRWCy6UGD',consumer_secret = 'jHZYUnXNj6oSQTXqMicZ077NCOfMD7atDcjBLszAy6qfDlJBml',
+                        access_token = '1315318156509040641-CM8vvE8fApKSpq8NKgXES4HCYAJK3X',access_secret = 'rQSQvP8RYn36vP6uN49lEquujq9muVYwOGmcyv9pFkAxA')
+        self.token_ids = list(self.tokens.keys())
         self.api = None
 
     def connect(self):
         to_select = self.tokens.keys()
-        num = random.randint(0, len(to_select)-1)
+        token = self.tokens[self.token_ids.pop()]
 
-        auth = OAuthHandler(self.tokens[num].consumer_key, self.tokens[num].consumer_secret)
-        auth.set_access_token(self.tokens[num].access_token, self.tokens[num].access_secret)
-        auth = tweepy.OAuthHandler(self.tokens[num].consumer_key,self.tokens[num].consumer_secret)
-        auth.set_access_token(self.token.access_token, self.token.access_secret)
+        auth = OAuthHandler(token.consumer_key,token.consumer_secret)
+        auth.set_access_token(token.access_token, token.access_secret)
+        auth = tweepy.OAuthHandler(token.consumer_key,token.consumer_secret)
+        auth.set_access_token(token.access_token, token.access_secret)
         self.api = tweepy.API(auth)
+        self.token_ids.append(token.id)
+
 
     def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: print(tweets)):
         tweets = {}
         for keyword in keywords:
-            for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items():
-                if keyword not in tweets.keys():
-                    tweets[trend_id] = []
-                tweets[trend_id].append(tweet)
+            try:
+                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items():
+                    if trend_id not in tweets.keys():
+                        tweets[trend_id] = []
+                    tweets[trend_id].append(tweet)
+            except:
+                self.connect()
+                # self.search_tweets_by_keywords(trend_id, keywords)        TODO
+
         on_finished(tweets)
         return tweets
 
@@ -62,10 +87,3 @@ class TwitterManager:
         tweets = self.unprocessed_tweets
         self.unprocessed_tweets = {}
         return tweets
-
-@dataclass
-class Token:
-    consumer_key: str
-    consumer_secret: str
-    access_token: str
-    access_secret: str
