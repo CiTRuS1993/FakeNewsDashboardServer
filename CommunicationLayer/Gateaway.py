@@ -29,18 +29,21 @@ def analyze():
 
 @app.route('/getTemp', methods=['get'])
 def get_temp():
+    print(f"get_temp = {dashboard_facade.getTemperature()}")
     return jsonify(dashboard_facade.getTemperature())
     # return jsonify({'sentiment': 42, 'fakiness': 38, 'authenticity': 15})
 
 
 @app.route('/getEmotions', methods=['get'])
 def get_emotions():
+    print(f"get_emotions = {dashboard_facade.get_emotions()}")
     return jsonify(dashboard_facade.get_emotions())
 
 
 @app.route('/getTrends')
-def get_trends(): # check and fix the format
-    return jsonify(dashboard_facade.retrieveGoogleTrendsData()) # TODO
+def get_trends():
+    print(f"get_trends = {dashboard_facade.googleTrendsStatistics()}")
+    return jsonify(dashboard_facade.googleTrendsStatistics())
 # {"Donald Trump": {'words': [
 #         {
 #             'text': 'told',
@@ -89,54 +92,13 @@ def get_emotions_tweet():
 
 @app.route('/getSentiment')
 def get_sentiment():
-    return jsonify({
-        'topics': [
-            {'y': 1, 'label': "1.1.2021"},
-            {'y': 1, 'label': "2.1.2021"},
-            {'y': -1, 'label': "3.1.2021"},
-            {'y': 1, 'label': "4.1.2021"},
-            {'y': 2, 'label': "5.1.2021"},
-            {'y': 1, 'label': "6.1.2021"},
-            {'y': 3, 'label': "7.1.2021"},
-            {'y': -1, 'label': "8.1.2021"},
-            {'y': 1, 'label': "9.1.2021"},
-            {'y': 1, 'label': "10.1.2021"},
-            {'y': -3, 'label': "11.1.2021"},
-            {'y': 1, 'label': "12.1.2021"}
-        ], 'trends': [
-            {'y': 3, 'label': "1.1.2021"},
-            {'y': 1, 'label': "2.1.2021"},
-            {'y': 0, 'label': "3.1.2021"},
-            {'y': 0, 'label': "4.1.2021"},
-            {'y': 0, 'label': "5.1.2021"},
-            {'y': 0, 'label': "6.1.2021"},
-            {'y': 1, 'label': "7.1.2021"},
-            {'y': -1, ' label': "8.1.2021"},
-            {'y': 1, 'label': "9.1.2021"},
-            {'y': 1, 'label': "10.1.2021"},
-            {'y': 1, 'label': "11.1.2021"},
-            {'y': -2, 'label': "12.1.2021"}
-        ],
-        'claims': [
-            {'y': 1, 'label': "1.1.2021"},
-            {'y': 1, 'label': "2.1.2021"},
-            {'y': 3, 'label': "3.1.2021"},
-            {'y': 2, 'label': "4.1.2021"},
-            {'y': -1, ' label': "5.1.2021"},
-            {'y': 1, 'label': "6.1.2021"},
-            {'y': 1, 'label': "7.1.2021"},
-            {'y': 0, 'label': "8.1.2021"},
-            {'y': -3, ' label': "9.1.2021"},
-            {'y': 1, 'label': "10.1.2021"},
-            {'y': -2, ' label': "11.1.2021"},
-            {'y': 1, 'label': "12.1.2021"}
-        ]
-    })
+    print(f"get_sentiment = {asdict(dashboard_facade.get_sentiment())}")
+    return jsonify(asdict(dashboard_facade.get_sentiment()))
 
 
 @app.route('/getTopic')
-def get_topic(): # TODO- does t a topic(claim of some trends)? where do we send the claims?
-    t = request.args.get('topic')
+def get_topic():
+    t = request.args.get('topic') # t = id of topic
     return jsonify({'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
                                {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': -2}],
                     'emotions': [{'y': 32, 'label': "Anger"},
@@ -149,4 +111,4 @@ def get_topic(): # TODO- does t a topic(claim of some trends)? where do we send 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-    # app.run(host='0.0.0.0', port=5000, debug=True, ssl_context='adhoc')   TODO- https
+    # app.run(host='0.0.0.0', port=5000, debug=True, ssl_context='adhoc')   # TODO- https   https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https

@@ -11,7 +11,9 @@ class DashboardFacade:
         self.usersManager=UsersManagerInterface(username, password)
         self.trends_timer = threading.Timer(12.0*360, self.retrieveGoogleTrendsData)
         self.snopes_timer = threading.Timer(12.0*360, self.retrieveSnopesData)
-
+        # retrieve data from Google Trends and from Snopes
+        self.retrieveGoogleTrendsData()
+        # self.retrieveSnopesData()     TODO- uncomment
 
 # ------------------------------- Retrieve Data & External Systems -----------------------------
 
@@ -87,6 +89,9 @@ class DashboardFacade:
 
     def get_emotions(self):
         return self.analysisManager.get_emotions()
+
+    def get_sentiment(self):
+        return self.analysisManager.get_sentiment()
 
 
 

@@ -40,3 +40,6 @@ class AnalysisManagerInterface:
 
     def get_emotions(self):
         return self.analysisManagerLogic.get_emotions()
+
+    def get_sentiment(self):
+        return self.analysisManagerLogic.get_sentiment()
