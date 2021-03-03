@@ -23,9 +23,9 @@ class Token:
 class TwitterManager:
     def __init__(self):
         self.unprocessed_tweets = {}
-        self.tokens= {}
+        self.tokens = {}
         self.search = False
-        self.token= Token(id=0, consumer_key= 'tWsXjgFakSqxuoB1lfRaJMBX4',consumer_secret = 'CmyellBME94ZCmU2MxcSrd0qcj9BZMWRnIApnoOAQC8oXJqkeQ',
+        self.token = Token(id=0, consumer_key= 'tWsXjgFakSqxuoB1lfRaJMBX4',consumer_secret = 'CmyellBME94ZCmU2MxcSrd0qcj9BZMWRnIApnoOAQC8oXJqkeQ',
                         access_token = '1353027459139174401-pe4YnxZsHfFav8ZbmZIXuyyNbhgAwd',access_secret = 'fAvqCeXtcCK6iYZFNVJkbLYBPPJaUjmfyBBtPfhSe956B')
         self.tokens[0]=self.token
         self.tokens[1]= Token(id=1, consumer_key= 'nMRLa7RAv9lT6j8akRWCy6UGD',consumer_secret = 'jHZYUnXNj6oSQTXqMicZ077NCOfMD7atDcjBLszAy6qfDlJBml',
@@ -47,12 +47,16 @@ class TwitterManager:
 
     def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: print(tweets)):
         tweets = {}
+        i = 0
         for keyword in keywords:
             try:
-                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items(1000):
+                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items():
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
                     tweets[trend_id].append(tweet)
+                    if i%100 == 0:
+                        time.sleep(360)
+                    i += 1
             except:
                 self.connect()
                 # self.search_tweets_by_keywords(trend_id, keywords)        TODO
