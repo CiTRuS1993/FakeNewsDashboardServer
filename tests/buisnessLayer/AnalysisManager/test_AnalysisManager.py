@@ -24,21 +24,30 @@ class TestAnalysisManager(TestCase):
         # amount = len(self.analysisManager.dashboard_statistics.keys())
         self.assertTrue(self.analysisManager.classifyTrends(self.trends_tweets))
         time.sleep(10)
-        print(self.analysisManager.getGoogleTrendsStatistics())
+        # print(self.analysisManager.getGoogleTrendsStatistics())
         self.assertTrue(len(self.analysisManager.getGoogleTrendsStatistics().keys()) > 0)
         # self.assertTrue(len(self.analysisManager.dashboard_statistics()) > amount)
 
 
-    def test_classify_snopes(self): # TODO- uncomment
+    def test_classify_snopes(self):
         self.assertEqual({}, self.analysisManager.getSnopesStatistics())
         # amount = len(self.analysisManager.dashboard_statistics())
         self.analysisManager.classifySnopes(self.snopes)
+        time.sleep(10)
         self.assertTrue(len(self.analysisManager.getSnopesStatistics()) > 0)
         # self.assertTrue(len(self.analysisManager.dashboard_statistics()) > amount)
 
     def test_get_claims_from_trend(self):
         for trend in self.trends_tweets:
             self.assertTrue(len(self.analysisManager.get_claims_from_trend(self.trends_tweets[trend]['tweets'])) > 0)
+
+    def test_get_tweets_by_emotion(self):
+        self.analysisManager.classifyTrends(self.trends_tweets)
+        time.sleep(10)
+        emotion = self.analysisManager.getGoogleTrendsStatistics()['Donald Trump']['statistics']['emotion'][0]
+        # print(emotion)
+        # print(self.analysisManager.get_emotion_tweets(emotion))
+        self.assertTrue(len(self.analysisManager.get_emotion_tweets(emotion))>0)
 
 # TODO
 

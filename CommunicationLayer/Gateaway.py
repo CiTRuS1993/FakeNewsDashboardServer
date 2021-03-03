@@ -29,14 +29,12 @@ def analyze():
 
 @app.route('/getTemp', methods=['get'])
 def get_temp():
-    print(f"get_temp = {dashboard_facade.getTemperature()}")
-    return jsonify(dashboard_facade.getTemperature())
+    return jsonify(asdict(dashboard_facade.getTemperature()))
     # return jsonify({'sentiment': 42, 'fakiness': 38, 'authenticity': 15})
 
 
 @app.route('/getEmotions', methods=['get'])
 def get_emotions():
-    print(f"get_emotions = {dashboard_facade.get_emotions()}")
     return jsonify(dashboard_facade.get_emotions())
 
 
@@ -86,27 +84,20 @@ def get_trends():
 @app.route('/getEmotionsTweet')
 def get_emotions_tweet():
     emotion = request.args.get('emotion')
-    return jsonify({'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake",'sentiment': 3},
-                               {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': 3}]})
+    print(dashboard_facade.get_emotion_tweets(emotion))
+    return jsonify(dashboard_facade.get_emotion_tweets(emotion))
 
 
 @app.route('/getSentiment')
 def get_sentiment():
-    print(f"get_sentiment = {asdict(dashboard_facade.get_sentiment())}")
     return jsonify(asdict(dashboard_facade.get_sentiment()))
 
 
 @app.route('/getTopic')
 def get_topic():
     t = request.args.get('topic') # t = id of topic
-    return jsonify({'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
-                               {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': -2}],
-                    'emotions': [{'y': 32, 'label': "Anger"},
-                                 {'y': 22, 'label': "Disgust"},
-                                 {'y': 15, 'label': "Sad"},
-                                 {'y': 19, 'label': "Happy"},
-                                 {'y': 5, 'label': "Surprise"},
-                                 {'y': 16, 'label': "Fear"}]})
+    print(dashboard_facade.get_topic(t))
+    return jsonify(dashboard_facade.get_topic(t))
 
 
 if __name__ == '__main__':

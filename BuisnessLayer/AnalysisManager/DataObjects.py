@@ -66,6 +66,16 @@ class Claim:
 class AnalysedClaim(Claim):
     statistics: Statistics # maybe use the ClaimStatistics instead (like the TrendStatistics)
 
+    def get_all_emotions(self):
+        emotions_counter = {"Anger": 0, "Disgust": 0, "Sad": 0, "Happy": 0, "Surprise": 0, "Fear": 0}
+        for tweet in self.tweets:
+            emotions_counter[tweet.emotion] = emotions_counter[tweet.emotion] + 1
+        emotions = list()
+        for emotion in emotions_counter.keys():
+            emotions.append({'y': emotions_counter[emotion], 'label': emotion})
+        return emotions
+
+
 @dataclass
 class Tweet:
     id: int
