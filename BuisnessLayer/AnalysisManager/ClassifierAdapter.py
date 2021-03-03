@@ -33,13 +33,13 @@ class ClassifierAdapter:
                 for tweet in topic.tweets:
                     rand = randrange(100)
                     if rand < 50:
-                        prediction = "wow it's fake"
+                        prediction = "fake"
                     else:
-                        prediction = "100% true"
+                        prediction = "true"
                     sentiment = randint(-3, 3)
                     rand = randrange(6)
                     emotion = get_emotion_by_id(rand)
-                    analyzed_tweet = AnalyzedTweet(tweet, emotion, sentiment, prediction)
+                    analyzed_tweet = AnalyzedTweet(tweet.id, tweet.author, tweet.content, emotion, sentiment, prediction)
                     tweets.append(analyzed_tweet)
                 processed_data[trend].append(Claim(topic, tweets))
 
@@ -72,27 +72,30 @@ class ClassifierAdapter:
             for tweet in data[claim]:
                 rand = randrange(100)
                 if rand < 50:
-                    prediction = "wow it's fake"
+                    prediction = "fake"
                 else:
-                    prediction = "100% true"
+                    prediction = "true"
                 sentiment = randint(-3, 3)
                 rand = randrange(6)
                 emotion = get_emotion_by_id(rand)
 
-                analyzed_tweet = AnalyzedTweet(tweet, emotion, sentiment, prediction)
+                analyzed_tweet = AnalyzedTweet(tweet['id'], tweet['author'], tweet['content'], emotion, sentiment, prediction)
                 tweets.append(analyzed_tweet)
-            processed_data[claim].append(Claim(claim, tweets))
+            if claim in processed_data.keys():
+                processed_data[claim].append(Claim(claim, tweets))
+            else:
+                processed_data[claim] = Claim(claim, tweets)
 
         time.sleep(1)
         return callback(processed_data)
 
     def get_claims_from_trend(self, trends_tweets):
-        claims = {}
-        for tweet in trends_tweets:
+        claims = {'claim1': {}, 'claim2': {}}
+        for tweet_id in trends_tweets:
             rand = randrange(10)
             if rand < 5:
-                claims["claim1"] = tweet
+                claims["claim1"][tweet_id]= trends_tweets[tweet_id]
             else:
-                claims["claim2"] = tweet
+                claims["claim2"][tweet_id]= trends_tweets[tweet_id]
         return claims
 

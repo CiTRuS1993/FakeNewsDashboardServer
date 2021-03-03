@@ -35,3 +35,17 @@ class AnalysisManagerInterface:
         # Yarin- maybe just add it to the ORM from here? does it have to pass throw the analysisManagerLogic?
         pass
 
+    def getTemperature(self):
+        return self.analysisManagerLogic.getTemperature()
+
+    def get_emotions(self):
+        return self.analysisManagerLogic.get_emotions()
+
+    def get_sentiment(self):
+        return self.analysisManagerLogic.get_sentiment()
+
+    def get_topic(self, topic_id):
+        return self.analysisManagerLogic.get_topic(topic_id)
+
+    def get_emotion_tweets(self, emotion):
+        return self.analysisManagerLogic.get_emotion_tweets(emotion)

@@ -11,7 +11,9 @@ class DashboardFacade:
         self.usersManager=UsersManagerInterface(username, password)
         self.trends_timer = threading.Timer(12.0*360, self.retrieveGoogleTrendsData)
         self.snopes_timer = threading.Timer(12.0*360, self.retrieveSnopesData)
-
+        # retrieve data from Google Trends and from Snopes
+        self.retrieveGoogleTrendsData()
+        # self.retrieveSnopesData()     TODO- uncomment
 
 # ------------------------------- Retrieve Data & External Systems -----------------------------
 
@@ -41,6 +43,21 @@ class DashboardFacade:
         if self.usersManager.is_admin(username):
             return self.analysisManager.configClassifier(classifier, configuration)
         return False #TODO- exception?
+
+    def getTemperature(self):
+        return self.analysisManager.getTemperature()
+
+    def get_emotions(self):
+        return self.analysisManager.get_emotions()
+
+    def get_sentiment(self):
+        return self.analysisManager.get_sentiment()
+
+    def get_topic(self, topic_id):
+        return self.analysisManager.get_topic(topic_id)
+
+    def get_emotion_tweets(self, emotion):
+        return self.analysisManager.get_emotion_tweets(emotion)
 
 # ----------------------------------- Users Options ------------------------------------------
 
@@ -81,5 +98,7 @@ class DashboardFacade:
 
     def deleteUser(self, admin_username, username_to_delete):
         return self.usersManager.deleteUser(admin_username, username_to_delete)
+
+
 
 
