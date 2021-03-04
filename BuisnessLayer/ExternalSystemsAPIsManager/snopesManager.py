@@ -39,7 +39,7 @@ class SnopesManager:
 
     def start(self):
         def scrap():
-            self.search_snopes()
+            # self.search_snopes()      TODO uncomment
             self.quit = True
             schedule.every().day.at("15:40").do(lambda: self.search_snopes())
             while self.quit:
