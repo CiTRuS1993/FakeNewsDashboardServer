@@ -35,7 +35,7 @@ class TwitterManager:
 
     def connect(self):
         to_select = self.tokens.keys()
-        token = self.tokens[self.token_ids.pop()]
+        token = self.tokens[self.token_ids.pop(0)]
 
         auth = OAuthHandler(token.consumer_key,token.consumer_secret)
         auth.set_access_token(token.access_token, token.access_secret)
@@ -54,9 +54,9 @@ class TwitterManager:
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
                     tweets[trend_id].append(tweet)
-                    if i%100 == 0:
-                        time.sleep(360)
-                    i += 1
+                   # if i%100 == 0:
+                       # time.sleep(360)
+                   # i += 1
             except:
                 self.connect()
                 # self.search_tweets_by_keywords(trend_id, keywords)        TODO
