@@ -69,7 +69,6 @@ class TwitterManager:
 
     def search_tweets_by_trends(self, trends):
         # trends={'id': {}}
-        print(trends)
         def search_trends():
             while self.search:
                 for trend in trends.keys():
