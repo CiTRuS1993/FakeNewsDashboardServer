@@ -15,7 +15,7 @@ class UsersORMFacade:
         jusers = json.loads(users)
         return jusers
 
-    def get_user(self, username):
+    def get_user(self, username): # TODO- add get like this
         user = jsonpickle.dumps(self.session.query(UserOrm).filter_by(username=username).first())
         juser = json.loads(user)
         return juser
