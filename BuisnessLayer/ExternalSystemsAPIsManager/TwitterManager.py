@@ -47,16 +47,16 @@ class TwitterManager:
 
     def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: print(tweets)):
         tweets = {}
-        i = 0
+        i = 1
         for keyword in keywords:
             try:
-                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items():
+                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items(100):
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
                     tweets[trend_id].append(tweet)
-                   # if i%100 == 0:
-                       # time.sleep(360)
-                   # i += 1
+                    # if i%100 == 0:
+                    #     time.sleep(360)
+                    i += 1
             except:
                 self.connect()
                 # self.search_tweets_by_keywords(trend_id, keywords)        TODO
@@ -80,6 +80,8 @@ class TwitterManager:
 
         search_thread = threading.Thread(target=search_trends)
         self.search = True
+        search_thread.setDaemon(True)
+
         search_thread.start()
 
     def edit_tokens(self, token):
