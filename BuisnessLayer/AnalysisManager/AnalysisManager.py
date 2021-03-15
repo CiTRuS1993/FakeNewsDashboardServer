@@ -25,8 +25,13 @@ class AnalysisManager:
         self.trends_statistics = {}
         self.snopes_statistics = {}
         self.adapter = ClassifierAdapter()
+
+        # retrieve previous analysis's from DB
         self.orm = AnalysisORMFacade()
-        # TODO- retrieve previous analysis's from DB
+        self.orm_topics = self.orm.get_all_analyzed_topics()
+        # self.orm_claims = self.orm.get_all_analyzed_claims()
+        self.orm_tweets = self.orm.get_all_analyzed_tweets()
+
         schedule.every().day.at("23:57").do(lambda: (self.update_todays_sentiment(datetime.date.today())))
 
     def init_emotions_dict(self):
@@ -68,7 +73,7 @@ class AnalysisManager:
             topics_statistics = list()
             trend_name = self.get_trend_name(trend_id)
             words_cloud = self.calc_topics_statistics_and_save(processed, topics_statistics, trend_id)
-            # -------------------- sync -----------------------
+            # -------------------- sync ----------------------- (was fixed by wait() on tests)
             self.lock.acquire()
             if trend_id not in self.trends_statistics.keys():
                 first = True
@@ -118,12 +123,15 @@ class AnalysisManager:
                 sentiment = sentiment + tweet.sentiment
                 prediction[tweet.is_fake] = prediction[tweet.is_fake] + 1
                 emotions.append(tweet.emotion)
-                # self.orm.add_analyzed_tweet(tweet.id, tweet.is_fake, tweet.emotion, tweet.sentiment) TODO UNCOMMENT
+                # TODO- if fails on the way --> delete the analysis?
+                if tweet.id not in self.orm_tweets:
+                    self.orm.add_analyzed_tweet(tweet.id, tweet.is_fake, tweet.emotion, tweet.sentiment) # TODO- BUG
+                    self.orm_tweets[tweet.id] = self.orm.get_analyzed_tweet(tweet.id)
             # update emotions statistics
             emotion = self.update_emotions(emotions)
             avg_prediction = self.calc_avg_prediction(prediction)
             topics_statistics.append((emotions, sentiment, prediction))
-            # self.orm.add_analyzed_topic(topic.name, avg_prediction, emotion, sentiment/len(emotions), ids, trend)  TODO UNCOMMENT
+            self.orm.add_analyzed_topic(topic.name, avg_prediction, emotion, sentiment/len(emotions), ids, trend)
         words_cloud_statistics = list()
         for word in words_cloud.keys():
             words_cloud_statistics.append(WordCloud(word, words_cloud[word]))
@@ -164,7 +172,7 @@ class AnalysisManager:
             emotions = list()
             for claim in processed.keys():
                 for tweet in processed[claim].tweets:
-                    # self.orm.add_analyzed_tweet(tweet.id, tweet.is_fake, tweet.emotion, tweet.sentiment)  TODO - uncomment
+                    self.orm.add_analyzed_tweet(tweet.id, tweet.is_fake, tweet.emotion, tweet.sentiment)
                     emotions.append(tweet.emotion)
                     prediction[tweet.is_fake] = prediction[tweet.is_fake] + 1
                     sentiment = sentiment + tweet.sentiment
@@ -210,9 +218,14 @@ class AnalysisManager:
         return claims
 
     def getTemperature(self):
+        is_fake = self.temperature['is_fake'] / self.temperature['amount']
+        if is_fake < 0.5:
+            is_fake = 0
+        else:
+            is_fake = 1
         temperature = Temperature(self.temperature['authenticity'],
-                                  self.temperature['sentiment'] / self.temperature['amount'],
-                                  self.temperature['is_fake'] / self.temperature['amount'])
+                                  round(self.temperature['sentiment'] / self.temperature['amount']),
+                                  is_fake)
         return temperature
 
     def get_emotions(self):
@@ -263,6 +276,8 @@ class AnalysisManager:
             for topic in self.trends_statistics[trend_name]:
                 if topic.id == topic_id:
                     return {'tweets': topic.tweets, 'emotions': topic.get_all_emotions}
+        # error case (stub)
+        print("Error on AnalysisManager.get_topic()")
         return {'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
                            {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': -2}],
                 'emotions': [{'y': 32, 'label': "Anger"},
@@ -281,8 +296,8 @@ class AnalysisManager:
         for claim in self.snopes_statistics:
             snopes_tweets = self.search_for_emotion_on_tweets(emotion, claim.tweets)
         return trends_tweets + snopes_tweets
-        return {'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
-                           {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': 3}]}
+        # return {'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
+        #                    {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': 3}]}
 
     def search_for_emotion_on_tweets(self, emotion, tweets) -> list:
         emotion_tweets = list()
