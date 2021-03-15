@@ -1,3 +1,6 @@
+import jsonpickle
+from jsonpickle import json
+
 from PersistenceLayer.ExternalAPIsORM import AuthorORM, SearchORM, SnopesORM
 from PersistenceLayer.ExternalAPIsORM.TrendsORM import TrendsORM
 from PersistenceLayer.ExternalAPIsORM.TweetORM import TweetORM
@@ -43,6 +46,19 @@ class ExternalAPIsORMFacade:
                 claim.snope_tweets.append(tweet)
                 claim.update_db()
         self.add_tweet_to_author(id, author_username)
+
+    def get_all_tweets_dict(self):
+        tweets = jsonpickle.dumps(self.session.query(TweetORM).all())
+        jtweets = json.loads(tweets)
+        tweets_dict = {}
+        for tweet in jtweets:
+            tweets_dict[tweet['id']] = tweet
+        return tweets_dict
+
+    def get_tweet(self, id):
+        tweet = jsonpickle.dumps(self.session.query(TweetORM).filter_by(id=id).first())
+        jtweet = json.loads(tweet)
+        return jtweet
 
     def add_search(self, keywords):
         search = SearchORM(KeyWords=keywords)
