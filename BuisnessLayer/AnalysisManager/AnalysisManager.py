@@ -139,6 +139,7 @@ class AnalysisManager:
 
     def get_trend_name(self, trend_id):
         flag = True
+        trend_name = ''
         for analysed_trend_id in self.trends_statistics:
             if analysed_trend_id == trend_id:
                 flag = False

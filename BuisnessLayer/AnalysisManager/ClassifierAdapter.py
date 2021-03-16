@@ -99,6 +99,7 @@ class ClassifierAdapter:
             if rand < 5:
                 claims["claim1"][status.id]= {'id': status.id, 'author': status.author.name, 'content': status.text}
             else:
+                # print(status)
                 claims["claim2"][status.id]= {'id': status.id, 'author': status.author.name, 'content': status.text}
         return claims
 
