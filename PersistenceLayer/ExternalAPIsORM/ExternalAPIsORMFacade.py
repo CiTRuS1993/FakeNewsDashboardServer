@@ -16,6 +16,23 @@ class ExternalAPIsORMFacade:
         trend.add_to_db()
         return trend.id
 
+    def get_all_trends(self):
+        trends = jsonpickle.dumps(self.session.query(TrendsORM).all())
+        jtrends = json.loads(trends)
+        trends_dict = {}
+        for trend in jtrends:
+            new_trend = {'date': trend['date'], 'id': trend['id']}
+            if trend['content'] in trends_dict.keys():
+                trends_dict[trend['content']].append(new_trend)
+            else:
+                trends_dict[trend['content']] = [new_trend]
+        return trends_dict
+
+    def get_trend(self, id):
+        trend = jsonpickle.dumps(self.session.query(TrendsORM).filter_by(id=id).first())
+        jtrend = json.loads(trend)
+        return jtrend
+
     def add_author(self, username, statuses_count=0, followers_count=0, friends_count=0, listed_count=0):
         AuthorORM(username=username, statuses_count=statuses_count, followers_count=followers_count,
                   friends_count=friends_count, listed_count=listed_count).add_to_db()
