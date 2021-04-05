@@ -1,3 +1,5 @@
+import time
+
 from ServiceLayer.AnalysisManagerInterface import AnalysisManagerInterface
 from ServiceLayer.ExternalSystemsAPIsManagerInterface import ExternalSystemsAPIsManagerInterface
 from ServiceLayer.UsersManagerInterface import UsersManagerInterface
@@ -11,10 +13,11 @@ class DashboardFacade:
         self.usersManager=UsersManagerInterface(username, password)
         self.trends_timer = threading.Timer(12.0*360, self.retrieveGoogleTrendsData)
         self.snopes_timer = threading.Timer(12.0*360, self.retrieveSnopesData)
+        time.sleep(60)
         # retrieve data from Google Trends and from Snopes
         self.retrieveGoogleTrendsData()
         # self.retrieveSnopesData()     TODO- uncomment
-
+        # TODO- add func which sends each unclassified tweet to analysisManager (errors handling)
 # ------------------------------- Retrieve Data & External Systems -----------------------------
 
     # gets all data related to the dashboard

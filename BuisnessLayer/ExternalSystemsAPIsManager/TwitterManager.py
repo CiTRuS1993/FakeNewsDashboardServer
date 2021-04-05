@@ -5,6 +5,7 @@ import tweepy
 from attr import dataclass
 from tweepy import OAuthHandler
 
+from PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade import ExternalAPIsORMFacade
 
 
 @dataclass
@@ -32,6 +33,8 @@ class TwitterManager:
                         access_token = '1315318156509040641-CM8vvE8fApKSpq8NKgXES4HCYAJK3X',access_secret = 'rQSQvP8RYn36vP6uN49lEquujq9muVYwOGmcyv9pFkAxA')
         self.token_ids = list(self.tokens.keys())
         self.api = None
+        self.orm = ExternalAPIsORMFacade()
+        self.all_tweets = self.orm.get_all_tweets_dict()
 
     def connect(self):
         to_select = self.tokens.keys()
@@ -47,18 +50,20 @@ class TwitterManager:
 
     def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: print(tweets)):
         tweets = {}
-        i = 0
+        i = 1
         for keyword in keywords:
             try:
-                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items(2):
+                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items(100):
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
                     tweets[trend_id].append(tweet)
-                    print(tweet.text,tweet.author,tweet.created_at)
-
-                   # if i%100 == 0:
-                       # time.sleep(360)
-                   # i += 1
+                    # TODO (?) - maybe without trend_id
+                    if tweet.id not in self.all_tweets.keys():
+                        self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, tweet.place, tweet.created_at, trend_id)
+                        self.all_tweets[tweet.id] = self.orm.get_tweet(tweet.id)
+                    # if i%100 == 0:
+                    #     time.sleep(360)
+                    i += 1
             except:
                 self.connect()
                 # self.search_tweets_by_keywords(trend_id, keywords)        TODO
@@ -79,9 +84,12 @@ class TwitterManager:
                         self.unprocessed_tweets[key] = {'keyword':trends[trend]['keywords'],'tweets':new_tweets[key]}
                     if not self.search:
                         return
+                    # time.sleep(100)  # TODO- delete
 
         search_thread = threading.Thread(target=search_trends)
         self.search = True
+        search_thread.setDaemon(True)
+
         search_thread.start()
 
     def edit_tokens(self, token):
