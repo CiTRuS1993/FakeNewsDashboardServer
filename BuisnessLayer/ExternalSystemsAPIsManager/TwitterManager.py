@@ -50,10 +50,12 @@ class TwitterManager:
         i = 0
         for keyword in keywords:
             try:
-                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items():
+                for tweet in tweepy.Cursor(self.api.search, q=keyword, lang='en').items(2):
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
                     tweets[trend_id].append(tweet)
+                    print(tweet.text,tweet.author,tweet.created_at)
+
                    # if i%100 == 0:
                        # time.sleep(360)
                    # i += 1
