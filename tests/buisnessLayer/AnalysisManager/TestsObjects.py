@@ -15,3 +15,9 @@ class Status:
 class Trend:
     id: int
     keywords: str
+
+@dataclass
+class AnalysedTweet(Status):
+    emotion: str
+    sentiment: int
+    is_fake: str

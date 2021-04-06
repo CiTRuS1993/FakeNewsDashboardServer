@@ -7,7 +7,7 @@ from flask_cors import CORS
 from CommunicationLayer import app
 from ServiceLayer.DashboardFacade import DashboardFacade
 
-dashboard_facade = DashboardFacade("username", "123")
+dashboard_facade = DashboardFacade("username", "123") # TODO
 time.sleep(10)
 
 @app.route('/get_fake_news_data', methods=['GET'])
