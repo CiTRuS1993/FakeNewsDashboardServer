@@ -1,12 +1,13 @@
 import unittest
+from unittest import mock
 
-from BuisnessLayer.AnalysisManager.AnalysisManager import AnalysisManager
-from tests.buisnessLayer.AnalysisManager.TestsObjects import AnalysedTweet, Name
+from ServiceLayer.AnalysisManagerInterface import AnalysisManagerInterface
+from tests.buisnessLayer.AnalysisManager.TestsObjects import AnalysedTweet, Name, Status
 
 
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self.analysis_manager= AnalysisManager()
+        self.analysis_manager= AnalysisManagerInterface()
         self.snopes = {'claim1': set(['tweet1', 'tweet2','tweet3']),
                        'claim2': set(['tweet1', 'tweet2','tweet3']),
                        'claim3': set(['tweet1', 'tweet2','tweet3'])}
@@ -21,75 +22,109 @@ class MyTestCase(unittest.TestCase):
                   'tweets': (self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3)},
             '3': {'id': 3, 'keyword': 'Elections',
                   'tweets': (self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3)}}
+        self.temp = [] # TODO- create temp objects
+        self.emotions = [] # TODO- create emotions objects
+        self.sentiment = [] # TODO- create sentiment objects
+        self.tweet1 = Status('1', Name('aa'), 'tweet1')
+        self.tweet2 = Status('2', Name('aa'), 'tweet2')
+        self.tweet3 = Status('3', Name('aa'), 'tweet3')
+        self.trends_tweets = {
+            '1': {'id': 1, 'keyword': 'Donald Trump', 'tweets': (self.tweet1, self.tweet2, self.tweet3)},
+            '2': {'id': 2, 'keyword': 'Covid19', 'tweets': (self.tweet1, self.tweet2, self.tweet3)},
+            '3': {'id': 3, 'keyword': 'Elections', 'tweets': (self.tweet1, self.tweet2,
+                                                              self.tweet3)}}
 
-    # def getGoogleTrendsStatistics(self):
-    #     return self.analysisManagerLogic.getGoogleTrendsStatistics()
-    #
-    # def getSnopesStatistics(self):
-    #     return self.analysisManagerLogic.getSnopesStatistics()
-    #
-    # def classifyTweets(self, file):
-    #     return self.analysisManagerLogic.classifyTweets(file)
-    #
-    # def retrieveFakeNewsData(self):
-    #     return self.analysisManagerLogic.retrieveFakeNewsData()
-    #
-    # def configClassifier(self, classifier, configuration):
-    #     return self.analysisManagerLogic.configClassifier(classifier, configuration)
-    #
-    # def classifyTrends(self, trends_tweets):
-    #     self.analysisManagerLogic.classifyTrends(trends_tweets)
-    #     return self.analysisManagerLogic.getGoogleTrendsStatistics()
-    #
-    # def classifySnopes(self, claims_tweets):
-    #     self.analysisManagerLogic.classifySnopes(claims_tweets)
-    #     return self.analysisManagerLogic.getSnopesStatistics()
-    #
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_getGoogleTrendsStatistics(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = self.analysed_tweets
+        mock.getGoogleTrendsStatistics.return_value = ret
+        self.assertEqual(self.analysis_manager.getGoogleTrendsStatistics(), ret)
+
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_getSnopesStatistics(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = self.snopes
+        mock.getSnopesStatistics.return_value = ret
+        self.assertEqual(self.analysis_manager.getSnopesStatistics(), ret)
+
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_classifyTweets(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = {'TODO': 'why am I doing it???'}
+        mock.classifyTweets.return_value = ret
+        self.assertEqual(self.analysis_manager.classifyTweets('file_dir'), ret)
+
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_retrieveFakeNewsData(self, mock_analysis):  # returns statistics
+        self.analysis_manager.analysisManagerLogic = mock_analysis
+        ret = {'TODO': 'why am I doing it???'}
+        mock_analysis.retrieveFakeNewsData.return_value = ret
+        self.assertEqual(self.analysis_manager.retrieveFakeNewsData(), ret)
+
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_configClassifier(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = True
+        mock.configClassifier.return_value = ret
+        self.assertEqual(self.analysis_manager.configClassifier('classifier1', 'configuration'), ret)
+
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_classifyTrends(self, mock):  # returns statistics
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = self.analysed_tweets
+        mock.getGoogleTrendsStatistics.return_value = ret
+        self.assertEqual(self.analysis_manager.classifyTrends(self.trends_tweets), ret)
+
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_classifySnopes(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = self.analysed_tweets
+        mock.getSnopesStatistics.return_value = ret
+        self.assertEqual(self.analysis_manager.classifySnopes(self.snopes), ret)
+
     # # TODO
-    # def tagTweets(self, tweet_id, isFake):
-    #     # return self.analysisManagerLogic.tagTweets(tweet_id, isFake)
-    #     # Yarin- maybe just add it to the ORM from here? does it have to pass throw the analysisManagerLogic?
-    #     pass
-    #
-    # def getTemperature(self):
-    #     return self.analysisManagerLogic.getTemperature()
-    #
-    # def get_emotions(self):
-    #     return self.analysisManagerLogic.get_emotions()
-    #
-    # def get_sentiment(self):
-    #     return self.analysisManagerLogic.get_sentiment()
-    #
-    # def get_topic(self, topic_id):
-    #     return self.analysisManagerLogic.get_topic(topic_id)
-    #
-    # def get_emotion_tweets(self, emotion):
-    #     return self.analysisManagerLogic.get_emotion_tweets(emotion)
+    # @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    # def test_tagTweets(self):
+    #     self.analysis_manager.analysisManagerLogic = mock
+    #     ret = self.analysed_tweets
+    #     mock.tagTweets.return_value = ret
+    #     self.assertEqual(self.analysis_manager.tagTweets('2323', '1'), ret)
 
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_getTemperature(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = self.temp
+        mock.getTemperature.return_value = ret
+        self.assertEqual(self.analysis_manager.getTemperature(), ret)
 
-    def test_getGoogleTrendsStatistics(self):
-        self.assertEqual(True, False)
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_get_emotions(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = self.emotions
+        mock.get_emotions.return_value = ret
+        self.assertEqual(self.analysis_manager.get_emotions(), ret)
 
-    def test_getSnopesStatistics(self):
-        self.assertEqual(True, False)
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_get_sentiment(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = self.sentiment
+        mock.get_sentiment.return_value = ret
+        self.assertEqual(self.analysis_manager.get_sentiment(), ret)
 
-    def test_classifyTweets(self):
-        self.assertEqual(True, False)
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_get_topic(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = {'tweets': self.analysed_tweets, 'emotions': self.emotions}
+        mock.get_topic.return_value = ret
+        self.assertEqual(self.analysis_manager.get_topic(1), ret)
 
-    def test_retrieveFakeNewsData(self):
-        self.assertEqual(True, False)
-
-    def test_configClassifier(self):
-        self.assertEqual(True, False)
-
-    def test_classifyTrends(self):
-        self.assertEqual(True, False)
-
-    def test_classifySnopes(self):
-        self.assertEqual(True, False)
-
-    def test_tagTweets(self):
-        self.assertEqual(True, False)
+    @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
+    def test_get_emotion_tweets(self, mock):
+        self.analysis_manager.analysisManagerLogic = mock
+        ret = self.analysed_tweets
+        mock.get_emotion_tweets.return_value = ret
+        self.assertEqual(self.analysis_manager.get_emotion_tweets('happy'), ret)
 
 if __name__ == '__main__':
     unittest.main()

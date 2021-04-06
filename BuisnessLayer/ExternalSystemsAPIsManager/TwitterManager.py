@@ -96,6 +96,7 @@ class TwitterManager:
         for token in token:
             if token not in self.tokens.keys():
                 self.tokens.append(token)
+        return True
 
     def get_unprocessed_tweets(self):
         tweets = self.unprocessed_tweets
