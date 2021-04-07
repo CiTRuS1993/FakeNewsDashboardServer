@@ -24,50 +24,35 @@ class MyTestCase(unittest.TestCase):
                   'tweets': (self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3)},
             '3': {'id': 3, 'keyword': 'Elections',
                   'tweets': (self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3)}}
+        self.temp = [] # TODO- create temp objects
+        self.emotions = [] # TODO- create emotions objects
+        self.sentiment = [] # TODO- create sentiment objects
 
-        #
-        # def configClassifier(self, username, classifier, configuration):
-        #     if self.usersManager.is_admin(username):
-        #         return self.analysisManager.configClassifier(classifier, configuration)
-        #     return False  # TODO- exception?
-        #
-        # def getTemperature(self):
-        #     return self.analysisManager.getTemperature()
-        #
-        # def get_emotions(self):
-        #     return self.analysisManager.get_emotions()
-        #
-        # def get_sentiment(self):
-        #     return self.analysisManager.get_sentiment()
-        #
-        # def get_topic(self, topic_id):
-        #     return self.analysisManager.get_topic(topic_id)
-        #
-        # def get_emotion_tweets(self, emotion):
-        #     return self.analysisManager.get_emotion_tweets(emotion)
 
     # ------------------------------- Retrieve Data & External Systems -----------------------------
 
     @mock.patch("ServiceLayer.AnalysisManagerInterface")
-    def test_retrieveFakeNewsData(self, mock):  # returns statistics
+    def test_retrieveFakeNewsData(self,  mock_analysis):  # returns statistics
+        self.dashboard.analysisManager= mock_analysis
         ret = {'TODO': 'why am I doing it???'}
-        mock.retrieveFakeNewsData.return_value = ret
+        mock_analysis.retrieveFakeNewsData.return_value = ret
         self.assertEqual(self.dashboard.retrieveFakeNewsData(), ret)
 
     @mock.patch("ServiceLayer.AnalysisManagerInterface")
     def test_googleTrendsStatistics(self, mock):  # returns statistics
+        self.dashboard.analysisManager= mock
         ret = self.analysed_tweets
         mock.getGoogleTrendsStatistics.return_value = ret
         self.assertEqual(self.dashboard.googleTrendsStatistics(), ret)
 
     @mock.patch("ServiceLayer.AnalysisManagerInterface")
     def test_snopesStatistics(self, mock):  # returns statistics
+        self.dashboard.analysisManager= mock
         ret = self.snopes
         mock.getSnopesStatistics.return_value = ret
         self.assertEqual(self.dashboard.snopesStatistics(), ret)
 
         # TODO?
-
     # @mock.patch("ServiceLayer.AnalysisManagerInterface")
     def test_retrieveGoogleTrendsData(self):
         time.sleep(4)
@@ -78,81 +63,142 @@ class MyTestCase(unittest.TestCase):
     @mock.patch("ServiceLayer.ExternalSystemsAPIsManagerInterface")
     @mock.patch("ServiceLayer.AnalysisManagerInterface")
     def test_retrieveSnopesData(self, mock_analysis, mock_external):
+        self.dashboard.analysisManager= mock_analysis
+        self.dashboard.externalSystemsManager= mock_external
         ret = self.snopes
-        mock_analysis.orm = mock.Mock()
         mock_analysis.classifySnopes.return_value = ret
         mock_external.retrieveSnopesData.return_value = self.claims
-        mock_external.extrenalManagerLogic = mock.Mock()
         self.assertEqual(self.dashboard.retrieveSnopesData(), ret)
 
-    def test_configClassifier(self):
-        self.assertEqual(True, False)
+    @mock.patch("ServiceLayer.UsersManagerInterface")
+    @mock.patch("ServiceLayer.AnalysisManagerInterface")
+    def test_configClassifier(self, mock_analysis, mock_users):
+        self.dashboard.analysisManager = mock_analysis
+        self.dashboard.usersManager = mock_users
+        ret = True
+        mock_analysis.configClassifier.return_value = ret
+        mock_users.is_admin.return_value = True
+        self.assertEqual(self.dashboard.configClassifier('username', 'classifier1', 'configuration'), ret)
+
+    @mock.patch("ServiceLayer.AnalysisManagerInterface")
+    def test_getTemperature(self, mock_analysis):
+        self.dashboard.analysisManager = mock_analysis
+        ret = self.temp
+        mock_analysis.getTemperature.return_value = ret
+        self.assertEqual(self.dashboard.getTemperature(), ret)
+
+    @mock.patch("ServiceLayer.AnalysisManagerInterface")
+    def test_get_emotions(self, mock_analysis):
+        self.dashboard.analysisManager = mock_analysis
+        ret = self.emotions
+        mock_analysis.get_emotions.return_value = ret
+        self.assertEqual(self.dashboard.get_emotions(), ret)
+
+    @mock.patch("ServiceLayer.AnalysisManagerInterface")
+    def test_get_sentiment(self, mock_analysis):
+        self.dashboard.analysisManager = mock_analysis
+        ret = self.sentiment
+        mock_analysis.get_sentiment.return_value = ret
+        self.assertEqual(self.dashboard.get_sentiment(), ret)
+
+    @mock.patch("ServiceLayer.AnalysisManagerInterface")
+    def test_get_topic(self, mock_analysis):
+        self.dashboard.analysisManager = mock_analysis
+        ret = {'tweets': self.analysed_tweets, 'emotions': self.emotions}
+        mock_analysis.get_topic.return_value = ret
+        self.assertEqual(self.dashboard.get_topic(1), ret)
+
+    @mock.patch("ServiceLayer.AnalysisManagerInterface")
+    def test_get_emotion_tweets(self, mock_analysis):
+        self.dashboard.analysisManager = mock_analysis
+        ret = self.analysed_tweets
+        mock_analysis.get_emotion_tweets.return_value = ret
+        self.assertEqual(self.dashboard.get_emotion_tweets('happy'), ret)
 
     # ----------------------------------- Users Options ------------------------------------------
 
-    #
-    # def searchTweetsByKeywords(self, username, keyword, token=None):
-    #     if (self.usersManager.userExists(username)):
-    #         search_id = self.externalSystemsManager.searchTweetsByKeywords(keyword, token)
-    #         self.usersManager.saveSearchTweetsByKeywords(username, search_id)
-    #         return True
-    #     return False
+    @mock.patch("ServiceLayer.ExternalSystemsAPIsManagerInterface")
+    @mock.patch("ServiceLayer.UsersManagerInterface")
+    def test_searchTweetsByKeywords(self, mock_users, mock_external):
+        self.dashboard.externalSystemsManager = mock_external
+        self.dashboard.usersManager = mock_users
+        ret = True
+        mock_external.searchTweetsByKeywords.return_value = 1
+        mock_users.userExists.return_value = ret
+        self.assertEqual(self.dashboard.searchTweetsByKeywords('username', 'keywords'), ret)
+
     #
     # def tagTweet(self, username, tweet_id, isFake):
     #     if self.usersManager.userExists(username):
     #         self.analysisManager.tagTweets(tweet_id, isFake)
     #         self.usersManager.tagTweet(username, tweet_id)
-    #         # TODO- what to return?
+    #         # TODO- what to return? also activate the test
     #
-    # def viewUserSearchHistory(self, username, username_to_view):
-    #     return self.usersManager.viewUserSearchHistory(username, username_to_view)
+
+    # @mock.patch("ServiceLayer.UsersManagerInterface")
+    # @mock.patch("ServiceLayer.AnalysisManagerInterface")
+    # def test_tagTweet(self, mock_analysis, mock_users):
+    #     self.dashboard.analysisManager = mock_analysis
+    #     self.dashboard.usersManager = mock_users
+    #     ret = True
+    #     mock_users.tagTweet.return_value = ret
+    #     mock_users.userExists.return_value = True
+    #     self.assertEqual(self.dashboard.tagTweet('username', '1223234', '1'), ret)
     #
-    # def editTwittersTokens(self, username, tokens):
-    #     if self.usersManager.is_admin(username):
-    #         return self.externalSystemsManager.editTwittersTokens(tokens)
-    #     return False  # TODO- exception?
-    #
-    # def classifyTweets(self, username, file):
-    #     if (self.usersManager.userExists(username)):
-    #         classify_id = self.analysisManager.classifyTweets(file)
-    #         return self.usersManager.classifyTweets(username, classify_id)
-    #     return False  # TODO- exception?
-    #
-    def test_searchTweetsByKeywords(self):
-        self.assertEqual(True, False)
 
-    def test_tagTweet(self):
-        self.assertEqual(True, False)
+    @mock.patch("ServiceLayer.UsersManagerInterface")
+    def test_viewUserSearchHistory(self, mock):
+        self.dashboard.usersManager = mock
+        ret = [1,5,12]
+        mock.viewUserSearchHistory.return_value = ret
+        self.assertEqual(self.dashboard.viewUserSearchHistory('username1', 'username2'), ret)
 
-    def test_viewUserSearchHistory(self):
-        self.assertEqual(True, False)
+    @mock.patch("ServiceLayer.ExternalSystemsAPIsManagerInterface")
+    @mock.patch("ServiceLayer.UsersManagerInterface")
+    def test_editTwittersTokens(self, mock_users, mock_external):
+        self.dashboard.externalSystemsManager = mock_external
+        self.dashboard.usersManager = mock_users
+        ret = True
+        mock_external.editTwittersTokens.return_value = ret
+        mock_users.is_admin.return_value = True
+        self.assertEqual(self.dashboard.editTwittersTokens('username', ['token1', 'token2']), ret)
 
-    def test_editTwittersTokens(self):
-        self.assertEqual(True, False)
-
-    def test_classifyTweets(self):
-        self.assertEqual(True, False)
+    @mock.patch("ServiceLayer.UsersManagerInterface")
+    @mock.patch("ServiceLayer.AnalysisManagerInterface")
+    def test_classifyTweets(self, mock_analysis, mock_users):
+        self.dashboard.analysisManager = mock_analysis
+        self.dashboard.usersManager = mock_users
+        ret = True
+        mock_users.classifyTweets.return_value = ret
+        mock_users.userExists.return_value = True
+        self.assertEqual(self.dashboard.classifyTweets('username', 'file_dir'), ret)
+        ret = False
+        mock_users.classifyTweets.return_value = ret
+        mock_users.userExists.return_value = False
+        self.assertEqual(self.dashboard.classifyTweets('username', 'file_dir'), ret)
 
     # ----------------------------------- Manage Users --------------------------------------------
 
-    # def register(self, username, password):
-    #     return self.usersManager.register(username, password)
-    #
-    # def login(self, username, password):
-    #     return self.usersManager.login(username, password)
-    #
-    # def deleteUser(self, admin_username, username_to_delete):
-    #     return self.usersManager.deleteUser(admin_username, username_to_delete)
-    #
-    def test_register(self):
-        self.assertEqual(True, False)
+    @mock.patch("ServiceLayer.UsersManagerInterface")
+    def test_register(self, mock):
+        self.dashboard.usersManager = mock
+        ret = True
+        mock.register.return_value = ret
+        self.assertEqual(self.dashboard.register('username', '12345'), ret)
 
-    def test_login(self):
-        self.assertEqual(True, False)
+    @mock.patch("ServiceLayer.UsersManagerInterface")
+    def test_login(self, mock):
+        self.dashboard.usersManager = mock
+        ret = True
+        mock.login.return_value = ret
+        self.assertEqual(self.dashboard.login('username', '12345'), ret)
 
-    def test_deleteUser(self):
-        self.assertEqual(True, False)
-
+    @mock.patch("ServiceLayer.UsersManagerInterface")
+    def test_deleteUser(self, mock):
+        self.dashboard.usersManager = mock
+        ret = True
+        mock.deleteUser.return_value = ret
+        self.assertEqual(self.dashboard.deleteUser('admin_username', 'user_to_delete'), ret)
 
 if __name__ == '__main__':
     unittest.main()
