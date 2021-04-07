@@ -1,5 +1,4 @@
 from unittest import TestCase, mock
-from unittest.mock import Mock
 
 from ServiceLayer.AnalysisManagerInterface import AnalysisManagerInterface
 from tests.buisnessLayer.AnalysisManager.TestsObjects import Status, Name, Trend, AnalysedTweet

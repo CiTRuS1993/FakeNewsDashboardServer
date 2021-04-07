@@ -1,11 +1,25 @@
-from unittest import TestCase
+from unittest import TestCase, mock
 
 from BuisnessLayer.Users.UsersManagerFacade import UserManagerFacade
+from PersistenceLayer.UsersORM.UsersORMFacade import UsersORMFacade
 
 
 class testUserManager(TestCase):
     def setUp(self) -> None:
         self.UserManagerFacade = UserManagerFacade("username", "123")
+
+
+    @mock.patch("PersistenceLayer.UsersORM.UsersORMFacade")
+    def test_init_userDb(self,mock):
+        self.UserManagerFacade.users_db = mock
+        mock.get_all_users.return_value = []
+        self.assertEqual(self.UserManagerFacade.initUsersDB(), {})
+        user1 = User( //)  # 'Yarin'
+        user2 = User( //)  # 'Sapir'
+        mock.get_all_users.return_value = [user1, user2] # User(...)
+        self.assertEqual(self.UserManagerFacade.initUsersDB(), {'Yarin':user1, 'Sapir': user2}) #'username':User
+
+
 
     def test_register(self):
         self.assertFalse(self.UserManagerFacade.register("sapir", "sap3232"))

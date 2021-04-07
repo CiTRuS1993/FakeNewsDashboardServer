@@ -58,12 +58,9 @@ class TwitterManager:
                         tweets[trend_id] = []
                     tweets[trend_id].append(tweet)
                     # TODO (?) - maybe without trend_id
-                    if tweet.id not in self.all_tweets.keys():
+                    if tweet.text not in self.all_tweets.values():
                         self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, tweet.place, tweet.created_at, trend_id)
                         self.all_tweets[tweet.id] = self.orm.get_tweet(tweet.id)
-                    # if i%100 == 0:
-                    #     time.sleep(360)
-                    i += 1
             except:
                 self.connect()
                 # self.search_tweets_by_keywords(trend_id, keywords)        TODO
