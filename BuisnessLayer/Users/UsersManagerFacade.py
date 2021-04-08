@@ -16,7 +16,8 @@ class UserManagerFacade:
         users = self.users_db.get_all_users()
         users_dict = {}
         for user in users:
-            users_dict[user['username']] = user
+            user1 = user.username
+            users_dict[user1] = user
         return users_dict
 
     def admin_exists(self, username, password):
