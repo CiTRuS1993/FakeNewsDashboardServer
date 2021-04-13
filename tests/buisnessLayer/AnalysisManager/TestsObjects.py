@@ -9,7 +9,13 @@ class Name:
 class Status:
     id: str
     author: Name
-    text: str
+    content: str
+
+# @dataclass
+# class Status1:
+#     id: str
+#     author: str
+#     text: str
 
 @dataclass
 class Trend:
@@ -21,3 +27,8 @@ class AnalysedTweet(Status):
     emotion: str
     sentiment: int
     is_fake: str
+
+@dataclass
+class Claim:
+    name: str
+    tweets: list

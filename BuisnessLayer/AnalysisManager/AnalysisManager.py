@@ -46,6 +46,7 @@ class AnalysisManager:
 
     # should return dict of <trend name> : TrendStatistics asdict --> asdict(trend.statistics)
     def getGoogleTrendsStatistics(self):
+        print(self.trends_statistics)
         current_statistics = dict()
         for trend in self.trends_statistics:
             current_statistics[self.get_trend_name(trend)] = asdict(self.trends_statistics[trend].statistics)
@@ -69,6 +70,7 @@ class AnalysisManager:
         pass
 
     def add_new_trends_statistics(self, processed):
+        # print("procced: "+processed)
         for trend_id in processed.keys():  # processed is type of dict<trend name> = list <Claim>
             topics_statistics = list()
             trend_name = self.get_trend_name(trend_id)
@@ -160,6 +162,9 @@ class AnalysisManager:
             trend = Trend(trend_id, trends_tweets[trend_id]['keyword'], claims)
             trends[trend_id] = trend
             self.addTrend(trend)
+            print('trend keyword= ' + trends_tweets[trend_id]['keyword'])
+        print("trends:")
+        print(trends)
         analyze_thread = threading.Thread(target=self.adapter.analyze_trends,
                                           args=(trends, self.add_new_trends_statistics))
         analyze_thread.start()

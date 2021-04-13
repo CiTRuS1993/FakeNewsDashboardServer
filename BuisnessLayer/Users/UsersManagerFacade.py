@@ -16,7 +16,8 @@ class UserManagerFacade:
         users = self.users_db.get_all_users()
         users_dict = {}
         for user in users:
-            user1 = user.username
+            user1 = user['username']
+            # user1 = user.username
             users_dict[user1] = user
         return users_dict
 

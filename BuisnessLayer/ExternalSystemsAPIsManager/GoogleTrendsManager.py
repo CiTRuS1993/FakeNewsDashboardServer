@@ -25,10 +25,12 @@ class GoogleTrendsManager:
             else:
                 flag = False
                 for trend_dict in self.all_trends[trend[0]]:
+                    # print(trend_dict['date'])
                     if trend_dict['date'] == str(date):
                         if trend_dict['id'] not in self.trends and not flag:
                             self.trends[trend_dict['id']] = {'keywords': trend[0]}
                         flag = True
+
 
                 if not flag:
                     t_id = self.ExternalOrm.add_trend(trend[0], str(date))
