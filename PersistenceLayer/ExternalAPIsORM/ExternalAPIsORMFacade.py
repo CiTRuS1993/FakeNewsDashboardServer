@@ -31,8 +31,8 @@ class ExternalAPIsORMFacade:
     def get_trend(self, id):
         trend = jsonpickle.dumps(self.session.query(TrendsORM).filter_by(id=id).first())
         jtrend = json.loads(trend)
-        if len(jtrend) == 1:
-            return [jtrend]
+        # if len(jtrend) == 1:
+        #     return [jtrend]
         return jtrend
 
     def add_author(self, username, statuses_count=0, followers_count=0, friends_count=0, listed_count=0):
