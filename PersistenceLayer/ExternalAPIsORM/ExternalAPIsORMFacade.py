@@ -31,7 +31,15 @@ class ExternalAPIsORMFacade:
     def get_trend(self, id):
         trend = jsonpickle.dumps(self.session.query(TrendsORM).filter_by(id=id).first())
         jtrend = json.loads(trend)
-        return jtrend
+        trends_dict = {}
+
+        new_trend = {'date': jtrend['date'], 'id': jtrend['id']}
+        if jtrend['content'] in trends_dict.keys():
+            trends_dict[jtrend['content']].append(new_trend)
+        else:
+            trends_dict[jtrend['content']] = [new_trend]
+
+        return [new_trend]
 
     def add_author(self, username, statuses_count=0, followers_count=0, friends_count=0, listed_count=0):
         AuthorORM(username=username, statuses_count=statuses_count, followers_count=followers_count,
@@ -63,7 +71,7 @@ class ExternalAPIsORMFacade:
                 claim.snope_tweets.append(tweet)
                 claim.update_db()
         self.add_tweet_to_author(id, author_username)
-
+        self.session.commit()
     def get_all_tweets_dict(self):
         tweets = jsonpickle.dumps(self.session.query(TweetORM).all())
         jtweets = json.loads(tweets)
