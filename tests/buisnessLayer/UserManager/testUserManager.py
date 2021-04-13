@@ -1,8 +1,7 @@
 from unittest import TestCase, mock
-
-from BuisnessLayer.Users.User import User
 from BuisnessLayer.Users.UsersManagerFacade import UserManagerFacade
-from PersistenceLayer.UsersORM.UsersORMFacade import UsersORMFacade
+from tests.buisnessLayer.AnalysisManager.TestsObjects import userObject
+
 
 
 class testUserManager(TestCase):
@@ -15,9 +14,8 @@ class testUserManager(TestCase):
         self.UserManagerFacade.users_db = mock
         mock.get_all_users.return_value = []
         self.assertEqual(self.UserManagerFacade.initUsersDB(), {})
-        user1 = User('Guest',1,'Yarin','123')  # 'Yarin'
-        #self, role, user_id, username, password, search_history = [], tagged_tweets = [], classify_id = -1
-        user2 = User('Guest',2,'Sapir','123')  # 'Sapir'
+        user1 = userObject('Guest',1,'Yarin','123')  # 'Yarin'
+        user2 = userObject('Guest',2,'Sapir','123')  # 'Sapir'
         mock.get_all_users.return_value = [user1, user2] # User(...)
         self.assertEqual(self.UserManagerFacade.initUsersDB(), {'Yarin':user1, 'Sapir': user2}) #'username':User
 
