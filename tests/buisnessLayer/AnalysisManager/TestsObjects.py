@@ -21,3 +21,11 @@ class AnalysedTweet(Status):
     emotion: str
     sentiment: int
     is_fake: str
+
+@dataclass
+class userObject():
+    username: str
+    password: str
+    role: str
+    email: str
+    #user_searches = relationship('SearchORM', secondary=SearchHistory, backref='users')
