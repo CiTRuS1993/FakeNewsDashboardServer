@@ -32,3 +32,11 @@ class AnalysedTweet(Status):
 class Claim:
     name: str
     tweets: list
+
+@dataclass
+class userObject():
+    username: str
+    password: str
+    role: str
+    email: str
+    #user_searches = relationship('SearchORM', secondary=SearchHistory, backref='users')

@@ -61,7 +61,7 @@ class TwitterManager:
                     tweets[trend_id].append(tweet)
                     # TODO (?) - maybe without trend_id
                     if tweet.text not in self.all_tweets.values():
-                        self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, tweet.place, tweet.created_at, trend_id)
+                        self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, tweet.place,tweet.user.location, tweet.created_at, trend_id)
                         self.all_tweets[tweet.id] = self.orm.get_tweet(tweet.id)
                     if i >= 900:
                         time.sleep(900)
