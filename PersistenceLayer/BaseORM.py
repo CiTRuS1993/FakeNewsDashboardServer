@@ -1,11 +1,13 @@
 from sqlalchemy.exc import SQLAlchemyError
 
 from PersistenceLayer.database import session
-
+# import logging
 import threading
 dblock = threading.Lock()
+# logging.basicConfig(filename='example.log', level=logging.DEBUG)
 class BaseORM:
     def add_to_db(self):
+        # logging.info('try add to db from '+str(type(self)))
         dblock.acquire()
         try:
             session.add(self)

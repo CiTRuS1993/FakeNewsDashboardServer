@@ -13,7 +13,7 @@ class DashboardFacade:
         self.usersManager=UsersManagerInterface(username, password)
         self.trends_timer = threading.Timer(12.0*360, self.retrieveGoogleTrendsData)
         self.snopes_timer = threading.Timer(12.0*360, self.retrieveSnopesData)
-        time.sleep(60)
+        time.sleep(20)
         # retrieve data from Google Trends and from Snopes
         self.retrieveGoogleTrendsData()
         # self.retrieveSnopesData()     TODO- uncomment

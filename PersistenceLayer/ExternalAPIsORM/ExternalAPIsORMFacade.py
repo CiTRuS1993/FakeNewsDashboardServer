@@ -1,5 +1,8 @@
 import jsonpickle
 from jsonpickle import json
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from PersistenceLayer.ExternalAPIsORM import AuthorORM, SearchORM, SnopesORM
 from PersistenceLayer.ExternalAPIsORM.TrendsORM import TrendsORM
@@ -8,7 +11,15 @@ from PersistenceLayer.ExternalAPIsORM.TweetORM import TweetORM
 
 class ExternalAPIsORMFacade:
     def __init__(self):
-        from ..database import session
+        # from ..database import session
+        SQLALCHEMY_DATABASE_URL = "./test.db"
+
+        engine = create_engine(
+            "sqlite:///" + SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False},
+            poolclass=StaticPool)
+
+        Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+        session = Session()
         self.session = session
 
     def add_trend(self, content, date):
