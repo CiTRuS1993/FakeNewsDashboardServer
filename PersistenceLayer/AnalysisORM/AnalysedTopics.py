@@ -9,7 +9,7 @@ from ..tablesConnections import TopicsTrendsConnection, TopicsTweetsConnection
 
 class AnalysedTopics(Base,BaseORM):
     __tablename__ = "analysed_topics"
-    id = Column(Integer,autoincrement=True, primary_key=True, index=True)
+    id = Column(Integer, autoincrement=True, primary_key=True, index=True)
     key_words = Column(String)
     prediction = Column(String)
     emotion = Column(String)

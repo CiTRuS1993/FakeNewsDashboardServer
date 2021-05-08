@@ -18,9 +18,9 @@ class GoogleTrendsManager:
         date = datetime.today().date()
         trends = self.pytrends.trending_searches().values.tolist()
         for trend in trends:
-            if trend[0] not in self.all_trends.keys(): # TODO- last sql connect
+            if trend[0] not in self.all_trends.keys():
                 t_id = self.ExternalOrm.add_trend(trend[0], str(date))
-                self.trends[t_id] = {'keywords': trend}
+                self.trends[t_id] = {'keywords': trend[0]} # was trend instead of trend[0]
                 self.all_trends[trend[0]] = self.ExternalOrm.get_trend(t_id).copy()
             else:
                 flag = False
@@ -30,7 +30,6 @@ class GoogleTrendsManager:
                         if trend_dict['id'] not in self.trends and not flag:
                             self.trends[trend_dict['id']] = {'keywords': trend[0]}
                         flag = True
-
 
                 if not flag:
                     t_id = self.ExternalOrm.add_trend(trend[0], str(date))

@@ -41,10 +41,10 @@ class ClassifierAdapter:
                     emotion = get_emotion_by_id(rand)
                     analyzed_tweet = AnalyzedTweet(tweet.id, tweet.author, tweet.content, emotion, sentiment, prediction)
                     tweets.append(analyzed_tweet)
-                processed_data[trend].append(Claim(topic, tweets))
+                processed_data[trend].append(Claim(topic.name, tweets))
 
         time.sleep(1)
-        return callback(processed_data)
+        return callback(processed_data, trends_dict)
 
     def analyze_snopes(self, data, callback):  # data is type of dict {<claim name> : list <tweets>}
         # print(data)
