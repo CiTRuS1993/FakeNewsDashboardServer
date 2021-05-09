@@ -26,7 +26,11 @@ class GoogleTrendsManager:
                 flag = False
                 for trend_dict in self.all_trends[trend[0]]:
                     # print(trend_dict['date'])
-                    if self.compare_dates(trend_dict['date'], date) == 0:
+                    if type(trend_dict) == str:
+                        trend_date = trend_dict
+                    else:
+                        trend_date = trend_dict['date']
+                    if self.compare_dates(trend_date, date) == 0:
                     # if trend_dict['date'] == str(date):
                         if trend_dict['id'] not in self.trends and not flag:
                             self.trends[trend_dict['id']] = {'keywords': trend[0]}

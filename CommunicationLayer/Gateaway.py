@@ -40,7 +40,7 @@ def get_emotions():
 
 @app.route('/getTrends')
 def get_trends():
-    print(f"get_trends = {dashboard_facade.googleTrendsStatistics()}")
+    # print(f"get_trends = {dashboard_facade.googleTrendsStatistics()}")
     return jsonify(dashboard_facade.googleTrendsStatistics())
 # {"Donald Trump": {'words': [
 #         {
@@ -84,7 +84,7 @@ def get_trends():
 @app.route('/getEmotionsTweet')
 def get_emotions_tweet():
     emotion = request.args.get('emotion')
-    print(dashboard_facade.get_emotion_tweets(emotion))
+    # print(dashboard_facade.get_emotion_tweets(emotion))
     return jsonify(dashboard_facade.get_emotion_tweets(emotion))
 
 
@@ -96,7 +96,7 @@ def get_sentiment():
 @app.route('/getTopic')
 def get_topic():
     t = request.args.get('topic') # t = id of topic
-    print(dashboard_facade.get_topic(t))
+    # print(dashboard_facade.get_topic(t))
     return jsonify(dashboard_facade.get_topic(t))
 
 
