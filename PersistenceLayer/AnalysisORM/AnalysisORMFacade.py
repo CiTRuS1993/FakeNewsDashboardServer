@@ -24,6 +24,7 @@ class AnalysisORMFacade:
                 tweet = self.session.query(TweetORM).filter_by(id=id).first()
                 analyzed_tweet.tweet = tweet
                 analyzed_tweet.add_to_db()
+                return True
             except:
                 print("Try to commit analysed tweet to DB while there is no tweet with the given id")
             # print(f"tweet: {tweet.id}")
@@ -32,6 +33,7 @@ class AnalysisORMFacade:
             # self.session.flush()
         except:
             print(f"DB error! (Analysis.add_analyzed_tweet)")
+        return False
 
     def get_all_analyzed_tweets(self):
         tweets = jsonpickle.dumps(self.session.query(AnalysedTweets).all())
@@ -72,6 +74,8 @@ class AnalysisORMFacade:
 #   ----------------------- Topics -----------------------
 
     def add_analyzed_topic(self, key_words, prediction, emotion, sentiment, tweets_ids, trend_id):
+        if self.get_analyzed_topic(key_words) is not None:
+            return False
         tweets = []
         # tweets = self.session.query(TweetORM.id.in_(tweets_ids)).all()
         for t_id in tweets_ids:

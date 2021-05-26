@@ -48,7 +48,7 @@ class GoogleTrendsManager:
         trends = {}
         for trend_name in self.all_trends:
             for trend in self.all_trends[trend_name]:
-                if trend['date'] == str(datetime.today().date()):
+                if trend['date'] == str(datetime.today().date()) or trend['date'] == str(datetime.today()):
                     trends[self.all_trends[trend_name][0]['id']] = {'keywords': trend_name}
         for t_id in self.trends:
             if t_id not in trends.keys():
