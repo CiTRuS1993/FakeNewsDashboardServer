@@ -17,7 +17,7 @@ class DashboardFacade:
         # retrieve data from Google Trends and from Snopes
         self.retrieveGoogleTrendsData()
         # self.retrieveSnopesData()     TODO- uncomment
-
+        # TODO- add func which sends each unclassified tweet to analysisManager (errors handling)
 # ------------------------------- Retrieve Data & External Systems -----------------------------
 
     # gets all data related to the dashboard
@@ -26,7 +26,11 @@ class DashboardFacade:
 
     # gets all data related to the Google Trends window
     def googleTrendsStatistics(self):
-        return self.analysisManager.getGoogleTrendsStatistics()
+        self.retrieveGoogleTrendsData() # new.. delete?
+        ans = self.analysisManager.getGoogleTrendsStatistics()
+        print(f"get = {ans}")
+        return ans
+        # return self.analysisManager.getGoogleTrendsStatistics()
 
     # gets all data related to the Snopes window
     def snopesStatistics(self):
@@ -35,6 +39,7 @@ class DashboardFacade:
     # each 12 hours retrieve the new Google Trends topics
     def retrieveGoogleTrendsData(self):
         new_trends= self.externalSystemsManager.retrieveGoogleTrendsData()
+        print(f"new trends are: {new_trends}")
         return self.analysisManager.classifyTrends(new_trends)
 
     # each 12 hours retrieve the new Snopes claims
@@ -45,7 +50,7 @@ class DashboardFacade:
     def configClassifier(self, username, classifier, configuration):
         if self.usersManager.is_admin(username):
             return self.analysisManager.configClassifier(classifier, configuration)
-        return False #TODO- exception?
+        return False # maybe exception?
 
     def getTemperature(self):
         return self.analysisManager.getTemperature()
@@ -89,7 +94,7 @@ class DashboardFacade:
         if (self.usersManager.userExists(username)):
             classify_id=self.analysisManager.classifyTweets(file)
             return self.usersManager.classifyTweets(username, classify_id)
-        return False #TODO- exception?
+        return False # maybe exception?
 
 # ----------------------------------- Manage Users --------------------------------------------
 

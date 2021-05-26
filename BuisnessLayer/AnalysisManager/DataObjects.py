@@ -101,9 +101,9 @@ class Sentiment:
 
 @dataclass
 class Temperature:
-    authenticity: str
+    authenticity: int
     sentiment: int
-    is_fake: str
+    is_fake: int
 
     def __post_init__(self):
         if self.sentiment == 3:
