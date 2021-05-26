@@ -22,11 +22,66 @@ def get_emotion_by_id(id):
         return 'Fear'
 
 
+author_columns = ['name', 'domain', 'author_guid', 'author_screen_name',
+                  'author_full_name', 'author_osn_id', 'description', 'created_at',
+                  'statuses_count', 'followers_count', 'favourites_count',
+                  'friends_count', 'listed_count', 'language', 'profile_background_color',
+                  'profile_background_tile', 'profile_banner_url', 'profile_image_url',
+                  'profile_link_color', 'profile_sidebar_fill_color',
+                  'profile_text_color', 'default_profile', 'contributors_enabled',
+                  'default_profile_image', 'geo_enabled', 'protected', 'location',
+                  'notifications', 'time_zone', 'url', 'utc_offset', 'verified',
+                  'is_suspended_or_not_exists', 'default_post_format', 'likes_count',
+                  'allow_questions', 'allow_anonymous_questions', 'image_size',
+                  'media_path', 'author_type', 'bad_actors_collector_insertion_date',
+                  'xml_importer_insertion_date', 'vico_dump_insertion_date',
+                  'missing_data_complementor_insertion_date',
+                  'bad_actors_markup_insertion_date',
+                  'mark_missing_bad_actor_retweeters_insertion_date', 'author_sub_type',
+                  'timeline_overlap_insertion_date',
+                  'original_tweet_importer_insertion_date']
+
+post_columns = ['post_id', 'author', 'guid', 'title', 'url', 'date', 'content',
+                'description', 'is_detailed', 'is_LB', 'is_valid', 'domain',
+                'author_guid', 'media_path', 'post_osn_guid', 'post_type',
+                'post_format', 'reblog_key', 'tags', 'is_created_via_bookmarklet',
+                'is_created_via_mobile', 'source_url', 'source_title', 'is_liked',
+                'post_state', 'post_osn_id', 'retweet_count', 'favorite_count',
+                'created_at', 'xml_importer_insertion_date',
+                'timeline_importer_insertion_date',
+                'original_tweet_importer_insertion_date']
+
+claims_columns = ['claim_id', 'title', 'description', 'url', 'verdict_date', 'keywords',
+                  'domain', 'verdict', 'category', 'sub_category']
+
+connection_columns = ['claim_id', 'post_id']
+
+# subprocess.call(['python','run_dataset_builder.py','configuration/config_demo.ini'],cwd= r'D:\aviad fake v3\fake-news-framework_Py3',shell=True)
 # ours, should write also stub
 class ClassifierAdapter:
     def __init__(self):
         pass
-    def _trends_to_csv(self,trend_dict):
+
+    def _trends_to_csv(self, trends_dict, path=""):
+        topics = []
+        tweets = []
+        authors = []
+        topic_tweet_connection = []
+
+        for trend in trends_dict.keys():
+            for topic in trends_dict[trend].claims:
+                topics.append({'title': topic.name})  # check what is the input
+                for tweet in topic.tweets:
+                    topic_tweet_connection.append({'topic_id': topic.id, 'tweet_id': tweet.id})
+                    tweets.append(tweet.__dict__)
+                    authors.append(tweet.author)
+
+        pd.DataFrame(topics, columns=claims_columns).to_csv(path + "claims",index=False)
+        pd.DataFrame(tweets, columns=post_columns).to_csv(path + "posts",index=False)
+        pd.DataFrame(authors, columns=author_columns).to_csv(path + "authors",index=False)
+        pd.DataFrame(topic_tweet_connection, columns=connection_columns).to_csv(path + "claim_tweet_connection",index=False)
+
+    def _classify_tweet(self):
         pass
 
     def analyze_trends(self, trends_dict, callback):  # trends_dict is type of dict {<trend name> : <Trend>}
@@ -105,18 +160,19 @@ class ClassifierAdapter:
             # print(status.text)
             # print(status.author.name)
             if rand < 5:
-                claims["claim1"][status.id] = {'id': status.id, 'author': status.author.name, 'content': status.text}
+                claims["claim1"][status.id]= {'id': status.id, 'author': status.author.name, 'content': status.text}
             else:
-                # print(status)
-                claims["claim2"][status.id] = {'id': status.id, 'author': status.author.name, 'content': status.text}
+                claims["claim2"][status.id]= {'id': status.id, 'author': status.author.name, 'content': status.text}
         return claims
 
     def _get_claim_from_trend(self, trends_tweets):
         df = pd.DataFrame([tweet.__dict__ for tweet in trends_tweets])[['id', 'text']]
-        if len(df)<15:
+        if len(df) < 15:
             from collections import Counter
-            claim_text = ' '.join([txt[0] for txt in Counter(" ".join(df['text'].str.replace("RT", '').values).split(' ')).most_common(10)])
-            return [Claim(claim_text,df['id'].values)]
+            claim_text = ' '.join([txt[0] for txt in
+                                   Counter(" ".join(df['text'].str.replace("RT", '').values).split(' ')).most_common(
+                                       10)])
+            return [Claim(claim_text, df['id'].values)]
         bt = BERTopic()
 
         topics = bt.fit_transform(df['text'].str.replace("RT", '').values)

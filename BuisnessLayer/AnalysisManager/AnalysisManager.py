@@ -159,6 +159,7 @@ class AnalysisManager:
         trends = {}
         for trend_id in trends_tweets:
             claims = self.get_claims_from_trend(trends_tweets[trend_id]['tweets'])  # <trend_name> : list <Claim>
+            # TODO: save claim to db
             trend = Trend(trend_id, trends_tweets[trend_id]['keyword'], claims)
             trends[trend_id] = trend
             self.addTrend(trend)
