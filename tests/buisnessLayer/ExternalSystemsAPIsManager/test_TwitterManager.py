@@ -1,10 +1,14 @@
 from unittest import TestCase, mock
-from
 
 from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager import TwitterManager
 from tests.buisnessLayer.AnalysisManager.TestsObjects import Trend, Name, Status
 from PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade import ExternalAPIsORMFacade
+from unittest.mock import patch
 
+import tweepy
+class Struct:
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
 
 class TestTwitterManager(TestCase):
 
@@ -25,17 +29,20 @@ class TestTwitterManager(TestCase):
                                                               self.tweet3)}}  # 'tweets':{'1': self.tweet1, '2': self.tweet2, '3': self.tweet3}}}
         self.claims = ['claim1', 'claim2', 'claim3']
 
-    @mock.patch("PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade")
-    def test_connect(self,mock):
-        self.twitterManager= mock
-        self.twitterManager.search_tweets_by_keywords(self,1, keywords, token=None, on_finished=lambda tweets: print(tweets))
 
-    @mock.patch("PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade")
-    def test_search_tweets_by_keywords(self,mock):
-        self.twitterManager.orm= mock
+    @patch.object(ExternalAPIsORMFacade,'add_tweet')
+    @patch('tweepy.Cursor.items')
+    def test_search_tweets_by_keywords(self,mock,orm):
+        db = []
+        mock.return_value = (self.tweet1, self.tweet2, self.tweet3)
+        self.twitterManager.connect()
+        tweets = self.twitterManager.search_tweets_by_keywords(0,["covid"],on_finished=lambda twts:db.append(len(twts)))
+        assert len(db)==1
+        assert len(tweets)==1
+        assert isinstance(tweets,dict)
+        assert len(tweets[0]) == 3
 
-    def test_stop(self):
-        self.fail()
+
 
     @mock.patch("BuisnessLayer.TwitterManager")
     def test_search_tweets_by_trends(self,mock):
