@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 
 from ServiceLayer.AnalysisManagerInterface import AnalysisManagerInterface
-from tests.buisnessLayer.AnalysisManager.TestsObjects import AnalysedTweet, Name, Status
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import AnalysedTweet, Name, Status
 
 
 class MyTestCase(unittest.TestCase):

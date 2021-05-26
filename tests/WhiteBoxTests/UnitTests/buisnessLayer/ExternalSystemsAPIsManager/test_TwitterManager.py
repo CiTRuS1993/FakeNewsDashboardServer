@@ -2,8 +2,7 @@ from unittest import TestCase, mock
 from
 
 from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager import TwitterManager
-from tests.buisnessLayer.AnalysisManager.TestsObjects import Trend, Name, Status
-from PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade import ExternalAPIsORMFacade
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import Trend, Name, Status
 
 
 class TestTwitterManager(TestCase):

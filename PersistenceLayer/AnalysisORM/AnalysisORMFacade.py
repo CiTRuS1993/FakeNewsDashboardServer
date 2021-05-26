@@ -80,6 +80,7 @@ class AnalysisORMFacade:
                 tweets.append(tweet)
             except:
                 self.unsaved_tweets[trend_id]= {'claim keywords': key_words, 'tweet id': t_id}
+                print("there is an unsaved tweet")
             # tweets.append(self.externalAPIs.get_tweet(t_id))
         # trend = self.session.query(TrendsORM).filter_by(id=trend_id)
         topic = AnalysedTopics(key_words=key_words, prediction=prediction, emotion=emotion[0], sentiment=sentiment)
@@ -89,8 +90,11 @@ class AnalysisORMFacade:
             topic.trend = trend
         except:
             print(f"problem on saving the trend-topic connection")
-        topic.topic_tweets = tweets
-        topic.update_db()
+        try:
+            topic.topic_tweets = tweets
+            topic.update_db()
+        except:
+            print(f"there was no tweets to save on the ORM, tweets list= {tweets}")
         print(f"unsaved tweets: {self.unsaved_tweets}")
         return topic.id
 

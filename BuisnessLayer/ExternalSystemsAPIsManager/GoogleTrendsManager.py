@@ -26,8 +26,11 @@ class GoogleTrendsManager:
                 flag = False
                 for trend_dict in self.all_trends[trend[0]]:
                     # print(trend_dict['date'])
-                    if type(trend_dict) == str:
+                    # if type(trend_dict) == str:
+                    #     trend_date = trend_dict
+                    if type(trend_dict) != dict:
                         trend_date = trend_dict
+                        print(f"at GoogleTrendsManager.connect, the type of the trends dict is {type(trend_dict)}")
                     else:
                         trend_date = trend_dict['date']
                     if self.compare_dates(trend_date, date) == 0:
