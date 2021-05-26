@@ -1,3 +1,4 @@
+import subprocess
 import time
 from random import random, randint, randrange
 
@@ -5,6 +6,10 @@ from bertopic import BERTopic
 import numpy as np
 from BuisnessLayer.AnalysisManager.DataObjects import AnalyzedTweet, Claim
 import pandas as pd
+import nltk
+nltk.download('vader_lexicon')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import text2emotion as te
 
 
 def get_emotion_by_id(id):
@@ -60,9 +65,16 @@ connection_columns = ['claim_id', 'post_id']
 # ours, should write also stub
 class ClassifierAdapter:
     def __init__(self):
-        pass
+        self.sid = SentimentIntensityAnalyzer()
 
-    def _trends_to_csv(self, trends_dict, path=""):
+    def get_sentiment(self,text) -> int:
+        snt = self.sid.polarity_scores(text)
+        return snt['pos']*3-snt['neg']*3
+
+    def get_emotion(self,text):
+        return max(te.get_emotion(text))  # The output we received,
+
+    def _trends_to_csv(self, trends_dict, path="D:/aviad fake v3/fake-news-framework_Py3/data/input/D/"):
         topics = []
         tweets = []
         authors = []
@@ -76,16 +88,20 @@ class ClassifierAdapter:
                     tweets.append(tweet.__dict__)
                     authors.append(tweet.author)
 
-        pd.DataFrame(topics, columns=claims_columns).to_csv(path + "claims",index=False)
-        pd.DataFrame(tweets, columns=post_columns).to_csv(path + "posts",index=False)
-        pd.DataFrame(authors, columns=author_columns).to_csv(path + "authors",index=False)
-        pd.DataFrame(topic_tweet_connection, columns=connection_columns).to_csv(path + "claim_tweet_connection",index=False)
+        pd.DataFrame(topics, columns=claims_columns).to_csv(path + "claims.csv",index=False)
+        pd.DataFrame(tweets, columns=post_columns).to_csv(path + "posts.csv",index=False)
+        pd.DataFrame(authors, columns=author_columns).to_csv(path + "authors.csv",index=False)
+        pd.DataFrame(topic_tweet_connection, columns=connection_columns).to_csv(path + "claim_tweet_connection.csv",index=False)
 
-    def _classify_tweet(self):
-        pass
+    def _classify_op(self):
+        subprocess.call(['python','run_dataset_builder.py','configuration/config_demo.ini'],cwd= r'D:\aviad fake v3\fake-news-framework_Py3',shell=True)
+        results = pd.read_csv("D:\\aviad fake v3\\fake-news-framework_Py3\\data\\output\\D")[['ClaimFeatureGenerator_claim_id','pred']]
+        return results
+
 
     def analyze_trends(self, trends_dict, callback):  # trends_dict is type of dict {<trend name> : <Trend>}
         processed_data = {}
+        self._trends_to_csv(trends_dict)
         for trend in trends_dict.keys():
             if trend not in processed_data:
                 processed_data[trend] = list()
