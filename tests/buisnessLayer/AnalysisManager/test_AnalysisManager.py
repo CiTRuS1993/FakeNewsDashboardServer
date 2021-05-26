@@ -80,10 +80,9 @@ class TestAnalysisManager(TestCase):
         #             sentiment = sentiment + tweet.sentiment
         #             prediction[tweet.is_fake] = prediction[tweet.is_fake] + 1
         #             emotions.append(tweet.emotion)
-        #             # TODO- if fails on the way --> delete the analysis?
         #             if tweet.id not in self.orm_tweets:
         #                 self.orm.add_analyzed_tweet(tweet.id, tweet.is_fake, tweet.emotion,
-        #                                             tweet.sentiment)  # TODO- BUG
+        #                                             tweet.sentiment)
         #                 self.orm_tweets[tweet.id] = self.orm.get_analyzed_tweet(tweet.id)
         #         # update emotions statistics
         #         emotion = self.update_emotions(emotions)
@@ -242,7 +241,6 @@ class TestAnalysisManager(TestCase):
 
 
 
-    # TODO (once it will be implemented)
     # def test_config_classifier(self):
     #     self.fail()
 

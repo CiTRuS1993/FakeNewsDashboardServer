@@ -29,10 +29,9 @@ class AnalysisManagerInterface:
         self.analysisManagerLogic.classifySnopes(claims_tweets)
         return self.analysisManagerLogic.getSnopesStatistics()
 
-    # TODO
     def tagTweets(self, tweet_id, isFake):
         # return self.analysisManagerLogic.tagTweets(tweet_id, isFake)
-        # Yarin- maybe just add it to the ORM from here? does it have to pass throw the analysisManagerLogic?
+        # maybe just add it to the ORM from here? does it have to pass throw the analysisManagerLogic?
         pass
 
     def getTemperature(self):

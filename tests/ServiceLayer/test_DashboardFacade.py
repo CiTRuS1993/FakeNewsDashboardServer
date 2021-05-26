@@ -52,7 +52,6 @@ class MyTestCase(unittest.TestCase):
         mock.getSnopesStatistics.return_value = ret
         self.assertEqual(self.dashboard.snopesStatistics(), ret)
 
-        # TODO?
     # @mock.patch("ServiceLayer.AnalysisManagerInterface")
     def test_retrieveGoogleTrendsData(self):
         time.sleep(4)
