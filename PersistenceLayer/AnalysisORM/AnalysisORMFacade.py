@@ -112,9 +112,13 @@ class AnalysisORMFacade:
         return jtopics
 
     def get_analyzed_topic(self, key_words):
-        topic = jsonpickle.dumps(self.session.query(AnalysedTopics).filter_by(key_words=key_words).first())
-        jtopic = json.loads(topic)
-        return jtopic
+        try:
+            topic = jsonpickle.dumps(self.session.query(AnalysedTopics).filter_by(key_words=key_words).first())
+            jtopic = json.loads(topic)
+            return jtopic
+        except:
+            print(f"problem at get_analyzed_topic(keywords={key_words})")
+            return None
 
     def get_all_trends(self):
         # analysed_topics = self.get_all_analyzed_topics()
