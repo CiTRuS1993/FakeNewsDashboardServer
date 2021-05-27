@@ -38,7 +38,7 @@ class AnalysisManager:
         self.orm_topics = self.orm.get_all_analyzed_topics()
         # self.orm_claims = self.orm.get_all_analyzed_claims() # TODO- uncomment
         self.orm_tweets = self.orm.get_all_analyzed_tweets()
-        # TODO- init trends_statistics from DB
+        self.retrieveFakeNewsDataFromDB()
 
         schedule.every().day.at("23:57").do(lambda: (self.update_todays_sentiment(datetime.date.today())))
 
@@ -78,6 +78,9 @@ class AnalysisManager:
 
     def add_new_trends_statistics(self, processed, trends_dict):
         for trend_id in processed.keys():  # processed is type of dict<trend name> = list <Claim>
+            # print(f"add_new_trends_statistics:")
+            # print(f"processed = {processed}")
+            # print(f"trends_dict = {trends_dict}")
             topics_statistics = list()
             trend_name = self.get_trend_name(trend_id, trends_dict)
             words_cloud = self.calc_topics_statistics_and_save(processed, topics_statistics, trend_id)
@@ -338,3 +341,33 @@ class AnalysisManager:
 
     def update_orm_tweets(self):
         self.orm_tweets = self.orm.get_all_analyzed_tweets()
+
+    def retrieveFakeNewsDataFromDB(self):
+        print(f"trends = {self.orm_trends}")
+        print(f"topics = {self.orm_topics}")
+        print(f"tweets = {self.orm_tweets}")
+        # for
+
+        # trends = {'Sixers': {'date': '2021-05-27', 'id': 2880}, 'Knicks': {'date': '2021-05-27', 'id': 2870},....}
+        #
+        # for trend_id in processed.keys():  # processed is type of dict<trend name> = list <Claim>
+        #     topics_statistics = list()
+        #     trend_name = self.get_trend_name(trend_id, trends_dict)
+        #     words_cloud = self.calc_topics_statistics_and_save(processed, topics_statistics, trend_id)
+        #     if trend_id not in self.trends_statistics.keys():
+        #         first = True
+        #         for (emotions, sentiment, prediction) in topics_statistics:
+        #             if first and len(emotions) > 0:
+        #                 first = False
+        #                 trend_statistics = self.init_trend_statistics(emotions, prediction, sentiment, words_cloud)
+        #                 self.trends_statistics[trend_id] = AnalysedTrend(trend_id, trend_name, processed[trend_id],
+        #                                                                  trend_statistics)
+        #             else:
+        #                 try:
+        #                     self.trends_statistics[trend_id].statistics.statistics.add_statistics(emotions, sentiment,
+        #                                                                                           prediction)
+        #                     # self.addTrend(self.trends_statistics[trend_id]) # delete?
+        #                 except:
+        #                     trend_statistics = self.init_trend_statistics(emotions, prediction, sentiment, words_cloud)
+        #                     self.trends_statistics[trend_id] = AnalysedTrend(trend_id, trend_name, processed[trend_id],
+        #                                                                      trend_statistics)

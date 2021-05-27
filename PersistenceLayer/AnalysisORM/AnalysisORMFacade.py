@@ -40,12 +40,18 @@ class AnalysisORMFacade:
         jtweets = json.loads(tweets)
         tweets_dict = {}
         for tweet in jtweets:
-            tweets_dict[tweet['id']] = tweet
+            tweet_dict = {'prediction': tweet['prediction'], 'emotion': tweet['emotion'],
+                           'sentiment': tweet['sentiment']}
+            try:
+                tweet_dict['tweet']= tweet['tweet']
+            except:
+                pass
+            tweets_dict[tweet['id']] = tweet_dict
         return tweets_dict
 
     def get_analyzed_tweet(self, t_id):
         tweet = jsonpickle.dumps(self.session.query(AnalysedTweets).filter_by(id=t_id).first())
-        jtweet = json.loads(tweet)
+        jtweet = json.loads(tweet) # TODO- change format of jtweet
         return jtweet
 
     #   ----------------------- Claims -----------------------
@@ -105,16 +111,23 @@ class AnalysisORMFacade:
     def get_all_analyzed_topics(self):
         topics = jsonpickle.dumps(self.session.query(AnalysedTopics).all())
         jtopics = json.loads(topics)
-        # analysed_topics = {}
-        # for topic in jtopics:
-        #     analysed_topics['']
-        # print(f"restore analysed topics, topics = {jtopics}")
-        return jtopics
+        topics_list = []
+        for jtopic in jtopics:
+            topic = {'keywords': jtopic['key_words'], 'prediction': round(float(jtopic['prediction'])),
+                    'emotion': jtopic['emotion'], 'sentiment': round(float(jtopic['sentiment']))}
+            try:
+                topic['tweets']= jtopic['topic_tweets']
+                topic['trend']= jtopic['trend']
+            except:
+                pass
+            topics_list.append(topic)
+        return topics_list
+        # return jtopics
 
     def get_analyzed_topic(self, key_words):
         try:
             topic = jsonpickle.dumps(self.session.query(AnalysedTopics).filter_by(key_words=key_words).first())
-            jtopic = json.loads(topic)
+            jtopic = json.loads(topic) # TODO- change format of jtopic
             return jtopic
         except:
             print(f"problem at get_analyzed_topic(keywords={key_words})")
