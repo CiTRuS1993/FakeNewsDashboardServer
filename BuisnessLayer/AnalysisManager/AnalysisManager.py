@@ -38,6 +38,7 @@ class AnalysisManager:
         self.orm_topics = self.orm.get_all_analyzed_topics()
         # self.orm_claims = self.orm.get_all_analyzed_claims() # TODO- uncomment
         self.orm_tweets = self.orm.get_all_analyzed_tweets()
+        # TODO- init trends_statistics from DB
 
         schedule.every().day.at("23:57").do(lambda: (self.update_todays_sentiment(datetime.date.today())))
 

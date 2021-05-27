@@ -4,7 +4,7 @@ import unittest
 import mock as mock
 
 from ServiceLayer.DashboardFacade import DashboardFacade
-from tests.buisnessLayer.AnalysisManager.TestsObjects import AnalysedTweet, Name
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import AnalysedTweet, Name
 
 
 class MyTestCase(unittest.TestCase):

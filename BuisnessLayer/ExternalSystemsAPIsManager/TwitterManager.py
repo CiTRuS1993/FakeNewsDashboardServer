@@ -16,6 +16,15 @@ class Token:
     access_token: str
     access_secret: str
 
+@dataclass
+class Tweet:
+    id: int
+    author_name: str
+    content: str
+    location: str
+    date: str
+    trend_id: int
+
 #consumer_key = 'nMRLa7RAv9lT6j8akRWCy6UGD'
 #consumer_secret = 'jHZYUnXNj6oSQTXqMicZ077NCOfMD7atDcjBLszAy6qfDlJBml'
 #access_token = '1315318156509040641-CM8vvE8fApKSpq8NKgXES4HCYAJK3X'
@@ -58,11 +67,21 @@ class TwitterManager:
                     i=i+1
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
-                    tweets[trend_id].append(tweet)
+                    _tweet = Tweet(tweet.id, tweet.author.name, tweet.text,
+                                   tweet.user.location, tweet.created_at, trend_id)
+                    tweets[trend_id].append(_tweet)
                     if tweet.text not in self.all_tweets.values():
                         self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, tweet.place,
                                            tweet.user.location, tweet.created_at, trend_id)
-                        self.all_tweets[tweet.id] = self.orm.get_tweet(tweet.id)
+                        try:
+                            orm_tweet = self.orm.get_tweet(tweet.id)
+                            tweet= Tweet(orm_tweet.id, orm_tweet.author_name, orm_tweet.content, orm_tweet.location,
+                                  orm_tweet.date, trend_id)
+                            # tweet= orm_tweet
+                        except:
+                            tweet= Tweet((tweet.id, tweet.author.name, tweet.text,
+                                   tweet.user.location, tweet.created_at, trend_id))
+                        self.all_tweets[tweet.id] = tweet
                     if i >= 900:
                         time.sleep(900)
             except:
@@ -93,10 +112,10 @@ class TwitterManager:
 
         search_thread.start()
 
-    def edit_tokens(self, token):
-        for token in token:
+    def edit_tokens(self, tokens):
+        for token in tokens:
             if token not in self.tokens.keys():
-                self.tokens.append(token)
+                self.tokens.append(token)    # TODO- bug, self.tokens is dict and not list!
         return True
 
     def get_unprocessed_tweets(self):
