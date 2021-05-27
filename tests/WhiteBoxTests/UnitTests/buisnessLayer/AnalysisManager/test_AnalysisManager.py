@@ -2,7 +2,7 @@ import time
 from unittest import TestCase, mock
 
 from BuisnessLayer.AnalysisManager.AnalysisManager import AnalysisManager
-from tests.buisnessLayer.AnalysisManager.TestsObjects import Status, Name, Trend, Claim, AnalysedTweet
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import Name, Trend, Claim, AnalysedTweet
 
 
 class TestAnalysisManager(TestCase):

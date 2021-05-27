@@ -176,9 +176,10 @@ class ClassifierAdapter:
             # print(status.text)
             # print(status.author.name)
             if rand < 5:
-                claims["claim1"][status.id]= {'id': status.id, 'author': status.author.name, 'content': status.text}
+                claims["claim1"][status.id]= {'id': status.id, 'author': status.author_name, 'content': status.content}
             else:
-                claims["claim2"][status.id]= {'id': status.id, 'author': status.author.name, 'content': status.text}
+                # print(status)
+                claims["claim2"][status.id]= {'id': status.id, 'author': status.author_name, 'content': status.content}
         return claims
 
     def _get_claim_from_trend(self, trends_tweets):
