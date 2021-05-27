@@ -15,10 +15,13 @@ class MyTestCase(TestCase):
         pass
 
     @mock.patch("BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager")
-    @mock.patch("BuisnessLayer.ExternalSystemsAPIsManager.GoogleTrendsManager")
-    def test_retrieve_google_trends_data(self, google_trends_mock, twitter_mock):
-        self.facade.googleTrendsManager.ExternalOrm = google_trends_mock
-        self.facade.twitterManager.orm = twitter_mock
+    @mock.patch("PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade")
+    def test_retrieve_google_trends_data(self, orm_mock, twitter_mock):
+        self.facade.googleTrendsManager.ExternalOrm = orm_mock
+        self.facade.twitterManager.orm = orm_mock
+        # tweets = {}   TODO
+        self.facade.twitterManager = twitter_mock
+        # twitter_mock.search_tweets_by_keywords.return_value = tweets  TODO
         tweets1 = self.facade.retrieve_google_trends_data()
         time.sleep(10)
         tweets2 = self.facade.retrieve_google_trends_data()

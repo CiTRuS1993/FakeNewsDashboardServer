@@ -1,8 +1,7 @@
 from unittest import TestCase, mock
-from
 
 from BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager import TwitterManager
-from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import Trend, Name, Status
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager.TestsObjects import Trend, Name, Status
 
 
 class TestTwitterManager(TestCase):
@@ -27,7 +26,7 @@ class TestTwitterManager(TestCase):
     @mock.patch("PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade")
     def test_connect(self,mock):
         self.twitterManager= mock
-        self.twitterManager.search_tweets_by_keywords(self,1, keywords, token=None, on_finished=lambda tweets: print(tweets))
+        self.twitterManager.search_tweets_by_keywords(self,1, "keywords", token=None, on_finished=lambda tweets: print(tweets))
 
     @mock.patch("PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade")
     def test_search_tweets_by_keywords(self,mock):
