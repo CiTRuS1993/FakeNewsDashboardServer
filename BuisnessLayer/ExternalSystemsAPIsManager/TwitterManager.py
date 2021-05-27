@@ -67,7 +67,9 @@ class TwitterManager:
                     i=i+1
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
-                    tweets[trend_id].append(tweet)
+                    _tweet = Tweet(tweet.id, tweet.author.name, tweet.text,
+                                   tweet.user.location, tweet.created_at, trend_id)
+                    tweets[trend_id].append(_tweet)
                     if tweet.text not in self.all_tweets.values():
                         self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, tweet.place,
                                            tweet.user.location, tweet.created_at, trend_id)
