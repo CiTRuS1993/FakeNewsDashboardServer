@@ -149,7 +149,8 @@ class AnalysisORMFacade:
             date = datetime(datetime.today().year-1, 12, 31-today_day).date()
         return self.externalAPIs.get_trends_names_from_date(date)
 
-
+    def get_trends_data(self,date):
+        return self.externalAPIs.get_trends_data_from_date(date)
     # def __setitem__(self, key, value):
     #     self.add_user(**value)
     #

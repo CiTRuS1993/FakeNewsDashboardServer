@@ -101,7 +101,7 @@ class ClassifierAdapter:
 
     def analyze_trends(self, trends_dict, callback):  # trends_dict is type of dict {<trend name> : <Trend>}
         processed_data = {}
-        self._trends_to_csv(trends_dict)
+        # self._trends_to_csv(trends_dict)
         for trend in trends_dict.keys():
             if trend not in processed_data:
                 processed_data[trend] = list()

@@ -1,6 +1,7 @@
-import datetime
+
 import threading
 from dataclasses import asdict
+from datetime import datetime
 from threading import Lock
 import schedule
 
@@ -280,7 +281,7 @@ class AnalysisManager:
         # if prediction['true'] > prediction['fake']:
         #     return 'true'
         # return 'fake'
-        return prediction['true'] / len(prediction)
+        return prediction['true'] / (len(prediction['true'])+len(prediction['fake']))
 
     def get_sentiment(self):
         return self.sentiment
@@ -347,6 +348,38 @@ class AnalysisManager:
         print(f"trends = {self.orm_trends}")
         print(f"topics = {self.orm_topics}")
         print(f"tweets = {self.orm_tweets}")
+        today_day = datetime.today().day
+        if today_day - 12 > 0:
+            date = datetime(datetime.today().year, datetime.today().month, today_day).date()
+        elif datetime.today().month != 1:
+            date = datetime(datetime.today().year, datetime.today().month - 1, 30 - today_day).date()
+        else:
+            date = datetime(datetime.today().year - 1, 12, 31 - today_day).date()
+        trends = self.orm.get_trends_data(date)
+        analyzed_trend = {}
+        for trend in trends:
+            emotions = []
+            prediction = {'true':0,'fake':0}
+            sentiment = 0
+            words = {}
+            for c in trend.claims:
+                for t in c.tweets:
+                    for word in t.content.split():
+                        if word in words.keys():
+                            words[word] = words[word] + 1
+                        else:
+                            words[word] = 1
+                        emotions.append(t.emotion)
+                        sentiment+=t.sentiment
+
+                        prediction[t.tweet.is_fake] =prediction[t.tweet.is_fake] +1
+
+            cloud = []
+            for word in words.keys():
+                cloud.append(WordCloud(word, words[word]))
+            analyzed_trend[trend.keywords] = self.init_trend_statistics(emotions,prediction,sentiment,cloud)
+
+        self.trend_statistics = analyzed_trend
         # for
 
         # trends = {'Sixers': {'date': '2021-05-27', 'id': 2880}, 'Knicks': {'date': '2021-05-27', 'id': 2870},....}
