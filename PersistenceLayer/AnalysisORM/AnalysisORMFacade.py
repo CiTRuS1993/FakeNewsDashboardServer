@@ -25,7 +25,8 @@ class AnalysisORMFacade:
                 analyzed_tweet.tweet = tweet
                 analyzed_tweet.add_to_db()
                 return True
-            except:
+            except Exception as e:
+                TweetORM.update_db()
                 print("Try to commit analysed tweet to DB while there is no tweet with the given id")
             # print(f"tweet: {tweet.id}")
             # print(f"analyzed_tweet: {analyzed_tweet.id}")

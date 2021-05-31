@@ -157,16 +157,17 @@ class ExternalAPIsORMFacade:
         for t in trends:
             if self.compare_dates(t.date, date) >= 0:
                 topics = []
-                for topic in t.topics:
-                    tweets = []
-                    for tw in topic.tweets:
-                        if tw.analyzed:
-                            tweets.append(
-                                AnalyzedTweet(tw.id, tw.author_name, tw.content, tw.analyzed.emotion, tw.analyzed.sentiment,
-                                              tw.analyzed.prediction))
-                    topics.append(AnalysedClaim(topic.key_words, tweets, topic.id,
-                                                Statistics(topic.emotion, topic.sentiment, topic.prediction, 0,
-                                                           len(tweets))))
+                if len(t.topics)>0:
+                    for topic in t.topics:
+                        tweets = []
+                        for tw in topic.tweets:
+                            if tw.analyzed:
+                                tweets.append(
+                                    AnalyzedTweet(tw.id, tw.author_name, tw.content, tw.analyzed.emotion, tw.analyzed.sentiment,
+                                                  tw.analyzed.prediction))
+                        topics.append(AnalysedClaim(topic.key_words, tweets, topic.id,
+                                                    Statistics(topic.emotion, topic.sentiment, topic.prediction, 0,
+                                                               len(tweets))))
 
-                tr[t.content] = Trend(t.id, t.content, topics)
+                    tr[t.content] = Trend(t.id, t.content, topics)
         return tr

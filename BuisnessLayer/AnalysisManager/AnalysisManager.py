@@ -239,14 +239,14 @@ class AnalysisManager:
     # initialize the data structures : Claim, Tweet
     # returns list <Claim>
     def get_claims_from_trend(self, trends_tweets):
-        claims_dict = self.adapter.get_claims_from_trend(trends_tweets)
+        claims_dict = self.adapter._get_claim_from_trend(trends_tweets)
         claims = list()
         for key in claims_dict.keys():
             tweets = list()
             for tweet_id in claims_dict[key]:
                 tweets.append(Tweet(tweet_id, claims_dict[key][tweet_id]['author'],
                                     claims_dict[key][tweet_id]['content']))  # tweet = id, author, content
-            claim = Claim(key, tweets)
+            claim = Claim(key, tweets,0) #todo :id
             claims.append(claim)
         return claims
 
@@ -281,7 +281,10 @@ class AnalysisManager:
         # if prediction['true'] > prediction['fake']:
         #     return 'true'
         # return 'fake'
-        return prediction['true'] / (len(prediction['true'])+len(prediction['fake']))
+        try:
+            return prediction['true'] / (prediction['true']+prediction['fake'])
+        except:
+            return 0
 
     def get_sentiment(self):
         return self.sentiment
@@ -362,7 +365,7 @@ class AnalysisManager:
             prediction = {'true':0,'fake':0}
             sentiment = 0
             words = {}
-            for c in trend.claims:
+            for c in trends[trend].claims:
                 for t in c.tweets:
                     for word in t.content.split():
                         if word in words.keys():
@@ -372,12 +375,12 @@ class AnalysisManager:
                         emotions.append(t.emotion)
                         sentiment+=t.sentiment
 
-                        prediction[t.tweet.is_fake] =prediction[t.tweet.is_fake] +1
+                        prediction[t.is_fake] =prediction[t.is_fake] +1
 
             cloud = []
             for word in words.keys():
                 cloud.append(WordCloud(word, words[word]))
-            analyzed_trend[trend.keywords] = self.init_trend_statistics(emotions,prediction,sentiment,cloud)
+            analyzed_trend[trend] = AnalysedTrend(trends[trend].id,trends[trend].keywords,trends[trend].claims,self.init_trend_statistics(emotions,prediction,sentiment,cloud))
 
         self.trend_statistics = analyzed_trend
         # for

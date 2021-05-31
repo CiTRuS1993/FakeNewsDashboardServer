@@ -74,7 +74,7 @@ class ClassifierAdapter:
     def get_emotion(self,text):
         return max(te.get_emotion(text))  # The output we received,
 
-    def _trends_to_csv(self, trends_dict, path="D:/aviad fake v3/fake-news-framework_Py3/data/input/D/"):
+    def _trends_to_csv(self, trends_dict, path="D:/aviad fake v3/fake-news-framework_Py3/data/input/tryout/"):
         topics = []
         tweets = []
         authors = []
@@ -82,10 +82,10 @@ class ClassifierAdapter:
 
         for trend in trends_dict.keys():
             for topic in trends_dict[trend].claims:
-                topics.append({'title': topic.name})  # check what is the input
+                topics.append({'claim_id':topic.id,'title': topic.name})  # check what is the input
                 for tweet in topic.tweets:
-                    topic_tweet_connection.append({'topic_id': topic.id, 'tweet_id': tweet.id})
-                    tweets.append(tweet.__dict__)
+                    topic_tweet_connection.append({'claim_id': topic.id, 'post_id': tweet.id})
+                    tweets.append({'post_id':tweet.id,'author':tweet.author,'content':tweet.content})
                     authors.append(tweet.author)
 
         pd.DataFrame(topics, columns=claims_columns).to_csv(path + "claims.csv",index=False)
@@ -93,15 +93,16 @@ class ClassifierAdapter:
         pd.DataFrame(authors, columns=author_columns).to_csv(path + "authors.csv",index=False)
         pd.DataFrame(topic_tweet_connection, columns=connection_columns).to_csv(path + "claim_tweet_connection.csv",index=False)
 
-    def _classify_op(self):
-        subprocess.call(['python','run_dataset_builder.py','configuration/config_demo.ini'],cwd= r'D:\aviad fake v3\fake-news-framework_Py3',shell=True)
-        results = pd.read_csv("D:\\aviad fake v3\\fake-news-framework_Py3\\data\\output\\D")[['ClaimFeatureGenerator_claim_id','pred']]
+    def _classify_topic(self):
+        subprocess.call(['python','run_dataset_builder.py','configuration/config_demo.ini'],cwd= r'D:/aviad fake v3/fake-news-framework_Py3',shell=True)
+        results = pd.read_csv("D:/aviad fake v3/fake-news-framework_Py3/data/output/D")[['ClaimFeatureGenerator_claim_id','pred']]
         return results
 
 
     def analyze_trends(self, trends_dict, callback):  # trends_dict is type of dict {<trend name> : <Trend>}
         processed_data = {}
-        # self._trends_to_csv(trends_dict)
+        self._trends_to_csv(trends_dict)
+        # results = self._classify_topic()
         for trend in trends_dict.keys():
             if trend not in processed_data:
                 processed_data[trend] = list()
@@ -113,13 +114,14 @@ class ClassifierAdapter:
                         prediction = "fake"
                     else:
                         prediction = "true"
-                    sentiment = randint(-3, 3)
-                    rand = randrange(6)
-                    emotion = get_emotion_by_id(rand)
+                    # sentiment = randint(-3, 3)
+                    sentiment = self.get_sentiment(tweet.content)
+                    # rand = randrange(6)
+                    emotion = self.get_emotion(tweet.content)
                     analyzed_tweet = AnalyzedTweet(tweet.id, tweet.author, tweet.content, emotion, sentiment,
                                                    prediction)
                     tweets.append(analyzed_tweet)
-                processed_data[trend].append(Claim(topic.name, tweets))
+                processed_data[trend].append(Claim(topic.name, tweets,0)) #todo : id
 
         time.sleep(1)
         return callback(processed_data, trends_dict)
@@ -183,16 +185,17 @@ class ClassifierAdapter:
         return claims
 
     def _get_claim_from_trend(self, trends_tweets):
-        df = pd.DataFrame([tweet.__dict__ for tweet in trends_tweets])[['id', 'text']]
+        df = pd.DataFrame([tweet.__dict__ for tweet in trends_tweets])[['id', 'content']]
+
         if len(df) < 15:
             from collections import Counter
             claim_text = ' '.join([txt[0] for txt in
-                                   Counter(" ".join(df['text'].str.replace("RT", '').values).split(' ')).most_common(
+                                   Counter(" ".join(df['content'].str.replace("RT", '').values).split(' ')).most_common(
                                        10)])
             return [Claim(claim_text, df['id'].values)]
         bt = BERTopic()
 
-        topics = bt.fit_transform(df['text'].str.replace("RT", '').values)
+        topics = bt.fit_transform(df['content'].str.replace("RT", '').values)
         df['topic_id'] = topics[0]
         topic_info = bt.get_topics()
         topics_text = {}
@@ -205,5 +208,5 @@ class ClassifierAdapter:
         claims = []
         for t in topic_info.keys():
             tweets = df[df['topic_id'] == t]['id'].values
-            claims.append(Claim(topics_text[t], tweets))
+            claims.append(Claim(topics_text[t], tweets,t))
         return claims
