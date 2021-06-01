@@ -20,7 +20,7 @@ class Statistics:
 
     def calc_avg_prediction(self, prediction):
         fake_amount = self.avg_fake * self.amount
-        return (prediction['true'] + fake_amount > prediction['fake'] + (self.amount - fake_amount)) / self.amount
+        return round((prediction['true'] + fake_amount > prediction['fake'] + (self.amount - fake_amount)) / self.amount)
 
 
     def calc_emotions(self, emotions):
@@ -29,11 +29,11 @@ class Statistics:
             emotions_counter[emotion] = emotions_counter[emotion]+1
         max_emotion_counter = max([emotions_counter[emotion] for emotion in emotions_counter])
         max_emotion = [emotion for emotion in emotions_counter if emotions_counter[emotion]==max_emotion_counter]
-        return max_emotion[0] # TODO- return more than 1?
+        return max_emotion[0]
 
     def copy_statistics(self, statistics):
-        self.sentiment = ((self.sentiment * self.amount) + (statistics.sentiment * statistics.amount)) / (self.amount + statistics.amount)
-        self.avg_fake = ((self.avg_fake * self.amount) + (statistics.avg_fake * statistics.amount)) / (self.amount + statistics.amount)
+        self.sentiment = round((self.sentiment * self.amount) + (statistics.sentiment * statistics.amount)) / (self.amount + statistics.amount)
+        self.avg_fake = round((self.avg_fake * self.amount) + (statistics.avg_fake * statistics.amount)) / (self.amount + statistics.amount)
         if self.amount < statistics.amount:
             self.emotion = statistics.emotion
 

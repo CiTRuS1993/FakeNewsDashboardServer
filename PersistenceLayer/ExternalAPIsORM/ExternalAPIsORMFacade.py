@@ -35,10 +35,9 @@ class ExternalAPIsORMFacade:
         trends = {}
         for trend in jtrends.keys():
             for trend_instance in jtrends[trend]:
-                if self.compare_dates(trend_instance['date'], date) > 0:
+                if self.compare_dates(trend_instance['date'], date) >= 0:
                     trends[trend] = trend_instance
         return trends
-
 
     def get_trend(self, id):
         trend = jsonpickle.dumps(self.session.query(TrendsORM).filter_by(id=id).first())
@@ -69,22 +68,27 @@ class ExternalAPIsORMFacade:
             author.tweets.append(tweet)
             author.update_db()
 
-    def add_tweet(self, id, author_username, content, location, date, trend_id=None, claim_id=None):
+    def add_tweet(self, id, author_username, content, location, date, trend_id=None, claim_id=None, is_test=False):
+        if self.get_tweet(id) is not None:
+            return False
         tweet = TweetORM(id=id, author_name=author_username, content=content, date=date, location=location)
         tweet.add_to_db()
         if trend_id is not None:
             trend = self.session.query(TrendsORM).filter_by(id=trend_id).first()
             if trend is not None:
                 trend.tweets.append(tweet)
-                # trend.update_db()  TODO?
         if claim_id is not None:
             claim = self.session.query(SnopesORM).filter_by(claim_id=claim_id).first()
             if claim is not None:
                 claim.snope_tweets.append(tweet)
-                # claim.update_db() # TODO?
         self.add_tweet_to_author(id, author_username)
         # self.session.commit()
-        claim.update_db()
+        try:
+            if (not is_test) or (trend_id is not None) or (claim_id is not None):
+                tweet.update_db()
+            return True
+        except:
+            return False
 
     def get_all_tweets_dict(self):
         tweets = jsonpickle.dumps(self.session.query(TweetORM).all())
@@ -111,10 +115,12 @@ class ExternalAPIsORMFacade:
 
     def compare_dates(self, date1, date2):
         if type(date1) is str:
+            if len(date1) > 10:
+                date1 = date1[:10]
             if '-' in date1:
                 date1 = datetime(int(date1[:4]), int(date1[5:7]), int(date1[8:])).date()
             else:
-                date1 = datetime(int("20"+date1[6:]), int(date1[3:5]), int(date1[:2])).date()
+                date1 = datetime(int("20" + date1[6:]), int(date1[3:5]), int(date1[:2])).date()
         if date1.year != date2.year:
             if date1.year > date2.year:
                 return 1

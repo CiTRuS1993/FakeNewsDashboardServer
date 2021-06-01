@@ -1,8 +1,8 @@
 from unittest import TestCase
 
 from BuisnessLayer.AnalysisManager.ClassifierAdapter import ClassifierAdapter
-from tests.buisnessLayer.AnalysisManager.TestsObjects import Status, Name
-from tests.buisnessLayer.AnalysisManager.test_AnalysisManager import TestAnalysisManager
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import Status, Name
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import TestAnalysisManager
 
 
 class TestClassifierAdapter(TestCase):

@@ -1,6 +1,6 @@
 from unittest import TestCase, mock
 from BuisnessLayer.Users.UsersManagerFacade import UserManagerFacade
-from tests.buisnessLayer.AnalysisManager.TestsObjects import userObject
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import userObject
 
 
 

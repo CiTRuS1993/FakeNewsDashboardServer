@@ -24,6 +24,7 @@ class AnalysisORMFacade:
                 tweet = self.session.query(TweetORM).filter_by(id=id).first()
                 analyzed_tweet.tweet = tweet
                 analyzed_tweet.add_to_db()
+                return True
             except:
                 print("Try to commit analysed tweet to DB while there is no tweet with the given id")
             # print(f"tweet: {tweet.id}")
@@ -32,18 +33,25 @@ class AnalysisORMFacade:
             # self.session.flush()
         except:
             print(f"DB error! (Analysis.add_analyzed_tweet)")
+        return False
 
     def get_all_analyzed_tweets(self):
         tweets = jsonpickle.dumps(self.session.query(AnalysedTweets).all())
         jtweets = json.loads(tweets)
         tweets_dict = {}
         for tweet in jtweets:
-            tweets_dict[tweet['id']] = tweet
+            tweet_dict = {'prediction': tweet['prediction'], 'emotion': tweet['emotion'],
+                           'sentiment': tweet['sentiment']}
+            try:
+                tweet_dict['tweet']= tweet['tweet']
+            except:
+                pass
+            tweets_dict[tweet['id']] = tweet_dict
         return tweets_dict
 
     def get_analyzed_tweet(self, t_id):
         tweet = jsonpickle.dumps(self.session.query(AnalysedTweets).filter_by(id=t_id).first())
-        jtweet = json.loads(tweet)
+        jtweet = json.loads(tweet) # TODO- change format of jtweet
         return jtweet
 
     #   ----------------------- Claims -----------------------
@@ -72,6 +80,8 @@ class AnalysisORMFacade:
 #   ----------------------- Topics -----------------------
 
     def add_analyzed_topic(self, key_words, prediction, emotion, sentiment, tweets_ids, trend_id):
+        if self.get_analyzed_topic(key_words) is not None:
+            return False
         tweets = []
         # tweets = self.session.query(TweetORM.id.in_(tweets_ids)).all()
         for t_id in tweets_ids:
@@ -80,6 +90,7 @@ class AnalysisORMFacade:
                 tweets.append(tweet)
             except:
                 self.unsaved_tweets[trend_id]= {'claim keywords': key_words, 'tweet id': t_id}
+                print("there is an unsaved tweet")
             # tweets.append(self.externalAPIs.get_tweet(t_id))
         # trend = self.session.query(TrendsORM).filter_by(id=trend_id)
         topic = AnalysedTopics(key_words=key_words, prediction=prediction, emotion=emotion[0], sentiment=sentiment)
@@ -89,24 +100,38 @@ class AnalysisORMFacade:
             topic.trend = trend
         except:
             print(f"problem on saving the trend-topic connection")
-        topic.topic_tweets = tweets
-        topic.update_db()
+        try:
+            topic.topic_tweets = tweets
+            topic.update_db()
+        except:
+            print(f"there was no tweets to save on the ORM, tweets list= {tweets}")
         print(f"unsaved tweets: {self.unsaved_tweets}")
         return topic.id
 
     def get_all_analyzed_topics(self):
         topics = jsonpickle.dumps(self.session.query(AnalysedTopics).all())
         jtopics = json.loads(topics)
-        # analysed_topics = {}
-        # for topic in jtopics:
-        #     analysed_topics['']
-        # print(f"restore analysed topics, topics = {jtopics}")
-        return jtopics
+        topics_list = []
+        for jtopic in jtopics:
+            topic = {'keywords': jtopic['key_words'], 'prediction': round(float(jtopic['prediction'])),
+                    'emotion': jtopic['emotion'], 'sentiment': round(float(jtopic['sentiment']))}
+            try:
+                topic['tweets']= jtopic['topic_tweets']
+                topic['trend']= jtopic['trend']
+            except:
+                pass
+            topics_list.append(topic)
+        return topics_list
+        # return jtopics
 
     def get_analyzed_topic(self, key_words):
-        topic = jsonpickle.dumps(self.session.query(AnalysedTopics).filter_by(key_words=key_words).first())
-        jtopic = json.loads(topic)
-        return jtopic
+        try:
+            topic = jsonpickle.dumps(self.session.query(AnalysedTopics).filter_by(key_words=key_words).first())
+            jtopic = json.loads(topic) # TODO- change format of jtopic
+            return jtopic
+        except:
+            print(f"problem at get_analyzed_topic(keywords={key_words})")
+            return None
 
     def get_all_trends(self):
         # analysed_topics = self.get_all_analyzed_topics()
