@@ -39,6 +39,7 @@ class GoogleTrendsManager:
                             self.trends[trend_dict['id']] = {'keywords': trend[0]}
                         flag = True
 
+
                 if not flag:
                     t_id = self.ExternalOrm.add_trend(trend[0], str(date))
                     self.trends[t_id] = {'keywords': trend[0]}

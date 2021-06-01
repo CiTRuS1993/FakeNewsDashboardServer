@@ -2,7 +2,11 @@ from datetime import datetime
 
 import jsonpickle
 from jsonpickle import json
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
+from BuisnessLayer.AnalysisManager.DataObjects import AnalyzedTweet, AnalysedClaim, Statistics, Trend
 from PersistenceLayer.ExternalAPIsORM import AuthorORM, SearchORM, SnopesORM
 from PersistenceLayer.ExternalAPIsORM.TrendsORM import TrendsORM
 from PersistenceLayer.ExternalAPIsORM.TweetORM import TweetORM
@@ -10,7 +14,15 @@ from PersistenceLayer.ExternalAPIsORM.TweetORM import TweetORM
 
 class ExternalAPIsORMFacade:
     def __init__(self):
-        from ..database import session
+        # from ..database import session
+        SQLALCHEMY_DATABASE_URL = "./test.db"
+
+        engine = create_engine(
+            "sqlite:///" + SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False},
+            poolclass=StaticPool)
+
+        Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+        session = Session()
         self.session = session
 
     def add_trend(self, content, date):
@@ -137,3 +149,25 @@ class ExternalAPIsORMFacade:
             return 1
         else:
             return -1
+
+    def get_trends_data_from_date(self, date):
+
+        trends = self.session.query(TrendsORM).all()
+        tr = {}
+        for t in trends:
+            if self.compare_dates(t.date, date) >= 0:
+                topics = []
+                if len(t.topics)>0:
+                    for topic in t.topics:
+                        tweets = []
+                        for tw in topic.tweets:
+                            if tw.analyzed:
+                                tweets.append(
+                                    AnalyzedTweet(tw.id, tw.author_name, tw.content, tw.analyzed.emotion, tw.analyzed.sentiment,
+                                                  tw.analyzed.prediction))
+                        topics.append(AnalysedClaim(topic.key_words, tweets, topic.id,
+                                                    Statistics(topic.emotion, topic.sentiment, topic.prediction, 0,
+                                                               len(tweets))))
+
+                    tr[t.content] = Trend(t.id, t.content, topics)
+        return tr

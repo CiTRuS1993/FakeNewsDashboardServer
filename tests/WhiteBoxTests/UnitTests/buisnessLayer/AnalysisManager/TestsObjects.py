@@ -4,13 +4,15 @@ from dataclasses import dataclass
 @dataclass
 class Name:
     name: str
-
+    location:str =""
 @dataclass
 class Status:
     id: str
     author: Name
-    content: str
-
+    text: str
+    created_at:str = ""
+    place:str = ""
+    user:Name = Name('')
 # @dataclass
 # class Status1:
 #     id: str
@@ -24,9 +26,9 @@ class Trend:
 
 @dataclass
 class AnalysedTweet(Status):
-    emotion: str
-    sentiment: int
-    is_fake: str
+    emotion: str = "sad"
+    sentiment: int = 0
+    is_fake: str = "True"
 
 @dataclass
 class Claim:

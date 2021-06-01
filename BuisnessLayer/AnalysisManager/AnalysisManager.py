@@ -1,6 +1,7 @@
-import datetime
+
 import threading
 from dataclasses import asdict
+from datetime import datetime
 from threading import Lock
 import schedule
 
@@ -184,6 +185,7 @@ class AnalysisManager:
         trends = {}
         for trend_id in trends_tweets:
             claims = self.get_claims_from_trend(trends_tweets[trend_id]['tweets'])  # <trend_name> : list <Claim>
+            # TODO: save claim to db
             trend = Trend(trend_id, trends_tweets[trend_id]['keyword'], claims)
             trends[trend_id] = trend
             # self.addTrend(trend)
@@ -237,14 +239,14 @@ class AnalysisManager:
     # initialize the data structures : Claim, Tweet
     # returns list <Claim>
     def get_claims_from_trend(self, trends_tweets):
-        claims_dict = self.adapter.get_claims_from_trend(trends_tweets)
+        claims_dict = self.adapter._get_claim_from_trend(trends_tweets)
         claims = list()
         for key in claims_dict.keys():
             tweets = list()
             for tweet_id in claims_dict[key]:
                 tweets.append(Tweet(tweet_id, claims_dict[key][tweet_id]['author'],
                                     claims_dict[key][tweet_id]['content']))  # tweet = id, author, content
-            claim = Claim(key, tweets)
+            claim = Claim(key, tweets,0) #todo :id
             claims.append(claim)
         return claims
 
@@ -279,7 +281,10 @@ class AnalysisManager:
         # if prediction['true'] > prediction['fake']:
         #     return 'true'
         # return 'fake'
-        return prediction['true'] / len(prediction)
+        try:
+            return prediction['true'] / (prediction['true']+prediction['fake'])
+        except:
+            return 0
 
     def get_sentiment(self):
         return self.sentiment
@@ -346,6 +351,38 @@ class AnalysisManager:
         print(f"trends = {self.orm_trends}")
         print(f"topics = {self.orm_topics}")
         print(f"tweets = {self.orm_tweets}")
+        today_day = datetime.today().day
+        if today_day - 12 > 0:
+            date = datetime(datetime.today().year, datetime.today().month, today_day).date()
+        elif datetime.today().month != 1:
+            date = datetime(datetime.today().year, datetime.today().month - 1, 30 - today_day).date()
+        else:
+            date = datetime(datetime.today().year - 1, 12, 31 - today_day).date()
+        trends = self.orm.get_trends_data(date)
+        analyzed_trend = {}
+        for trend in trends:
+            emotions = []
+            prediction = {'true':0,'fake':0}
+            sentiment = 0
+            words = {}
+            for c in trends[trend].claims:
+                for t in c.tweets:
+                    for word in t.content.split():
+                        if word in words.keys():
+                            words[word] = words[word] + 1
+                        else:
+                            words[word] = 1
+                        emotions.append(t.emotion)
+                        sentiment+=t.sentiment
+
+                        prediction[t.is_fake] =prediction[t.is_fake] +1
+
+            cloud = []
+            for word in words.keys():
+                cloud.append(WordCloud(word, words[word]))
+            analyzed_trend[trend] = AnalysedTrend(trends[trend].id,trends[trend].keywords,trends[trend].claims,self.init_trend_statistics(emotions,prediction,sentiment,cloud))
+
+        self.trend_statistics = analyzed_trend
         # for
 
         # trends = {'Sixers': {'date': '2021-05-27', 'id': 2880}, 'Knicks': {'date': '2021-05-27', 'id': 2870},....}
