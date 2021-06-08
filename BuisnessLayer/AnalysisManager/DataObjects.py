@@ -7,7 +7,7 @@ class Statistics:
     emotion: str
     sentiment: int
     avg_fake: int
-    authenticity: int
+    # authenticity: int
     amount: int
 
     def add_statistics(self, emotions, sentiment, fake):
@@ -32,8 +32,8 @@ class Statistics:
         return max_emotion[0]
 
     def copy_statistics(self, statistics):
-        self.sentiment = round((self.sentiment * self.amount) + (statistics.sentiment * statistics.amount)) / (self.amount + statistics.amount)
-        self.avg_fake = round((self.avg_fake * self.amount) + (statistics.avg_fake * statistics.amount)) / (self.amount + statistics.amount)
+        self.sentiment = round((self.sentiment * self.amount) + (statistics.sentiment * statistics.amount) / (self.amount + statistics.amount))
+        self.avg_fake = round((self.avg_fake * self.amount) + (statistics.avg_fake * statistics.amount) / (self.amount + statistics.amount))
         if self.amount < statistics.amount:
             self.emotion = statistics.emotion
 
@@ -101,7 +101,7 @@ class Sentiment:
 
 @dataclass
 class Temperature:
-    authenticity: int
+    # authenticity: int
     sentiment: int
     is_fake: int
 

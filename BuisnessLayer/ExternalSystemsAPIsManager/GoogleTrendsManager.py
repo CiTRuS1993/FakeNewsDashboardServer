@@ -28,7 +28,9 @@ class GoogleTrendsManager:
                     # print(trend_dict['date'])
                     # if type(trend_dict) == str:
                     #     trend_date = trend_dict
-                    if type(trend_dict) != dict:
+                    if type(trend_dict) == list:
+                        trend_date=trend_dict[0]['date']
+                    elif type(trend_dict) != dict:
                         trend_date = trend_dict
                         print(f"at GoogleTrendsManager.connect, the type of the trends dict is {type(trend_dict)}")
                     else:
@@ -61,8 +63,9 @@ class GoogleTrendsManager:
                 date1 = datetime(int(date1[:4]), int(date1[5:7]), int(date1[8:])).date()
             else:
                 date1 = datetime(int("20"+date1[6:]), int(date1[3:5]), int(date1[:2])).date()
-        if type(date1) != type(datetime.today().date()) or type(date1) != type(datetime.today().date()):
+        if type(date1) != type(datetime.today().date()) or type(date2) != type(datetime.today().date()):
             print(f"at googleTrendsManager.compare_dates     type of date1= {type(date1)},  type of date2= {type(date2)}")
+            print(f"at googleTrendsManager.compare_dates     date1= {date1},  date2= {date2}")
         if date1.year != date2.year:
             if date1.year > date2.year:
                 return 1
