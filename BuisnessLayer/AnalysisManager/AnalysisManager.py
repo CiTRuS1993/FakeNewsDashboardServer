@@ -342,10 +342,12 @@ class AnalysisManager:
     def update_orm_tweets(self):
         self.orm_tweets = self.orm.get_all_analyzed_tweets()
 
+    # TODO
     def retrieveFakeNewsDataFromDB(self):
-        print(f"trends = {self.orm_trends}")
-        print(f"topics = {self.orm_topics}")
-        print(f"tweets = {self.orm_tweets}")
+        # print(f"trends = {self.orm_trends}")
+        # print(f"topics = {self.orm_topics}")
+        # print(f"tweets = {self.orm_tweets}")
+        pass
         # for
 
         # trends = {'Sixers': {'date': '2021-05-27', 'id': 2880}, 'Knicks': {'date': '2021-05-27', 'id': 2870},....}
