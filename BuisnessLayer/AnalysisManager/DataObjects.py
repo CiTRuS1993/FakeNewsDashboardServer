@@ -7,7 +7,7 @@ class Statistics:
     emotion: str
     sentiment: int
     avg_fake: int
-    authenticity: int
+    # authenticity: int
     amount: int
 
     def add_statistics(self, emotions, sentiment, fake):
@@ -101,7 +101,7 @@ class Sentiment:
 
 @dataclass
 class Temperature:
-    authenticity: int
+    # authenticity: int
     sentiment: int
     is_fake: int
 
