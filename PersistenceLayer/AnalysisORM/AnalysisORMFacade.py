@@ -34,6 +34,7 @@ class AnalysisORMFacade:
             # self.session.flush()
         except:
             print(f"DB error! (Analysis.add_analyzed_tweet)")
+            self.session.commit()
         return False
 
     def get_all_analyzed_tweets(self):
@@ -79,6 +80,12 @@ class AnalysisORMFacade:
         return jclaim
 
 #   ----------------------- Topics -----------------------
+    def update_topic(self,id,key_words,prediction, emotion, sentiment):
+        topic = self.session.query(AnalysedTopics).filter_by(id=id).first()
+        topic.prediction  = prediction
+        topic.emotion  = emotion
+        topic.sentiment  = sentiment
+        topic.update_db()
 
     def add_analyzed_topic(self, key_words, prediction, emotion, sentiment, tweets_ids, trend_id):
         if self.get_analyzed_topic(key_words) is not None:
@@ -94,7 +101,7 @@ class AnalysisORMFacade:
                 print("there is an unsaved tweet")
             # tweets.append(self.externalAPIs.get_tweet(t_id))
         # trend = self.session.query(TrendsORM).filter_by(id=trend_id)
-        topic = AnalysedTopics(key_words=key_words, prediction=prediction, emotion=emotion[0], sentiment=sentiment)
+        topic = AnalysedTopics(key_words=key_words, prediction=prediction, emotion=emotion, sentiment=sentiment)
         topic.add_to_db()
         try:
             trend = self.session.query(TrendsORM).filter_by(id=trend_id).all()
@@ -114,7 +121,7 @@ class AnalysisORMFacade:
         jtopics = json.loads(topics)
         topics_list = []
         for jtopic in jtopics:
-            topic = {'keywords': jtopic['key_words'], 'prediction': round(float(jtopic['prediction'])),
+            topic = {'keywords': jtopic['key_words'], 'prediction': jtopic['prediction'],
                     'emotion': jtopic['emotion'], 'sentiment': round(float(jtopic['sentiment']))}
             try:
                 topic['tweets']= jtopic['topic_tweets']

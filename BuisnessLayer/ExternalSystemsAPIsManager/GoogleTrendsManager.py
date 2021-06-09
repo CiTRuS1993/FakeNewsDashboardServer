@@ -31,6 +31,9 @@ class GoogleTrendsManager:
                     if type(trend_dict) != dict:
                         trend_date = trend_dict
                         print(f"at GoogleTrendsManager.connect, the type of the trends dict is {type(trend_dict)}")
+                    elif type(trend_dict)==list:
+                        trend_dict = trend_dict[0]
+                        trend_date = trend_dict['date']
                     else:
                         trend_date = trend_dict['date']
                     if self.compare_dates(trend_date, date) == 0:

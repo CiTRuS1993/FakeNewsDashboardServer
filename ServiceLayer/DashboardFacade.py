@@ -12,10 +12,10 @@ class DashboardFacade:
         self.externalSystemsManager=ExternalSystemsAPIsManagerInterface()
         self.usersManager=UsersManagerInterface(username, password)
         self.trends_timer = threading.Timer(12.0*360, self.retrieveGoogleTrendsData)
-        self.snopes_timer = threading.Timer(12.0*360, self.retrieveSnopesData)
+        # self.snopes_timer = threading.Timer(12.0*360, self.retrieveSnopesData)
         time.sleep(20)
         # retrieve data from Google Trends and from Snopes
-        self.retrieveGoogleTrendsData()
+        # self.retrieveGoogleTrendsData()
         # self.retrieveSnopesData()     TODO- uncomment
         # TODO- add func which sends each unclassified tweet to analysisManager (errors handling)
 # ------------------------------- Retrieve Data & External Systems -----------------------------
@@ -26,7 +26,7 @@ class DashboardFacade:
 
     # gets all data related to the Google Trends window
     def googleTrendsStatistics(self):
-        self.retrieveGoogleTrendsData() # new.. delete?
+        # self.retrieveGoogleTrendsData() # new.. delete?
         ans = self.analysisManager.getGoogleTrendsStatistics()
         print(f"get = {ans}")
         return ans

@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from BuisnessLayer.AnalysisManager.DataObjects import AnalyzedTweet, AnalysedClaim, Statistics, Trend
+from BuisnessLayer.AnalysisManager.DataObjects import AnalyzedTweet, AnalysedClaim, Statistics, Trend,Tweet
 from PersistenceLayer.ExternalAPIsORM import AuthorORM, SearchORM, SnopesORM
 from PersistenceLayer.ExternalAPIsORM.TrendsORM import TrendsORM
 from PersistenceLayer.ExternalAPIsORM.TweetORM import TweetORM
@@ -80,15 +80,17 @@ class ExternalAPIsORMFacade:
             author.tweets.append(tweet)
             author.update_db()
 
-    def add_tweet(self, id, author_username, content, location, date, trend_id=None, claim_id=None, is_test=False):
+    def add_tweet(self, id, author_username, content, location, date,favorite_count,retweet_count, trend_id=None, claim_id=None, is_test=False):
         if self.get_tweet(id) is not None:
             return False
-        tweet = TweetORM(id=id, author_name=author_username, content=content, date=date, location=location)
-        tweet.add_to_db()
+        tweet = TweetORM(id=id, author_name=author_username, content=content, date=date, location=location,favorite_count=favorite_count,retweet_count=retweet_count)
+        tweet.add_to_db(self.session)
         if trend_id is not None:
             trend = self.session.query(TrendsORM).filter_by(id=trend_id).first()
             if trend is not None:
                 trend.tweets.append(tweet)
+                self.session.commit()
+                
         if claim_id is not None:
             claim = self.session.query(SnopesORM).filter_by(claim_id=claim_id).first()
             if claim is not None:
@@ -101,7 +103,13 @@ class ExternalAPIsORMFacade:
             return True
         except:
             return False
-
+    def get_unprocessed_tweets(self):
+        unprocessed_trend = self.session.query(TrendsORM).filter_by(trend_topics=None)
+        unprocessed_dict = {}
+        for trend in unprocessed_trend:
+            unprocessed_dict[trend.id] = {'keyword':trend.content,'tweets':[Tweet(tweet.id, tweet.author_name, tweet.content,
+                                   tweet.location, tweet.date, trend.id,tweet.retweet_count,tweet.favorite_count) for tweet in trend.tweets]}
+        return unprocessed_dict
     def get_all_tweets_dict(self):
         tweets = jsonpickle.dumps(self.session.query(TweetORM).all())
         jtweets = json.loads(tweets)

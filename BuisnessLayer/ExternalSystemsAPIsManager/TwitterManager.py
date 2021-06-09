@@ -44,7 +44,7 @@ class TwitterManager:
         self.api = None
         self.orm = ExternalAPIsORMFacade()
         self.all_tweets = self.orm.get_all_tweets_dict()
-
+        self.unprocessed_tweets = self.orm.get_unprocessed_tweets()
     def connect(self):
         to_select = self.tokens.keys()
         token = self.tokens[self.token_ids.pop(0)]
@@ -60,6 +60,7 @@ class TwitterManager:
     def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: print(tweets)):
         tweets = {}
         i = 1
+        j=1
         for keyword in keywords:
             try:
                 i = 0
@@ -71,8 +72,8 @@ class TwitterManager:
                                    tweet.user.location, tweet.created_at, trend_id)
                     tweets[trend_id].append(_tweet)
                     if tweet.text not in self.all_tweets.values():
-                        self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, tweet.place,
-                                           tweet.user.location, tweet.created_at, trend_id)
+                        self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, 
+                                           tweet.user.location, tweet.created_at,tweet.favorite_count,tweet.retweet_count,trend_id= trend_id)
                         try:
                             orm_tweet = self.orm.get_tweet(tweet.id)
                             tweet= Tweet(orm_tweet.id, orm_tweet.author_name, orm_tweet.content, orm_tweet.location,
@@ -86,8 +87,11 @@ class TwitterManager:
                         time.sleep(900)
             except:
                 self.connect()
+                j+=1
+                if j>4:
+                    j=0
+                    break
                 # self.search_tweets_by_keywords(trend_id, keywords)        TODO
-
         on_finished(tweets)
         return tweets
 
@@ -101,10 +105,14 @@ class TwitterManager:
                 for trend in trends.keys():
                     new_tweets = self.search_tweets_by_keywords(trend,trends[trend]['keywords'], self.tokens[0])
                     for key in new_tweets.keys():
-                        self.unprocessed_tweets[key] = {'keyword':trends[trend]['keywords'],'tweets':new_tweets[key]}
+                        if key not in self.unprocessed_tweets.keys():
+                            self.unprocessed_tweets[key] = {'keyword':trends[trend]['keywords'],'tweets':new_tweets[key]}
+                        else:
+                            self.unprocessed_tweets[key]['tweets'] +=new_tweets[key]
                     if not self.search:
                         return
-                    # time.sleep(100)  # TODO- delete
+                time.sleep(900)
+    # time.sleep(100)  # TODO- delete
 
         search_thread = threading.Thread(target=search_trends)
         self.search = True

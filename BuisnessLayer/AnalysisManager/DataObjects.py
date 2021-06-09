@@ -90,9 +90,13 @@ class AnalysedClaim(Claim):
 @dataclass
 class Tweet:
     id: int
-    author: str
+    author_name: str
     content: str
-
+    location: str
+    date: str
+    trend_id: int
+    retweet_count:int
+    favorite_count:int
 
 @dataclass
 class AnalyzedTweet(Tweet):

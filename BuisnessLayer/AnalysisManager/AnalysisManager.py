@@ -77,7 +77,7 @@ class AnalysisManager:
     def configClassifier(self, classifier, configuration):
         pass
 
-    def add_new_trends_statistics(self, processed, trends_dict):
+    def add_new_trends_statistics(self, processed, trends_dict,res):
         for trend_id in processed.keys():  # processed is type of dict<trend name> = list <Claim>
             # print(f"add_new_trends_statistics:")
             # print(f"processed = {processed}")
@@ -119,7 +119,7 @@ class AnalysisManager:
         trend_statistics = TrendStatistic(words_cloud, statistics)
         return trend_statistics
 
-    def calc_topics_statistics_and_save(self, processed, topics_statistics, trend):
+    def calc_topics_statistics_and_save(self, processed, topics_statistics, trend,res):
         words_cloud = dict()
         for topic in processed[trend]:
             prediction = {'true': 0, 'fake': 0}
@@ -145,7 +145,7 @@ class AnalysisManager:
             avg_prediction = self.calc_avg_prediction(prediction)
             topics_statistics.append((emotions, sentiment, prediction))
             print(f"save the analysed topic '{topic.name}'")
-            topic_id = self.orm.add_analyzed_topic(topic.name, avg_prediction, emotion, sentiment / len(emotions), ids, trend)
+            self.orm.update_topic(topic.id, res[['ClaimFeatureGenerator_claim_id']==topic.id], emotion, sentiment / len(emotions))
             print(topic_id)
         words_cloud_statistics = list()
         for word in words_cloud.keys():
@@ -186,6 +186,8 @@ class AnalysisManager:
         for trend_id in trends_tweets:
             claims = self.get_claims_from_trend(trends_tweets[trend_id]['tweets'])  # <trend_name> : list <Claim>
             # TODO: save claim to db
+            for claim in claims:
+                claim.id = self.orm.add_analyzed_topic(claim.name,None,None,0,list(map(lambda t: t.id,claim.tweets)),trend_id)
             trend = Trend(trend_id, trends_tweets[trend_id]['keyword'], claims)
             trends[trend_id] = trend
             # self.addTrend(trend)
@@ -239,15 +241,15 @@ class AnalysisManager:
     # initialize the data structures : Claim, Tweet
     # returns list <Claim>
     def get_claims_from_trend(self, trends_tweets):
-        claims_dict = self.adapter._get_claim_from_trend(trends_tweets)
-        claims = list()
-        for key in claims_dict.keys():
-            tweets = list()
-            for tweet_id in claims_dict[key]:
-                tweets.append(Tweet(tweet_id, claims_dict[key][tweet_id]['author'],
-                                    claims_dict[key][tweet_id]['content']))  # tweet = id, author, content
-            claim = Claim(key, tweets,0) #todo :id
-            claims.append(claim)
+        claims = self.adapter._get_claim_from_trend(trends_tweets)
+        # claims = list()
+        # for key in claims_dict.keys():
+        #     tweets = list()
+        #     for tweet_id in claims_dict[key]:
+        #         tweets.append(Tweet(tweet_id, claims_dict[key][tweet_id]['author'],
+        #                             claims_dict[key][tweet_id]['content']))  # tweet = id, author, content
+        #     claim = Claim(key, tweets,0) #todo :id
+        #     claims.append(claim)
         return claims
 
     def getTemperature(self):
