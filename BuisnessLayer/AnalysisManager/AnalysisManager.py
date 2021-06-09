@@ -27,7 +27,7 @@ class AnalysisManager:
                                     {'sentiment': 1, 'date': "3.3.2021"}])
         self.emotions = self.init_emotions_dict()
         # self.emotion_tweets = {"Anger":list(), "Disgust": list(), "Sad":list(), "Happy": list(), "Surprise": list(), "Fear": list()}
-        self.temperature = {'sentiment': 0, 'is_fake': 0, 'authenticity': 15, 'amount': 1}
+        self.temperature = {'sentiment': 0, 'is_fake': 0, 'amount': 1}
         # self.dashboard_statistics = {}
         self.trends_statistics = {}
         self.snopes_statistics = {}
@@ -115,7 +115,8 @@ class AnalysisManager:
             trend_sentiment = sentiment / len(emotions)
         else:
             trend_sentiment = sentiment
-        statistics = Statistics(emotion, trend_sentiment, avg_prediction, 50, len(emotions))
+        statistics = Statistics(emotion, trend_sentiment, avg_prediction, len(emotions))
+        # statistics = Statistics(emotion, trend_sentiment, avg_prediction, 50, len(emotions))
         trend_statistics = TrendStatistic(words_cloud, statistics)
         return trend_statistics
 
@@ -227,7 +228,8 @@ class AnalysisManager:
                     self.snopes_statistics[claim].add_statistics(emotions, sentiment, prediction)
                 # else:
                 except:
-                    statistics = Statistics(emotion[0], avg_sentiment, avg_prediction, 15, len(emotions))
+                    statistics = Statistics(emotion[0], avg_sentiment, avg_prediction, len(emotions))
+                    # statistics = Statistics(emotion[0], avg_sentiment, avg_prediction, 15, len(emotions))
                     analysed_claim = AnalysedClaim(claim, processed[claim].tweets, statistics)
                     self.snopes_statistics[claim] = analysed_claim
                 self.lock.release()
@@ -258,7 +260,8 @@ class AnalysisManager:
             is_fake = 0
         else:
             is_fake = 1
-        temperature = Temperature(self.temperature['authenticity'],
+        temperature = Temperature(
+            #self.temperature['authenticity'],
                                   round(self.temperature['sentiment'] / self.temperature['amount']),
                                   is_fake)
         return temperature
@@ -349,6 +352,7 @@ class AnalysisManager:
     def update_orm_tweets(self):
         self.orm_tweets = self.orm.get_all_analyzed_tweets()
 
+    # TODO
     def retrieveFakeNewsDataFromDB(self):
         print(f"trends = {self.orm_trends}")
         print(f"topics = {self.orm_topics}")

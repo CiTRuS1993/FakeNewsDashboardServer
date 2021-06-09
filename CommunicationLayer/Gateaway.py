@@ -30,7 +30,6 @@ def analyze():
 @app.route('/api/getTemp', methods=['get'])
 def get_temp():
     return jsonify(asdict(dashboard_facade.getTemperature()))
-    # return jsonify({'sentiment': 42, 'fakiness': 38, 'authenticity': 15})
 
 
 @app.route('/api/getEmotions', methods=['get'])
