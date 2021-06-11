@@ -61,6 +61,7 @@ class AnalysedTrend(Trend):
 class Claim:
     name: str
     tweets: list
+    id: int
 
     def setID(self, topic_id):
         self.id: topic_id

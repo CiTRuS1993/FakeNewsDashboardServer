@@ -245,7 +245,7 @@ class AnalysisManager:
             for tweet_id in claims_dict[key]:
                 tweets.append(Tweet(tweet_id, claims_dict[key][tweet_id]['author'],
                                     claims_dict[key][tweet_id]['content']))  # tweet = id, author, content
-            claim = Claim(key, tweets)
+            claim = Claim(key, tweets, 0)
             claims.append(claim)
         return claims
 

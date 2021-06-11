@@ -41,7 +41,7 @@ class ClassifierAdapter:
                     emotion = get_emotion_by_id(rand)
                     analyzed_tweet = AnalyzedTweet(tweet.id, tweet.author, tweet.content, emotion, sentiment, prediction)
                     tweets.append(analyzed_tweet)
-                processed_data[trend].append(Claim(topic.name, tweets))
+                processed_data[trend].append(Claim(topic.name, tweets, 0))
 
         time.sleep(1)
         return callback(processed_data, trends_dict)
@@ -82,9 +82,9 @@ class ClassifierAdapter:
                 analyzed_tweet = AnalyzedTweet(tweet['id'], tweet['author'], tweet['content'], emotion, sentiment, prediction)
                 tweets.append(analyzed_tweet)
             if claim in processed_data.keys():
-                processed_data[claim].append(Claim(claim, tweets))
+                processed_data[claim].append(Claim(claim, tweets, 0))
             else:
-                processed_data[claim] = Claim(claim, tweets)
+                processed_data[claim] = Claim(claim, tweets, 0)
 
         time.sleep(1)
         return callback(processed_data)
