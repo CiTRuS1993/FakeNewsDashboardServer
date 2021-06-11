@@ -6,12 +6,16 @@ import threading
 dblock = threading.Lock()
 # logging.basicConfig(filename='example.log', level=logging.DEBUG)
 class BaseORM:
-    def add_to_db(self):
+    def add_to_db(self,sess = None):
         # logging.info('try add to db from '+str(type(self)))
         dblock.acquire()
         try:
-            session.add(self)
-            session.commit()
+            if sess is not None:
+                sess.add(self)
+                sess.commit()
+            else:
+                session.add(self)
+                session.commit()
         except SQLAlchemyError as e:
             session.rollback()
         dblock.release()
@@ -20,7 +24,7 @@ class BaseORM:
         dblock.acquire()
         try:
             session.commit()
-        except:
+        except Exception as e:
             print("error in update_db")
         dblock.release()
 

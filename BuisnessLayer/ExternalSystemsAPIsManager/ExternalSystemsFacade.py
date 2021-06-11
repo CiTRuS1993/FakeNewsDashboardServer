@@ -8,7 +8,7 @@ class ExternalSystemsFacade:
         self.googleTrendsManager = GoogleTrendsManager()
         self.twitterManager = TwitterManager()
         self.snopesManager = SnopesManager()
-        self.snopesManager.start()
+        # self.snopesManager.start()
         self.googleTrendsManager.connect()
         self.twitterManager.connect()
         self.twitterManager.search_tweets_by_trends(self.googleTrendsManager.get_trends())
@@ -19,7 +19,8 @@ class ExternalSystemsFacade:
     def retrieve_google_trends_data(self):
         self.twitterManager.stop()
         tweets = self.twitterManager.get_unprocessed_tweets()
-        self.twitterManager.search_tweets_by_trends(self.googleTrendsManager.get_trends())
+        self.googleTrendsManager.connect()
+        # self.twitterManager.search_tweets_by_trends(self.googleTrendsManager.get_trends())
         return tweets
 
     def edit_twitters_tokens(self, tokens):

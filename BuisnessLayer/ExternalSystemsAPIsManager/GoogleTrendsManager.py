@@ -6,7 +6,7 @@ from PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade import ExternalAPIsO
 
 class GoogleTrendsManager:
     def __init__(self):
-        self.pytrends = TrendReq(hl='en-US', tz=360)
+        self.pytrends = TrendReq(hl='en-US', tz=360, retries=3)
         self.ExternalOrm = ExternalAPIsORMFacade()
         self.trends = {}
         self.all_trends = self.ExternalOrm.get_all_trends()
@@ -29,10 +29,12 @@ class GoogleTrendsManager:
                     # if type(trend_dict) == str:
                     #     trend_date = trend_dict
                     if type(trend_dict) == list:
-                        trend_date=trend_dict[0]['date']
+                        trend_dict = trend_dict[0]
+                        trend_date = trend_dict['date']
                     elif type(trend_dict) != dict:
                         trend_date = trend_dict
                         print(f"at GoogleTrendsManager.connect, the type of the trends dict is {type(trend_dict)}")
+                    
                     else:
                         trend_date = trend_dict['date']
                     if self.compare_dates(trend_date, date) == 0:
@@ -43,6 +45,7 @@ class GoogleTrendsManager:
                         if trend_dict['id'] not in self.trends.keys() and not flag:
                             self.trends[trend_dict['id']] = {'keywords': trend[0]}
                         flag = True
+
 
                 if not flag:
                     t_id = self.ExternalOrm.add_trend(trend[0], str(date))

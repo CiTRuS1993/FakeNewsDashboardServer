@@ -41,6 +41,43 @@ def get_emotions():
 def get_trends():
     # print(f"get_trends = {dashboard_facade.googleTrendsStatistics()}")
     return jsonify(dashboard_facade.googleTrendsStatistics())
+# {"Donald Trump": {'words': [
+#         {
+#             'text': 'told',
+#             'value': 64,
+#         },
+#         {
+#             'text': 'mistake',
+#             'value': 11,
+#         },
+#         {
+#             'text': 'thought',
+#             'value': 16,
+#         },
+#         {
+#             'text': 'bad',
+#             'value': 17,
+#         },
+#     ], 'statistics': {
+#         'mainEmo': "fear", 'avgSentiment': -1, 'avgAuthenticity': 17, 'avgFakiness': 78
+#     }},
+#         "some Trends": {'words': [
+#             {'text': 'foos',
+#              'value': 23},
+#             {'text': 'other',
+#              'value': 50},
+#             {
+#                 'text': 'thought',
+#                 'value': 16,
+#             },
+#             {
+#                 'text': 'bad',
+#                 'value': 17,
+#             },
+#         ], 'statistics': {
+#             'mainEmo': "happy", 'avgSentiment': 3, 'avgAuthenticity': 87, 'avgFakiness': 2
+#         }}
+#     }
 
 
 @app.route('/api/getEmotionsTweet')

@@ -1,4 +1,4 @@
-import datetime
+
 from dataclasses import dataclass, field
 
 
@@ -13,7 +13,7 @@ class Statistics:
     def add_statistics(self, emotions, sentiment, fake):
         amount = len(emotions)
         if amount > 0:
-            self.sentiment = sentiment/amount
+            self.sentiment = sentiment / amount
             self.emotion = self.calc_emotions(emotions)
             self.avg_fake = self.calc_avg_prediction(fake)
             self.amount = self.amount + amount
@@ -24,11 +24,11 @@ class Statistics:
 
 
     def calc_emotions(self, emotions):
-        emotions_counter = {"Anger":0, "Disgust":0, "Sad":0, "Happy":0, "Surprise": 0, "Fear": 0}
+        emotions_counter = {"Angry": 0, "Sad": 0, "Happy": 0, "Surprise": 0, "Fear": 0}
         for emotion in emotions:
-            emotions_counter[emotion] = emotions_counter[emotion]+1
+            emotions_counter[emotion] = emotions_counter[emotion] + 1
         max_emotion_counter = max([emotions_counter[emotion] for emotion in emotions_counter])
-        max_emotion = [emotion for emotion in emotions_counter if emotions_counter[emotion]==max_emotion_counter]
+        max_emotion = [emotion for emotion in emotions_counter if emotions_counter[emotion] == max_emotion_counter]
         return max_emotion[0]
 
     def copy_statistics(self, statistics):
@@ -83,8 +83,13 @@ class AnalysedClaim(Claim):
 @dataclass
 class Tweet:
     id: int
-    author: str
+    author_name: str
     content: str
+    location: str
+    date: str
+    trend_id: int
+    retweet_count:int
+    favorite_count:int
 
 @dataclass
 class AnalyzedTweet(Tweet):
