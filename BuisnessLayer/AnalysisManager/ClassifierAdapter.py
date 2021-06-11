@@ -71,7 +71,7 @@ class ClassifierAdapter:
         self.i=0
     def get_sentiment(self,text) -> int:
         snt = self.sid.polarity_scores(text)
-        return snt['pos']*3-snt['neg']*3
+        return round(snt['pos']*3-snt['neg']*3)
 
     def get_emotion(self,text):
         emo = te.get_emotion(text)

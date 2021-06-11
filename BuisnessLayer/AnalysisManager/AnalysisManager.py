@@ -105,7 +105,7 @@ class AnalysisManager:
                                                                              trend_statistics)
                 self.lock.release()
             # --------------------- until here ---------------------
-            return True
+        return True
 
     def init_trend_statistics(self, emotions, prediction, sentiment, words_cloud):
         emotion = self.update_emotions(emotions)
@@ -328,7 +328,7 @@ class AnalysisManager:
         print("Error on AnalysisManager.get_topic()")
         return {'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
                            {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': -2}],
-                'emotions': [{'y': 32, 'label': "Anger"},
+                'emotions': [{'y': 32, 'label': "Angry"},
                              {'y': 22, 'label': "Disgust"},
                              {'y': 15, 'label': "Sad"},
                              {'y': 19, 'label': "Happy"},
