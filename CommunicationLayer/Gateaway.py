@@ -54,6 +54,12 @@ def get_emotions_tweet():
 def get_sentiment():
     return jsonify(asdict(dashboard_facade.get_sentiment()))
 
+@app.route('/api/getTopics')
+def get_topics():
+    t = request.args.get('trend') # t = id of trend
+    return jsonify(dashboard_facade.get_topics(t))
+
+
 
 @app.route('/api/getTopic')
 def get_topic():

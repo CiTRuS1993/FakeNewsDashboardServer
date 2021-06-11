@@ -62,6 +62,9 @@ class Claim:
     name: str
     tweets: list
 
+    def setID(self, topic_id):
+        self.id: topic_id
+
 @dataclass
 class AnalysedClaim(Claim):
     statistics: Statistics # maybe use the ClaimStatistics instead (like the TrendStatistics)

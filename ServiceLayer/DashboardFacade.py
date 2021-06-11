@@ -28,7 +28,7 @@ class DashboardFacade:
     def googleTrendsStatistics(self):
         self.retrieveGoogleTrendsData() # new.. delete?
         ans = self.analysisManager.getGoogleTrendsStatistics()
-        print(f"get = {ans}")
+        # print(f"get = {ans}")
         return ans
         # return self.analysisManager.getGoogleTrendsStatistics()
 
@@ -39,7 +39,7 @@ class DashboardFacade:
     # each 12 hours retrieve the new Google Trends topics
     def retrieveGoogleTrendsData(self):
         new_trends= self.externalSystemsManager.retrieveGoogleTrendsData()
-        print(f"new trends are: {new_trends}")
+        # print(f"new trends are: {new_trends}")
         return self.analysisManager.classifyTrends(new_trends)
 
     # each 12 hours retrieve the new Snopes claims
@@ -64,6 +64,9 @@ class DashboardFacade:
     def get_topic(self, topic_id):
         return self.analysisManager.get_topic(topic_id)
 
+    def get_topics(self, trend_id):
+        return self.analysisManager.get_topics(trend_id)
+
     def get_emotion_tweets(self, emotion):
         return self.analysisManager.get_emotion_tweets(emotion)
 
@@ -80,7 +83,6 @@ class DashboardFacade:
         if self.usersManager.userExists(username):
             self.analysisManager.tagTweets(tweet_id, isFake)
             self.usersManager.tagTweet(username, tweet_id)
-            # TODO- what to return?
 
     def viewUserSearchHistory (self, username, username_to_view):
         return self.usersManager.viewUserSearchHistory(username,username_to_view)
@@ -88,7 +90,7 @@ class DashboardFacade:
     def editTwittersTokens(self, username, tokens):
         if self.usersManager.is_admin(username):
             return self.externalSystemsManager.editTwittersTokens(tokens)
-        return False #TODO- exception?
+        return False
 
     def classifyTweets(self, username, file):
         if (self.usersManager.userExists(username)):
@@ -106,6 +108,8 @@ class DashboardFacade:
 
     def deleteUser(self, admin_username, username_to_delete):
         return self.usersManager.deleteUser(admin_username, username_to_delete)
+
+
 
 
 

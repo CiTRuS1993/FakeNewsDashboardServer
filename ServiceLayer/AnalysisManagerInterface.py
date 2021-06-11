@@ -48,3 +48,7 @@ class AnalysisManagerInterface:
 
     def get_emotion_tweets(self, emotion):
         return self.analysisManagerLogic.get_emotion_tweets(emotion)
+
+    def get_topics(self, trend_id):
+        return self.analysisManagerLogic.get_topics(trend_id)
+
