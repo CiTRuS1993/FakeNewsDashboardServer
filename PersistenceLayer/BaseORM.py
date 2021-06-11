@@ -24,7 +24,7 @@ class BaseORM:
         dblock.acquire()
         try:
             session.commit()
-        except:
+        except Exception as e:
             print("error in update_db")
         dblock.release()
 

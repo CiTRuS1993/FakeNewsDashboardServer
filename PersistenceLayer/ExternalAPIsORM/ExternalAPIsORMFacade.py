@@ -10,6 +10,7 @@ from BuisnessLayer.AnalysisManager.DataObjects import AnalyzedTweet, AnalysedCla
 from PersistenceLayer.ExternalAPIsORM import AuthorORM, SearchORM, SnopesORM
 from PersistenceLayer.ExternalAPIsORM.TrendsORM import TrendsORM
 from PersistenceLayer.ExternalAPIsORM.TweetORM import TweetORM
+from PersistenceLayer.BaseORM import dblock
 
 
 class ExternalAPIsORMFacade:
@@ -89,7 +90,9 @@ class ExternalAPIsORMFacade:
             trend = self.session.query(TrendsORM).filter_by(id=trend_id).first()
             if trend is not None:
                 trend.tweets.append(tweet)
+                dblock.acquire()
                 self.session.commit()
+                dblock.release()
                 
         if claim_id is not None:
             claim = self.session.query(SnopesORM).filter_by(claim_id=claim_id).first()
@@ -171,10 +174,11 @@ class ExternalAPIsORMFacade:
                         for tw in topic.tweets:
                             if tw.analyzed:
                                 tweets.append(
-                                    AnalyzedTweet(tw.id, tw.author_name, tw.content, tw.analyzed.emotion, tw.analyzed.sentiment,
+                                   
+                                    AnalyzedTweet(tw.id, tw.author_name, tw.content,tw.location,tw.date,t.id,tw.favorite_count,tw.retweet_count, tw.analyzed.emotion, tw.analyzed.sentiment,
                                                   tw.analyzed.prediction))
                         topics.append(AnalysedClaim(topic.key_words, tweets, topic.id,
-                                                    Statistics(topic.emotion, topic.sentiment, topic.prediction, 0,
+                                                    Statistics(topic.emotion, topic.sentiment, topic.prediction, 
                                                                len(tweets))))
 
                     tr[t.content] = Trend(t.id, t.content, topics)

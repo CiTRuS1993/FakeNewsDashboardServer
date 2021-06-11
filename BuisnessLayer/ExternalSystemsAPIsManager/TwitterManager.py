@@ -24,6 +24,9 @@ class Tweet:
     location: str
     date: str
     trend_id: int
+    retweet_count:int
+    favorite_count:int
+
 
 #consumer_key = 'nMRLa7RAv9lT6j8akRWCy6UGD'
 #consumer_secret = 'jHZYUnXNj6oSQTXqMicZ077NCOfMD7atDcjBLszAy6qfDlJBml'
@@ -57,7 +60,7 @@ class TwitterManager:
         self.token_ids.append(token.id)
 
 
-    def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: print(tweets)):
+    def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: (tweets)):
         tweets = {}
         i = 1
         j=1
@@ -69,7 +72,7 @@ class TwitterManager:
                     if trend_id not in tweets.keys():
                         tweets[trend_id] = []
                     _tweet = Tweet(tweet.id, tweet.author.name, tweet.text,
-                                   tweet.user.location, tweet.created_at, trend_id)
+                                   tweet.user.location, tweet.created_at, trend_id,tweet.favorite_count,tweet.retweet_count)
                     tweets[trend_id].append(_tweet)
                     if tweet.text not in self.all_tweets.values():
                         self.orm.add_tweet(tweet.id, tweet.author.name, tweet.text, 
@@ -77,11 +80,11 @@ class TwitterManager:
                         try:
                             orm_tweet = self.orm.get_tweet(tweet.id)
                             tweet= Tweet(orm_tweet.id, orm_tweet.author_name, orm_tweet.content, orm_tweet.location,
-                                  orm_tweet.date, trend_id)
+                                  orm_tweet.date, trend_id,tweet.favorite_count,tweet.retweet_count)
                             # tweet= orm_tweet
                         except:
-                            tweet= Tweet((tweet.id, tweet.author.name, tweet.text,
-                                   tweet.user.location, tweet.created_at, trend_id))
+                            tweet= Tweet(tweet.id, tweet.author.name, tweet.text,
+                                   tweet.user.location, tweet.created_at, trend_id,tweet.favorite_count,tweet.retweet_count)
                         self.all_tweets[tweet.id] = tweet
                     if i >= 900:
                         time.sleep(900)

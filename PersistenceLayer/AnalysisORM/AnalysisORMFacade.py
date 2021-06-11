@@ -6,6 +6,7 @@ from jsonpickle import json
 from PersistenceLayer.AnalysisORM import AnalysedTweets, AnalyzedClaims, AnalysedTopics
 from PersistenceLayer.ExternalAPIsORM import TweetORM, SnopesORM, TrendsORM
 from PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade import ExternalAPIsORMFacade
+from PersistenceLayer.BaseORM import dblock
 
 
 class AnalysisORMFacade:
@@ -81,18 +82,20 @@ class AnalysisORMFacade:
 
 #   ----------------------- Topics -----------------------
     def update_topic(self,id,key_words,prediction, emotion, sentiment):
-        topic = self.session.query(AnalysedTopics).filter_by(id=id).first()
+        topic = self.session.query(AnalysedTopics).filter_by(id=id).first() #todo: check none
         topic.prediction  = prediction
         topic.emotion  = emotion
         topic.sentiment  = sentiment
-        topic.update_db()
+        dblock.acquire()
+        self.session.commit()
+        dblock.release()
 
     def add_analyzed_topic(self, key_words, prediction, emotion, sentiment, tweets_ids, trend_id):
         if self.get_analyzed_topic(key_words) is not None:
             return False
         tweets = []
         # tweets = self.session.query(TweetORM.id.in_(tweets_ids)).all()
-        for t_id in tweets_ids:
+        for t_id in set(tweets_ids):
             try:
                 tweet = self.session.query(TweetORM).filter_by(id=t_id).first()
                 tweets.append(tweet)
@@ -117,15 +120,15 @@ class AnalysisORMFacade:
         return topic.id
 
     def get_all_analyzed_topics(self):
-        topics = jsonpickle.dumps(self.session.query(AnalysedTopics).all())
-        jtopics = json.loads(topics)
+        jtopics = self.session.query(AnalysedTopics).all()
+        # jtopics = json.loads(topics)
         topics_list = []
         for jtopic in jtopics:
-            topic = {'keywords': jtopic['key_words'], 'prediction': jtopic['prediction'],
-                    'emotion': jtopic['emotion'], 'sentiment': round(float(jtopic['sentiment']))}
+            topic = {'keywords': jtopic.key_words, 'prediction': jtopic.prediction,
+                    'emotion': jtopic.emotion, 'sentiment': round(float(jtopic.sentiment))}
             try:
-                topic['tweets']= jtopic['topic_tweets']
-                topic['trend']= jtopic['trend']
+                topic['tweets']= list(map(lambda tweet:tweet.id,jtopic.topic_tweets) )#switch to parse from obj
+                topic['trend']= jtopic.trend[0].id
             except:
                 pass
             topics_list.append(topic)

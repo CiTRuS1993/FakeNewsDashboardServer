@@ -74,7 +74,8 @@ class ClassifierAdapter:
         return snt['pos']*3-snt['neg']*3
 
     def get_emotion(self,text):
-        return max(te.get_emotion(text))  # The output we received,
+        emo = te.get_emotion(text)
+        return max(emo, key=emo.get)  # The output we received,
 
     def _trends_to_csv(self, trends_dict, path="C:/fake-news-framework_Py3/data/input/tryout/"):
         topics = []
@@ -87,26 +88,30 @@ class ClassifierAdapter:
                 topics.append({'claim_id':topic.id,'title': topic.name})  # check what is the input
                 for tweet in topic.tweets:
                     topic_tweet_connection.append({'claim_id': topic.id, 'post_id': tweet.id})
-                    tweets.append({'post_id':tweet.id,'author':tweet.author,'content':tweet.content})
-                    authors.append({'name':tweet.author})
+                    tweets.append({'post_id':tweet.id,'author':tweet.author_name,'content':tweet.content,'retweet_count':tweet.retweet_count, 'favorite_count':tweet.favorite_count})
+                    authors.append({'name':tweet.author_name})
 
-        pd.DataFrame(topics, columns=claims_columns).to_csv(path + "claims{}.csv".format(self.i),index=False)
-        pd.DataFrame(tweets, columns=post_columns).to_csv(path + "posts{}.csv".format(self.i),index=False)
-        pd.DataFrame(authors, columns=author_columns).to_csv(path + "authors{}.csv".format(self.i),index=False)
-        pd.DataFrame(topic_tweet_connection, columns=connection_columns).to_csv(path + "claim_tweet_connection{}.csv".format(self.i),index=False)
+        pd.DataFrame(topics, columns=claims_columns).to_csv(path + "claims.csv",index=False)
+        pd.DataFrame(tweets, columns=post_columns).to_csv(path + "posts.csv",index=False)
+        pd.DataFrame(authors, columns=author_columns).to_csv(path + "authors.csv",index=False)
+        pd.DataFrame(topic_tweet_connection, columns=connection_columns).to_csv(path + "claim_tweet_connection.csv",index=False)
         self.i+=1
 
     def _classify_topic(self):
-        # subprocess.call(['python','run_dataset_builder.py','configuration/config_demo.ini'],cwd= r'C:/fake-news-framework_Py3',shell=True)
-        results = pd.read_csv("C:/fake-news-framework_Py3/data/output/D/labeled_predictions.csv")[['ClaimFeatureGenerator_claim_id','pred']]
+        subprocess.call(['python','run_dataset_builder.py','configuration/config_demo.ini'],cwd= r'C:/fake-news-framework_Py3',shell=True)
+        results = pd.read_csv("C:/fake-news-framework_Py3/data/output/D/labeled_predictions.csv")[['author_guid','pred']]
         return results
 
 
     def analyze_trends(self, trends_dict, callback):  # trends_dict is type of dict {<trend name> : <Trend>}
         processed_data = {}
+        if len(trends_dict)==0:
+            return
         self._trends_to_csv(trends_dict)
         results = self._classify_topic()
+        print("got classifier results\nparsing the results and running sentiment and emotion")
         for trend in trends_dict.keys():
+            print("start trend {}".format(trend))
             if trend not in processed_data:
                 processed_data[trend] = list()
             for topic in trends_dict[trend].claims:
@@ -121,10 +126,12 @@ class ClassifierAdapter:
                     sentiment = self.get_sentiment(tweet.content)
                     # rand = randrange(6)
                     emotion = self.get_emotion(tweet.content)
-                    analyzed_tweet = AnalyzedTweet(tweet.id, tweet.author, tweet.content, emotion, sentiment,
+                    
+                    analyzed_tweet = AnalyzedTweet(tweet.id, tweet.author_name, tweet.content,tweet.location,tweet.date,
+                    tweet.trend_id,tweet.favorite_count,tweet.retweet_count, emotion, sentiment,
                                                    prediction)
                     tweets.append(analyzed_tweet)
-                processed_data[trend].append(Claim(topic.name, tweets,0)) #todo : id
+                processed_data[trend].append(Claim(topic.name, tweets,topic.id)) #todo : id
 
         time.sleep(1)
         results['pred'] = results['pred'].apply(lambda x:"True" if x else "Fake")
@@ -189,17 +196,21 @@ class ClassifierAdapter:
         return claims
 
     def _get_claim_from_trend(self, trends_tweets):
-        df = pd.DataFrame([tweet.__dict__ for tweet in trends_tweets])[['id', 'content','author_name']]
-
+        print("topic model")
+        df = pd.DataFrame([tweet.__dict__ for tweet in trends_tweets])
+        df = df[['id', 'content','author_name']]
         if len(df) < 15:
+            print("less then 15 tweets, creating 1 topic")
             from collections import Counter
             claim_text = ' '.join([txt[0] for txt in
                                    Counter(" ".join(df['content'].str.replace("RT", '').values).split(' ')).most_common(
                                        10)])
             return [Claim(claim_text,trends_tweets,0)]
+        print("build bertopic")
         bt = BERTopic()
-
+        print("fit bertopic") 
         topics = bt.fit_transform(df['content'].str.replace("RT", '').values)
+        print("done fitting")
         df['topic_id'] = topics[0]
         topic_info = bt.get_topics()
         topics_text = {}
@@ -210,6 +221,7 @@ class ClassifierAdapter:
 
         # df['topic_text'] = df['topic_id'].apply(lambda x:topics_text[x])
         claims = []
+        print("attaching tweet object for topics")
         for t in topic_info.keys():
             
             fitered = df[df['topic_id'] == t]

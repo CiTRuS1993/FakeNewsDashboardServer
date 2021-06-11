@@ -24,7 +24,7 @@ class Statistics:
             (prediction['true'] + fake_amount > prediction['fake'] + (self.amount - fake_amount)) / self.amount)
 
     def calc_emotions(self, emotions):
-        emotions_counter = {"Anger": 0, "Disgust": 0, "Sad": 0, "Happy": 0, "Surprise": 0, "Fear": 0}
+        emotions_counter = {"Angry": 0, "Sad": 0, "Happy": 0, "Surprise": 0, "Fear": 0}
         for emotion in emotions:
             emotions_counter[emotion] = emotions_counter[emotion] + 1
         max_emotion_counter = max([emotions_counter[emotion] for emotion in emotions_counter])
