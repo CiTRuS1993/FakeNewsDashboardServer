@@ -21,12 +21,12 @@ class DashboardFacade:
 # ------------------------------- Retrieve Data & External Systems -----------------------------
 
     # gets all data related to the dashboard
-    def retrieveFakeNewsData(self):
-        return self.analysisManager.retrieveFakeNewsData()
+    # def retrieveFakeNewsData(self):
+    #     return self.analysisManager.retrieveFakeNewsData()
 
     # gets all data related to the Google Trends window
     def googleTrendsStatistics(self):
-        # self.retrieveGoogleTrendsData() # new.. delete?
+        # self.retrieveGoogleTrendsData()
         ans = self.analysisManager.getGoogleTrendsStatistics()
         # print(f"get = {ans}")
         return ans

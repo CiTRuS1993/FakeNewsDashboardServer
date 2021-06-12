@@ -76,7 +76,7 @@ class AnalysisManager:
             # print(f"trends_dict = {trends_dict}")
             topics_statistics = list()
             trend_name = self.get_trend_name(trend_id, trends_dict)
-            words_cloud = self.calc_topics_statistics_and_save(processed, topics_statistics, trend_id,res)
+            words_cloud, topics_statistics= self.calc_topics_statistics_and_save(processed, topics_statistics, trend_id,res)
             # -------------------- sync ----------------------- (was fixed by wait() on tests)
             self.lock.acquire()
             if trend_id not in self.trends_statistics.keys():
@@ -108,12 +108,15 @@ class AnalysisManager:
         else:
             trend_sentiment = sentiment
         statistics = Statistics(emotion, trend_sentiment, avg_prediction, len(emotions))
+        print(f"at init_trend_statistics, trend statistics = {statistics}")
         # statistics = Statistics(emotion, trend_sentiment, avg_prediction, 50, len(emotions))
         trend_statistics = TrendStatistic(words_cloud, statistics)
         return trend_statistics
 
     def calc_topics_statistics_and_save(self, processed, topics_statistics, trend,res):
+        print("at calc_topics_statistics_and_save")
         words_cloud = dict()
+        # topics_statistics= list() # format : (emotions, sentiment, prediction)
         for topic in processed[trend]:
             prediction = {'true': 0, 'fake': 0}
             emotions = list()
@@ -147,12 +150,13 @@ class AnalysisManager:
                 topic_id = self.orm.add_analyzed_topic(topic.name, avg_prediction, emotion, avg_sentiment, ids, trend)
             topic.setID(topic_id)
             self.orm.update_topic(topic.id,topic.name,res[res['author_guid']==topic.id]['pred'].values[0], emotion, avg_sentiment)
+            topics_statistics.append((emotion, avg_sentiment, avg_prediction))
             print(topic_id)
         words_cloud_statistics = list()
         for word in words_cloud.keys():
             words_cloud_statistics.append(WordCloud(word, words_cloud[word]))
         self.update_orm_tweets()
-        return words_cloud_statistics
+        return words_cloud_statistics, topics_statistics
 
     # TODO- make this func shorter
     def get_trend_name(self, trend_id, trends_dict):
@@ -190,7 +194,6 @@ class AnalysisManager:
                 print("empty trend {}".format(trend_id))
                 continue
             claims = self.get_claims_from_trend(trends_tweets[trend_id]['tweets'])  # <trend_name> : list <Claim>
-            # TODO: save claim to db
             print("num of claims:{}".format(len(claims)))
             for claim in claims:
                 claim.id = self.orm.add_analyzed_topic(claim.name,None,None,0,list(map(lambda t: t.id,claim.tweets)),trend_id)
@@ -304,6 +307,7 @@ class AnalysisManager:
         #     return 'true'
         # return 'fake'
         try:
+            print(f"at calc_avg_prediction, prediction= {prediction}")
             return prediction['true'] / (prediction['true']+prediction['fake'])
         except:
             return 0
@@ -477,20 +481,28 @@ class AnalysisManager:
         # self.sentiment = Sentiment([], trend_sentiments, [])
         # print(self.sentiment)
         # return self.sentiment
-        # # return Sentiment([{'sentiment': 2, 'date': "27.2.2021"}, {'sentiment': 1, 'date': "28.2.2021"},
-        # #                             {'sentiment': 1, 'date': "1.3.2021"}, {'sentiment': 2, 'date': "2.3.2021"},
-        # #                             {'sentiment': 2, 'date': "3.3.2021"}],
-        # #                            [{'sentiment': -1, 'date': "27.2.2021"}, {'sentiment': 0, 'date': "28.2.2021"},
-        # #                             {'sentiment': -1, 'date': "1.3.2021"}, {'sentiment': -2, 'date': "2.3.2021"},
-        # #                             {'sentiment': -2, 'date': "3.3.2021"}],
-        # #                            [{'sentiment': -2, 'date': "27.2.2021"}, {'sentiment': 2, 'date': "28.2.2021"},
-        # #                             {'sentiment': 0, 'date': "1.3.2021"}, {'sentiment': 3, 'date': "2.3.2021"},
-        # #                             {'sentiment': 1, 'date': "3.3.2021"}])
+        return Sentiment([{'sentiment': 2, 'date': "27.2.2021"}, {'sentiment': 1, 'date': "28.2.2021"},
+                                    {'sentiment': 1, 'date': "1.3.2021"}, {'sentiment': 2, 'date': "2.3.2021"},
+                                    {'sentiment': 2, 'date': "3.3.2021"}],
+                                   [{'sentiment': -1, 'date': "27.2.2021"}, {'sentiment': 0, 'date': "28.2.2021"},
+                                    {'sentiment': -1, 'date': "1.3.2021"}, {'sentiment': -2, 'date': "2.3.2021"},
+                                    {'sentiment': -2, 'date': "3.3.2021"}],
+                                   [{'sentiment': -2, 'date': "27.2.2021"}, {'sentiment': 2, 'date': "28.2.2021"},
+                                    {'sentiment': 0, 'date': "1.3.2021"}, {'sentiment': 3, 'date': "2.3.2021"},
+                                    {'sentiment': 1, 'date': "3.3.2021"}])
 
     def get_topics(self, trend_id):
         for trend in self.trends_statistics:
-            print(f"at get topics, trend (key) on self.trend_statistics={trend}")
-            print(f"all:{self.trends_statistics[trend]}")
+            # print(f"trend_id to search = {trend_id}, curr trend_id={self.trends_statistics[trend].id}")
+            # print(f"at get topics, trend (key) on self.trend_statistics={trend}")
+            # print(f"all:{self.trends_statistics[trend]}")
             if trend == trend_id:
-                return self.trends_statistics[trend].claims
+                # return {'tweets': self.trends_statistics[trend].claims[0].tweets, 'emotions': self.trends_statistics[trend].claims[0].statistics.emotion}
+                # print(f"claims= {self.trends_statistics[trend].claims}")
+                # print(f"claims asdict= {asdict(self.trends_statistics[trend].claims)}")
+                topics= {}
+                for topic in self.trends_statistics[trend].claims:
+                    topics[topic.name] = asdict(topic)
+                # print(f"topics = {topics}")
+                return {"topics": topics}
                 return {'tweets': self.trends_statistics[trend]['tweets'], 'emotions': topic.get_all_emotions}

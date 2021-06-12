@@ -10,10 +10,10 @@ from ServiceLayer.DashboardFacade import DashboardFacade
 dashboard_facade = DashboardFacade("username", "123") # TODO
 time.sleep(10)
 
-@app.route('/api/get_fake_news_data', methods=['GET'])
-def get_fake_news_data():
-    return jsonify(dashboard_facade.retrieveFakeNewsData())
-
+# @app.route('/api/get_fake_news_data', methods=['GET'])
+# def get_fake_news_data():
+#     return jsonify(dashboard_facade.retrieveFakeNewsData())
+#
 
 @app.route('/api/stop', methods=['GET'])
 def stop():
@@ -94,6 +94,7 @@ def get_sentiment():
 @app.route('/api/getTopics')
 def get_topics():
     t = request.args.get('trend') # t = id of trend
+    print(f"search topics for t={t}, output of get topics= {dashboard_facade.get_topics(t)}")
     return jsonify(dashboard_facade.get_topics(t))
 
 

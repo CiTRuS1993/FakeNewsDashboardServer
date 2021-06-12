@@ -129,7 +129,9 @@ class ClassifierAdapter:
                     tweet.trend_id,tweet.favorite_count,tweet.retweet_count, emotion, sentiment,
                                                    prediction)
                     tweets.append(analyzed_tweet)
-                processed_data[trend].append(Claim(topic.name, tweets,topic.id)) #todo : id
+                    print(f"add tweet {tweet} to the topic {topic}")
+                print(f"save the topic {topic}, with the list of tweets: {tweets}")
+                processed_data[trend].append(Claim(topic.name, tweets,topic.id))
 
         time.sleep(1)
         results['pred'] = results['pred'].apply(lambda x:"True" if x else "Fake")

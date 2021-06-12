@@ -60,6 +60,9 @@ class TwitterManager:
         self.token_ids.append(token.id)
 
 
+    def is_connected(self):
+        return not self.api == None
+
     def search_tweets_by_keywords(self,trend_id, keywords, token=None, on_finished=lambda tweets: (tweets)):
         tweets = {}
         i = 1
