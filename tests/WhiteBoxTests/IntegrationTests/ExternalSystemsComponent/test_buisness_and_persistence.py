@@ -11,7 +11,7 @@ class MyTestCase(TestCase):
         self.facade = ExternalSystemsFacade()
 
     def test_search_tweets_by_keywords(self):
-    #     self.facade.search_tweets_by_keywords(search_id, keyword)     TODO?
+    #     self.facade.search_tweets_by_keywords(search_id, keyword)
         pass
 
     def test_retrieve_google_trends_data(self):
@@ -26,7 +26,6 @@ class MyTestCase(TestCase):
         self.assertTrue(self.facade.edit_twitters_tokens([token1, token2]))
 
     def test_retrieve_snopes_data(self):
-        # TODO
         pass
         # return self.facade.retrieve_snopes_data()
 

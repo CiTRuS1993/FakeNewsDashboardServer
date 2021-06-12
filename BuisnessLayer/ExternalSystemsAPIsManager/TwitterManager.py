@@ -118,7 +118,6 @@ class TwitterManager:
                     if not self.search:
                         return
                 time.sleep(900)
-    # time.sleep(100)  # TODO- delete
 
         search_thread = threading.Thread(target=search_trends)
         self.search = True
@@ -129,7 +128,7 @@ class TwitterManager:
     def edit_tokens(self, tokens):
         for token in tokens:
             if token not in self.tokens.keys():
-                self.tokens.append(token)    # TODO- bug, self.tokens is dict and not list!
+                self.tokens.append(token)    # bug, self.tokens is dict and not list!
         return True
 
     def get_unprocessed_tweets(self):

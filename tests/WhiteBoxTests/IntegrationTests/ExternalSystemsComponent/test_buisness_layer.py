@@ -11,7 +11,7 @@ class MyTestCase(TestCase):
         self.facade = ExternalSystemsFacade()
 
     def test_search_tweets_by_keywords(self):
-    #     self.facade.search_tweets_by_keywords(search_id, keyword)     TODO?
+    #     self.facade.search_tweets_by_keywords(search_id, keyword)
         pass
 
     @mock.patch("BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager")
@@ -19,9 +19,9 @@ class MyTestCase(TestCase):
     def test_retrieve_google_trends_data(self, orm_mock, twitter_mock):
         self.facade.googleTrendsManager.ExternalOrm = orm_mock
         self.facade.twitterManager.orm = orm_mock
-        # tweets = {}   TODO
+        tweets = {'1':1212}
         self.facade.twitterManager = twitter_mock
-        # twitter_mock.search_tweets_by_keywords.return_value = tweets  TODO
+        twitter_mock.get_unprocessed_tweets.return_value = tweets
         tweets1 = self.facade.retrieve_google_trends_data()
         time.sleep(10)
         tweets2 = self.facade.retrieve_google_trends_data()
@@ -33,7 +33,6 @@ class MyTestCase(TestCase):
         self.assertTrue(self.facade.edit_twitters_tokens([token1, token2]))
 
     def test_retrieve_snopes_data(self):
-        # TODO
         pass
         # return self.facade.retrieve_snopes_data()
 

@@ -2,7 +2,7 @@ import time
 from unittest import TestCase, mock
 
 from BuisnessLayer.AnalysisManager.AnalysisManager import AnalysisManager
-from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager import Name, Trend, Claim, AnalysedTweet
+from tests.WhiteBoxTests.UnitTests.buisnessLayer.AnalysisManager.TestsObjects import Name, Trend, Claim, AnalysedTweet
 
 
 class TestAnalysisManager(TestCase):
@@ -27,9 +27,9 @@ class TestAnalysisManager(TestCase):
         self.analysed_tweet1 = AnalysedTweet('1', Name('aa'), 'tweet1', 'Happy', 2, 'true')
         self.analysed_tweet2 = AnalysedTweet('2', Name('aa'), 'tweet2', 'Sad', -1, 'fake')
         self.analysed_tweet3 = AnalysedTweet('3', Name('aa'), 'tweet3', 'Sad', -3, 'true')
-        self.trends_claims = {'1': [Claim('claim1', [self.analysed_tweet1, self.analysed_tweet2]), Claim('claim2', [self.analysed_tweet2, self.analysed_tweet3])],
-                              '2': [Claim('claim3', [self.analysed_tweet1, self.analysed_tweet2]), Claim('claim4', [self.analysed_tweet1, self.analysed_tweet3])],
-                              '3': [Claim('some claim', [self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3])]}
+        self.trends_claims = {'1': [Claim('claim1', [self.analysed_tweet1, self.analysed_tweet2],1), Claim('claim2', [self.analysed_tweet2, self.analysed_tweet3],2)],
+                              '2': [Claim('claim3', [self.analysed_tweet1, self.analysed_tweet2],3), Claim('claim4', [self.analysed_tweet1, self.analysed_tweet3],4)],
+                              '3': [Claim('some claim', [self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3],5)]}
         self.snopes = {'claim1': [self.tweet1, self.tweet2, self.tweet3],
                        'claim2': [self.tweet1, self.tweet2, self.tweet3],
                        'claim3': [self.tweet1, self.tweet2, self.tweet3]}
@@ -61,7 +61,7 @@ class TestAnalysisManager(TestCase):
 
     # @mock.patch("BuisnessLayer.AnalysisManager.ClassifierAdapter")
     # def test_init_trend_statistics(self, mock_claims):
-    #     self.fail() - TODO?
+    #     self.fail()
 
         # def calc_topics_statistics_and_save(self, processed, topics_statistics, trend):
         #     words_cloud = dict()

@@ -61,15 +61,12 @@ class MyTestCase(unittest.TestCase):
 
 #   ----------------------- Claims -----------------------
 
-    # TODO
     def test_add_analyzed_claim(self):
         self.assertTrue(True)
 
-    # TODO
     def test_get_all_analyzed_claims(self):
         self.assertTrue(True)
 
-    # TODO
     def test_get_analyzed_claim(self):
         self.assertTrue(True)
 

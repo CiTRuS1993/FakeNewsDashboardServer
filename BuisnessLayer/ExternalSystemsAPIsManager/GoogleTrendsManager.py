@@ -63,7 +63,7 @@ class GoogleTrendsManager:
                 if type(trend)==list:
                     if len(trend)>0:
                         print(f"at get_trends, trend type = {type(trend)}")
-                        print(f"position 0: {trends[0]}")
+                        print(f"trends= {trends}")
                         trend=trend[0]
                     else:
                         stop=True

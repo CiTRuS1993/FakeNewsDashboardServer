@@ -22,9 +22,9 @@ class MyTestCase(unittest.TestCase):
                   'tweets': (self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3)},
             '3': {'id': 3, 'keyword': 'Elections',
                   'tweets': (self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3)}}
-        self.temp = [] # TODO- create temp objects
-        self.emotions = [] # TODO- create emotions objects
-        self.sentiment = [] # TODO- create sentiment objects
+        self.temp = []
+        self.emotions = []
+        self.sentiment = []
         self.tweet1 = Status('1', Name('aa'), 'tweet1')
         self.tweet2 = Status('2', Name('aa'), 'tweet2')
         self.tweet3 = Status('3', Name('aa'), 'tweet3')
@@ -83,7 +83,6 @@ class MyTestCase(unittest.TestCase):
         mock.getSnopesStatistics.return_value = ret
         self.assertEqual(self.analysis_manager.classifySnopes(self.snopes), ret)
 
-    # # TODO
     # @mock.patch("BuisnessLayer.AnalysisManager.AnalysisManager")
     # def test_tagTweets(self):
     #     self.analysis_manager.analysisManagerLogic = mock

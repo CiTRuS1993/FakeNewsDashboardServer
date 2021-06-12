@@ -98,10 +98,13 @@ class AnalysisManager:
                                                                              trend_statistics)
                 self.lock.release()
             # --------------------- until here ---------------------
-        return True
+        return len(topics_statistics)
 
     def init_trend_statistics(self, emotions, prediction, sentiment, words_cloud):
-        emotion = self.update_emotions(emotions)
+        if type(emotions) != str:
+            emotion = self.update_emotions(emotions)
+        else:
+            emotion= emotions
         avg_prediction = self.calc_avg_prediction(prediction)
         if len(emotions) > 0:
             trend_sentiment = sentiment / len(emotions)
@@ -130,6 +133,7 @@ class AnalysisManager:
                         words_cloud[word] = 1
                 ids.append(tweet.id)
                 sentiment = sentiment + tweet.sentiment
+
                 prediction[tweet.is_fake] = prediction[tweet.is_fake] + 1
                 emotions.append(tweet.emotion)
                 # TODO- if fails on the way --> delete the analysis?
@@ -323,17 +327,17 @@ class AnalysisManager:
         self.sentiment.topics.append(todays_topics_sentiment)
         self.sentiment.trends.append(todays_trends_sentiment)
 
-    def addTrend(self, trend):
-        keywords = ""
-        for k in trend.keywords:
-            keywords = keywords + k + ' '
-        # print(trend)
-        if keywords in self.trends:
-            print(f"arg trend: {trend.statistics}")
-            print(f"self trend: {self.trends[keywords].statistics}")
-            self.trends[keywords].statistics.statistics.copy_statistics(trend.statistics.statistics)
-        else:
-            self.trends[keywords] = trend
+    # def addTrend(self, trend):
+    #     keywords = ""
+    #     for k in trend.keywords:
+    #         keywords = keywords + k + ' '
+    #     # print(trend)
+    #     if keywords in self.trends:
+    #         print(f"arg trend: {trend.statistics}")
+    #         print(f"self trend: {self.trends[keywords].statistics}")
+    #         self.trends[keywords].statistics.statistics.copy_statistics(trend.statistics.statistics)
+    #     else:
+    #         self.trends[keywords] = trend
 
     def get_topic(self, topic_id):
         # for trend_name in self.trends_statistics:
