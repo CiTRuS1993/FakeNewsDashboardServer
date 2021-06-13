@@ -61,7 +61,7 @@ class AnalysisManager:
         # read file
         # self.adapter.analyze(data, callback)
         # save to DB
-        pass
+        return False
 
     def retrieveFakeNewsData(self):
         return self.dashboard_statistics
@@ -309,7 +309,6 @@ class AnalysisManager:
 
     def calc_avg_prediction(self, prediction):
         try:
-            print(f"at calc_avg_prediction, prediction= {prediction}")
             return prediction['true'] / (prediction['true']+prediction['fake'])
         except:
             return 0
