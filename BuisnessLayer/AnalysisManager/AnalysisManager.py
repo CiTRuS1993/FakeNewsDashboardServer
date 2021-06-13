@@ -1,6 +1,7 @@
-import datetime
+
 import threading
 from dataclasses import asdict
+from datetime import datetime
 from threading import Lock
 import schedule
 
@@ -44,8 +45,7 @@ class AnalysisManager:
 
     def init_emotions_dict(self):
         return {'emotions': [
-            {'amount': 1, 'label': "Anger"},
-            {'amount': 1, 'label': "Disgust"},
+            {'amount': 1, 'label': "Angry"},
             {'amount': 1, 'label': "Sad"},
             {'amount': 1, 'label': "Happy"},
             {'amount': 1, 'label': "Surprise"},
@@ -54,7 +54,7 @@ class AnalysisManager:
 
     # should return dict of <trend name> : TrendStatistics asdict --> asdict(trend.statistics)
     def getGoogleTrendsStatistics(self):
-        print(self.trends_statistics)
+        # print(self.trends_statistics)
         current_statistics = dict()
         for trend in self.trends_statistics:
             current_statistics[self.get_trend_name(trend, self.trends_statistics[trend])] = \
@@ -76,14 +76,14 @@ class AnalysisManager:
     def configClassifier(self, classifier, configuration):
         pass
 
-    def add_new_trends_statistics(self, processed, trends_dict):
+    def add_new_trends_statistics(self, processed, trends_dict,res):
         for trend_id in processed.keys():  # processed is type of dict<trend name> = list <Claim>
             # print(f"add_new_trends_statistics:")
             # print(f"processed = {processed}")
             # print(f"trends_dict = {trends_dict}")
             topics_statistics = list()
             trend_name = self.get_trend_name(trend_id, trends_dict)
-            words_cloud = self.calc_topics_statistics_and_save(processed, topics_statistics, trend_id)
+            words_cloud = self.calc_topics_statistics_and_save(processed, topics_statistics, trend_id,res)
             # -------------------- sync ----------------------- (was fixed by wait() on tests)
             self.lock.acquire()
             if trend_id not in self.trends_statistics.keys():
@@ -105,7 +105,7 @@ class AnalysisManager:
                                                                              trend_statistics)
                 self.lock.release()
             # --------------------- until here ---------------------
-            return True
+        return True
 
     def init_trend_statistics(self, emotions, prediction, sentiment, words_cloud):
         emotion = self.update_emotions(emotions)
@@ -119,7 +119,7 @@ class AnalysisManager:
         trend_statistics = TrendStatistic(words_cloud, statistics)
         return trend_statistics
 
-    def calc_topics_statistics_and_save(self, processed, topics_statistics, trend):
+    def calc_topics_statistics_and_save(self, processed, topics_statistics, trend,res):
         words_cloud = dict()
         for topic in processed[trend]:
             prediction = {'true': 0, 'fake': 0}
@@ -145,8 +145,8 @@ class AnalysisManager:
             avg_prediction = self.calc_avg_prediction(prediction)
             topics_statistics.append((emotions, sentiment, prediction))
             print(f"save the analysed topic '{topic.name}'")
-            topic_id = self.orm.add_analyzed_topic(topic.name, avg_prediction, emotion, sentiment / len(emotions), ids, trend)
-            print(topic_id)
+            self.orm.update_topic(topic.id,topic.name,res[res['author_guid']==topic.id]['pred'].values[0], emotion, sentiment / len(emotions))
+            print(topic.id)
         words_cloud_statistics = list()
         for word in words_cloud.keys():
             words_cloud_statistics.append(WordCloud(word, words_cloud[word]))
@@ -184,7 +184,16 @@ class AnalysisManager:
     def classifyTrends(self, trends_tweets):
         trends = {}
         for trend_id in trends_tweets:
+            print("trend:{}".format(trend_id))
+            if len(trends_tweets[trend_id]['tweets'])==0:
+                print("empty trend {}".format(trend_id))
+                continue
             claims = self.get_claims_from_trend(trends_tweets[trend_id]['tweets'])  # <trend_name> : list <Claim>
+            # TODO: save claim to db
+            print("num of claims:{}".format(len(claims)))
+            for claim in claims:
+                claim.id = self.orm.add_analyzed_topic(claim.name,None,None,0,list(map(lambda t: t.id,claim.tweets)),trend_id)
+            print("topics added to db")
             trend = Trend(trend_id, trends_tweets[trend_id]['keyword'], claims)
             trends[trend_id] = trend
             # self.addTrend(trend)
@@ -239,15 +248,15 @@ class AnalysisManager:
     # initialize the data structures : Claim, Tweet
     # returns list <Claim>
     def get_claims_from_trend(self, trends_tweets):
-        claims_dict = self.adapter.get_claims_from_trend(trends_tweets)
-        claims = list()
-        for key in claims_dict.keys():
-            tweets = list()
-            for tweet_id in claims_dict[key]:
-                tweets.append(Tweet(tweet_id, claims_dict[key][tweet_id]['author'],
-                                    claims_dict[key][tweet_id]['content']))  # tweet = id, author, content
-            claim = Claim(key, tweets)
-            claims.append(claim)
+        claims = self.adapter._get_claim_from_trend(trends_tweets)
+        # claims = list()
+        # for key in claims_dict.keys():
+        #     tweets = list()
+        #     for tweet_id in claims_dict[key]:
+        #         tweets.append(Tweet(tweet_id, claims_dict[key][tweet_id]['author'],
+        #                             claims_dict[key][tweet_id]['content']))  # tweet = id, author, content
+        #     claim = Claim(key, tweets,0) #todo :id
+        #     claims.append(claim)
         return claims
 
     def getTemperature(self):
@@ -268,7 +277,7 @@ class AnalysisManager:
 
     def update_emotions(self, emotions):
         # calculate the most repetitive emotion
-        emotions_counter = {"Anger": 0, "Disgust": 0, "Sad": 0, "Happy": 0, "Surprise": 0, "Fear": 0}
+        emotions_counter = {"Angry": 0, "Sad": 0, "Happy": 0, "Surprise": 0, "Fear": 0}
         for emotion in emotions:
             emotions_counter[emotion] = emotions_counter[emotion] + 1
         max_emotion_counter = max([emotions_counter[emotion] for emotion in emotions_counter])
@@ -276,13 +285,16 @@ class AnalysisManager:
         # update the emotions statistics
         for emotion_dict in self.emotions['emotions']:
             emotion_dict['amount'] = emotion_dict['amount'] + emotions_counter[emotion_dict['label']]
-        return max_emotion
+        return max_emotion[0]
 
     def calc_avg_prediction(self, prediction):
         # if prediction['true'] > prediction['fake']:
         #     return 'true'
         # return 'fake'
-        return prediction['true'] / len(prediction)
+        try:
+            return prediction['true'] / (prediction['true']+prediction['fake'])
+        except:
+            return 0
 
     def get_sentiment(self):
         return self.sentiment
@@ -299,7 +311,7 @@ class AnalysisManager:
         keywords = ""
         for k in trend.keywords:
             keywords = keywords + k + ' '
-        print(trend)
+        # print(trend)
         if keywords in self.trends:
             print(f"arg trend: {trend.statistics}")
             print(f"self trend: {self.trends[keywords].statistics}")
@@ -316,7 +328,7 @@ class AnalysisManager:
         print("Error on AnalysisManager.get_topic()")
         return {'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
                            {'id': "1361577298282094592", 'emotion': "happy", 'real': "true", 'sentiment': -2}],
-                'emotions': [{'y': 32, 'label': "Anger"},
+                'emotions': [{'y': 32, 'label': "Angry"},
                              {'y': 22, 'label': "Disgust"},
                              {'y': 15, 'label': "Sad"},
                              {'y': 19, 'label': "Happy"},
@@ -350,7 +362,39 @@ class AnalysisManager:
         # print(f"trends = {self.orm_trends}")
         # print(f"topics = {self.orm_topics}")
         # print(f"tweets = {self.orm_tweets}")
-        pass
+        today_day = datetime.today().day
+        if today_day - 12 > 0:
+            date = datetime(datetime.today().year, datetime.today().month, today_day).date()
+        elif datetime.today().month != 1:
+            date = datetime(datetime.today().year, datetime.today().month - 1, 30 - today_day).date()
+        else:
+            date = datetime(datetime.today().year - 1, 12, 31 - today_day).date()
+        trends = self.orm.get_trends_data(date)
+        analyzed_trend = {}
+        print("trends in db".format(len(trends)))
+        for trend in trends:
+            emotions = []
+            prediction = {'true':0,'fake':0}
+            sentiment = 0
+            words = {}
+            for c in trends[trend].claims:
+                for t in c.tweets:
+                    for word in t.content.split():
+                        if word in words.keys():
+                            words[word] = words[word] + 1
+                        else:
+                            words[word] = 1
+                        emotions.append(t.emotion)
+                        sentiment+=t.sentiment
+
+                        prediction[t.is_fake] =prediction[t.is_fake] +1
+
+            cloud = []
+            for word in words.keys():
+                cloud.append(WordCloud(word, words[word]))
+            analyzed_trend[trend] = AnalysedTrend(trends[trend].id,trends[trend].keywords,trends[trend].claims,self.init_trend_statistics(emotions,prediction,sentiment,cloud))
+
+        self.trends_statistics = analyzed_trend
         # for
 
         # trends = {'Sixers': {'date': '2021-05-27', 'id': 2880}, 'Knicks': {'date': '2021-05-27', 'id': 2870},....}

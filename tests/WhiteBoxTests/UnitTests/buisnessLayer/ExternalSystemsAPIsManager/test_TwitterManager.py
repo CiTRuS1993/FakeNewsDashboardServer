@@ -28,9 +28,17 @@ class TestTwitterManager(TestCase):
         self.twitterManager= mock
         self.twitterManager.search_tweets_by_keywords(self,1, "keywords", token=None, on_finished=lambda tweets: print(tweets))
 
-    @mock.patch("PersistenceLayer.ExternalAPIsORM.ExternalAPIsORMFacade")
-    def test_search_tweets_by_keywords(self,mock):
-        self.twitterManager.orm= mock
+    @patch.object(ExternalAPIsORMFacade,'add_tweet')
+    @patch('tweepy.Cursor.items')
+    def test_search_tweets_by_keywords(self,mock,orm):
+        db = []
+        mock.return_value = (self.tweet1, self.tweet2, self.tweet3)
+        self.twitterManager.connect()
+        tweets = self.twitterManager.search_tweets_by_keywords(0,["covid"],on_finished=lambda twts:db.append(len(twts)))
+        assert len(db)==1
+        assert len(tweets)==1
+        assert isinstance(tweets,dict)
+        assert len(tweets[0]) == 3
 
     def test_stop(self):
         self.fail()

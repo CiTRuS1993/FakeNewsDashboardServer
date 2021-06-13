@@ -2,15 +2,28 @@ from datetime import datetime
 
 import jsonpickle
 from jsonpickle import json
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
+from BuisnessLayer.AnalysisManager.DataObjects import AnalyzedTweet, AnalysedClaim, Statistics, Trend,Tweet
 from PersistenceLayer.ExternalAPIsORM import AuthorORM, SearchORM, SnopesORM
 from PersistenceLayer.ExternalAPIsORM.TrendsORM import TrendsORM
 from PersistenceLayer.ExternalAPIsORM.TweetORM import TweetORM
+from PersistenceLayer.BaseORM import dblock
 
 
 class ExternalAPIsORMFacade:
     def __init__(self):
-        from ..database import session
+        # from ..database import session
+        SQLALCHEMY_DATABASE_URL = "./test.db"
+
+        engine = create_engine(
+            "sqlite:///" + SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False},
+            poolclass=StaticPool)
+
+        Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+        session = Session()
         self.session = session
 
     def add_trend(self, content, date):
@@ -68,15 +81,19 @@ class ExternalAPIsORMFacade:
             author.tweets.append(tweet)
             author.update_db()
 
-    def add_tweet(self, id, author_username, content, location, date, trend_id=None, claim_id=None, is_test=False):
+    def add_tweet(self, id, author_username, content, location, date,favorite_count,retweet_count, trend_id=None, claim_id=None, is_test=False):
         if self.get_tweet(id) is not None:
             return False
-        tweet = TweetORM(id=id, author_name=author_username, content=content, date=date, location=location)
-        tweet.add_to_db()
+        tweet = TweetORM(id=id, author_name=author_username, content=content, date=date, location=location,favorite_count=favorite_count,retweet_count=retweet_count)
+        tweet.add_to_db(self.session)
         if trend_id is not None:
             trend = self.session.query(TrendsORM).filter_by(id=trend_id).first()
             if trend is not None:
                 trend.tweets.append(tweet)
+                dblock.acquire()
+                self.session.commit()
+                dblock.release()
+                
         if claim_id is not None:
             claim = self.session.query(SnopesORM).filter_by(claim_id=claim_id).first()
             if claim is not None:
@@ -89,7 +106,13 @@ class ExternalAPIsORMFacade:
             return True
         except:
             return False
-
+    def get_unprocessed_tweets(self):
+        unprocessed_trend = self.session.query(TrendsORM).filter_by(trend_topics=None)
+        unprocessed_dict = {}
+        for trend in unprocessed_trend:
+            unprocessed_dict[trend.id] = {'keyword':trend.content,'tweets':[Tweet(tweet.id, tweet.author_name, tweet.content,
+                                   tweet.location, tweet.date, trend.id,tweet.retweet_count,tweet.favorite_count) for tweet in trend.tweets]}
+        return unprocessed_dict
     def get_all_tweets_dict(self):
         tweets = jsonpickle.dumps(self.session.query(TweetORM).all())
         jtweets = json.loads(tweets)
@@ -137,3 +160,26 @@ class ExternalAPIsORMFacade:
             return 1
         else:
             return -1
+
+    def get_trends_data_from_date(self, date):
+
+        trends = self.session.query(TrendsORM).all()
+        tr = {}
+        for t in trends:
+            if self.compare_dates(t.date, date) >= 0:
+                topics = []
+                if len(t.topics)>0:
+                    for topic in t.topics:
+                        tweets = []
+                        for tw in topic.tweets:
+                            if tw.analyzed:
+                                tweets.append(
+                                   
+                                    AnalyzedTweet(tw.id, tw.author_name, tw.content,tw.location,tw.date,t.id,tw.favorite_count,tw.retweet_count, tw.analyzed.emotion, tw.analyzed.sentiment,
+                                                  tw.analyzed.prediction))
+                        topics.append(AnalysedClaim(topic.key_words, tweets, topic.id,
+                                                    Statistics(topic.emotion, topic.sentiment, topic.prediction, 
+                                                               len(tweets))))
+
+                    tr[t.content] = Trend(t.id, t.content, topics)
+        return tr
