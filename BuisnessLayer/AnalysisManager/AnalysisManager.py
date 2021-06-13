@@ -505,7 +505,7 @@ class AnalysisManager:
                     topic_dict = {'id': topic.id, 'topic':words_cloud, 'statistics': asdict(topic.statistics)}
                     topics.append(topic_dict)
                 # print(f"topics = {topics}")
-                return [topics]
+                return topics
 
     def calc_words_cloud(self, topic):
         words_cloud = dict()
