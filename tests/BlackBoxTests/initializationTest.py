@@ -25,6 +25,14 @@ class MyTestCase(unittest.TestCase):
         with self.assertRaises(SystemExit) as cm:
             DashboardFacade(self.admin_name, self.admin_pass+ 'lalala')
             self.assertEqual(cm.exception, "Wrong username or password!")
+        # connection problems
+        dashboard = DashboardFacade(self.admin_name, self.admin_pass)
+        dashboard.externalSystemsManager.extrenalManagerLogic.twitterManager.api = None
+        dashboard.externalSystemsManager.extrenalManagerLogic.googleTrendsManager.pytrends = None
+        dashboard.analysisManager.analysisManagerLogic.trends_statistics = {}  # clear the DBs data
+        with self.assertRaises(Exception) as cm:
+            dashboard.retrieveGoogleTrendsData()
+            self.assertEqual(cm.exception, "Connection problems")
 
 
 if __name__ == '__main__':

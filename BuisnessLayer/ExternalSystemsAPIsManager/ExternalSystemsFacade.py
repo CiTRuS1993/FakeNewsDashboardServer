@@ -13,7 +13,7 @@ class ExternalSystemsFacade:
         self.twitterManager.connect()
         self.twitterManager.search_tweets_by_trends(self.googleTrendsManager.get_trends())
 
-    def search_tweets_by_keywords(self,search_id, keyword: str, token=None):
+    def search_tweets_by_keywords(self, search_id, keyword: str, token=None):
         return self.twitterManager.search_tweets_by_keywords(search_id, keyword, token)
 
     def retrieve_google_trends_data(self):

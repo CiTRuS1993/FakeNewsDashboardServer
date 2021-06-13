@@ -11,9 +11,9 @@ class AnalysisManagerInterface:
     def getSnopesStatistics(self):
         return self.analysisManagerLogic.getSnopesStatistics()
 
-    # def classifyTweets(self, file):
-    #     return self.analysisManagerLogic.classifyTweets(file)
-    #
+    def classifyTweets(self, file):
+        return self.analysisManagerLogic.classifyTweets(file)
+
     # def retrieveFakeNewsData(self):
     #     return self.analysisManagerLogic.retrieveFakeNewsData()
     #

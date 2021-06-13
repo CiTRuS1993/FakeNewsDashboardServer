@@ -50,10 +50,10 @@ class DashboardFacade:
         new_claims= self.externalSystemsManager.retrieveSnopesData()
         return self.analysisManager.classifySnopes(new_claims)
 
-    def configClassifier(self, username, classifier, configuration):
-        if self.usersManager.is_admin(username):
-            return self.analysisManager.configClassifier(classifier, configuration)
-        return False # maybe exception?
+    # def configClassifier(self, username, classifier, configuration):
+    #     if self.usersManager.is_admin(username):
+    #         return self.analysisManager.configClassifier(classifier, configuration)
+    #     return False # maybe exception?
 
     def getTemperature(self):
         return self.analysisManager.getTemperature()
@@ -75,20 +75,20 @@ class DashboardFacade:
 
 # ----------------------------------- Users Options ------------------------------------------
 
-    def searchTweetsByKeywords(self, username, keyword, token=None):
-        if (self.usersManager.userExists(username)):
-            search_id= self.externalSystemsManager.searchTweetsByKeywords(keyword, token)
-            self.usersManager.saveSearchTweetsByKeywords(username, search_id)
-            return True
-        return False
+    # def searchTweetsByKeywords(self, username, keyword, token=None):
+    #     if (self.usersManager.userExists(username)):
+    #         search_id= self.externalSystemsManager.searchTweetsByKeywords(keyword, token)
+    #         self.usersManager.saveSearchTweetsByKeywords(username, search_id)
+    #         return True
+    #     return False
 
-    def tagTweet(self, username, tweet_id, isFake):
-        if self.usersManager.userExists(username):
-            self.analysisManager.tagTweets(tweet_id, isFake)
-            self.usersManager.tagTweet(username, tweet_id)
+    # def tagTweet(self, username, tweet_id, isFake):
+    #     if self.usersManager.userExists(username):
+    #         self.analysisManager.tagTweets(tweet_id, isFake)
+    #         self.usersManager.tagTweet(username, tweet_id)
 
-    def viewUserSearchHistory (self, username, username_to_view):
-        return self.usersManager.viewUserSearchHistory(username,username_to_view)
+    # def viewUserSearchHistory (self, username, username_to_view):
+    #     return self.usersManager.viewUserSearchHistory(username,username_to_view)
 
     def editTwittersTokens(self, username, tokens):
         if self.usersManager.is_admin(username):

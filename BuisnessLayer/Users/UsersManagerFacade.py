@@ -16,13 +16,12 @@ class UserManagerFacade:
         users = self.users_db.get_all_users()
         users_dict = {}
         for user in users:
-            # print(f"DB user = {user}")
-            users_dict[user['username']] = user
+            users_dict[user['username']] = User(user['role'], user['email'], user['username'], user['password'])
         return users_dict
 
     def admin_exists(self, username, password):
         if username in self.users_by_name_list.keys():
-            if self.users_by_name_list[username]['password'] == password:
+            if self.users_by_name_list[username].password == password:
                 return True
         return False
 
@@ -67,7 +66,7 @@ class UserManagerFacade:
 
     def is_admin(self, username):
         if username in self.users_by_name_list.keys():
-            return self.users_by_name_list[username]['role'] == "admin"
+            return self.users_by_name_list[username].role == "admin"
         return False
 
     def validate_user(self, username, password):
