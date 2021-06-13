@@ -57,6 +57,10 @@ class Statistics:
     amount: int
 
 @dataclass
+class AnalysedClaim(Claim):
+    statistics: Statistics = Statistics('Happy', 3, 1, 10)
+
+@dataclass
 class AnalysedTrend(Trend):
     claims: list
     statistics: Statistics = Statistics('Happy', 3, 1, 10)

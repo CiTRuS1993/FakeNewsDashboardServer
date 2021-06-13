@@ -104,6 +104,7 @@ class AnalysisManager:
         if type(emotions) != str:
             emotion = self.update_emotions(emotions)
         else:
+            print(f"at init_trend_statistics, emotions should be list but its = {emotions}")
             emotion= emotions
         avg_prediction = self.calc_avg_prediction(prediction)
         if len(emotions) > 0:
@@ -307,9 +308,6 @@ class AnalysisManager:
         return max_emotion[0]
 
     def calc_avg_prediction(self, prediction):
-        # if prediction['true'] > prediction['fake']:
-        #     return 'true'
-        # return 'fake'
         try:
             print(f"at calc_avg_prediction, prediction= {prediction}")
             return prediction['true'] / (prediction['true']+prediction['fake'])
@@ -381,9 +379,6 @@ class AnalysisManager:
 
     # TODO
     def retrieveFakeNewsDataFromDB(self):
-        # print(f"trends = {self.orm_trends}")
-        # print(f"topics = {self.orm_topics}")
-        # print(f"tweets = {self.orm_tweets}")
         today_day = datetime.today().day
         if today_day - 12 > 0:
             date = datetime(datetime.today().year, datetime.today().month, today_day).date()
@@ -504,9 +499,23 @@ class AnalysisManager:
                 # return {'tweets': self.trends_statistics[trend].claims[0].tweets, 'emotions': self.trends_statistics[trend].claims[0].statistics.emotion}
                 # print(f"claims= {self.trends_statistics[trend].claims}")
                 # print(f"claims asdict= {asdict(self.trends_statistics[trend].claims)}")
-                topics= {}
+                topics= []
                 for topic in self.trends_statistics[trend].claims:
-                    topics[topic.name] = asdict(topic)
+                    words_cloud= self.calc_words_cloud(topic)
+                    topic_dict = {'id': topic.id, 'topic':words_cloud, 'statistics': asdict(topic.statistics)}
+                    topics.append(topic_dict)
                 # print(f"topics = {topics}")
-                return {"topics": topics}
-                return {'tweets': self.trends_statistics[trend]['tweets'], 'emotions': topic.get_all_emotions}
+                return [topics]
+
+    def calc_words_cloud(self, topic):
+        words_cloud = dict()
+        for tweet in topic.tweets:
+            for word in tweet.content.split():
+                if word in words_cloud:
+                    words_cloud[word] = words_cloud[word] + 1
+                else:
+                    words_cloud[word] = 1
+        words_cloud_statistics = list()
+        for word in words_cloud.keys():
+            words_cloud_statistics.append(WordCloud(word, words_cloud[word]))
+        return words_cloud_statistics
