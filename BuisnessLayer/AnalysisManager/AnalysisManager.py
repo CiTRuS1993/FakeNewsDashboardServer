@@ -387,7 +387,7 @@ class AnalysisManager:
     def retrieveFakeNewsDataFromDB(self):
         today_day = datetime.today().day
         if today_day - 12 > 0:
-            date = datetime(datetime.today().year, datetime.today().month, today_day).date() # TODO- day-12?
+            date = datetime(datetime.today().year, datetime.today().month, today_day-12).date() # TODO- day-12?
         elif datetime.today().month != 1:
             date = datetime(datetime.today().year, datetime.today().month - 1, 30 - today_day).date()
         else:
