@@ -40,7 +40,10 @@ class DashboardFacade:
     def retrieveGoogleTrendsData(self):
         new_trends= self.externalSystemsManager.retrieveGoogleTrendsData()
         # print(f"new trends are: {new_trends}")
-        return self.analysisManager.classifyTrends(new_trends)
+        output, empty_trends = self.analysisManager.classifyTrends(new_trends)
+        if len(empty_trends)>0:
+            self.externalSystemsManager.search_for_empty_trends(empty_trends)
+        return output
 
     # each 12 hours retrieve the new Snopes claims
     def retrieveSnopesData(self):
@@ -97,6 +100,8 @@ class DashboardFacade:
             classify_id=self.analysisManager.classifyTweets(file)
             return self.usersManager.classifyTweets(username, classify_id)
         return False # maybe exception?
+
+
 
 # ----------------------------------- Manage Users --------------------------------------------
 

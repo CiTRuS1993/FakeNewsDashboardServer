@@ -92,7 +92,7 @@ class AnalysisORMFacade:
 
     def add_analyzed_topic(self, key_words, prediction, emotion, sentiment, tweets_ids, trend_id):
         if self.get_analyzed_topic(key_words) is not None:
-            return False
+            return self.get_analyzed_topic(key_words)['id']
         tweets = []
         # tweets = self.session.query(TweetORM.id.in_(tweets_ids)).all()
         for t_id in set(tweets_ids):
