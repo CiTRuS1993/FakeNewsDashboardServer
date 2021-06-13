@@ -125,7 +125,11 @@ class AnalysisORMFacade:
         topics_list = []
         for jtopic in jtopics:
             topic = {'keywords': jtopic.key_words, 'prediction': jtopic.prediction,
-                    'emotion': jtopic.emotion, 'sentiment': round(float(jtopic.sentiment))}
+                     'emotion': jtopic.emotion, 'sentiment': jtopic.sentiment}
+            # topic = {'keywords': jtopic['key_words'], 'prediction': jtopic['prediction'],
+            #         'emotion': jtopic['emotion'], 'sentiment': jtopic['sentiment']}
+            # topic = {'keywords': jtopic['key_words'], 'prediction': round(float(jtopic['prediction'])),
+            #         'emotion': jtopic['emotion'], 'sentiment': round(float(jtopic['sentiment']))}
             try:
                 topic['tweets']= list(map(lambda tweet:tweet.id,jtopic.topic_tweets) )#switch to parse from obj
                 topic['trend']= jtopic.trend[0].id

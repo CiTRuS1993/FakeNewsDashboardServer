@@ -63,9 +63,7 @@ connection_columns = ['claim_id', 'post_id']
 
 # subprocess.call(['python','run_dataset_builder.py','configuration/config_demo.ini'],cwd= r'D:\aviad fake v3\fake-news-framework_Py3',shell=True)
 # ours, should write also stub
-
 class ClassifierAdapter:
-    
     def __init__(self):
         self.sid = SentimentIntensityAnalyzer()
         self.i=0
@@ -126,12 +124,14 @@ class ClassifierAdapter:
                     sentiment = self.get_sentiment(tweet.content)
                     # rand = randrange(6)
                     emotion = self.get_emotion(tweet.content)
-                    
+
                     analyzed_tweet = AnalyzedTweet(tweet.id, tweet.author_name, tweet.content,tweet.location,tweet.date,
                     tweet.trend_id,tweet.favorite_count,tweet.retweet_count, emotion, sentiment,
                                                    prediction)
                     tweets.append(analyzed_tweet)
-                processed_data[trend].append(Claim(topic.name, tweets,topic.id)) #todo : id
+                    print(f"add tweet {tweet} to the topic {topic}")
+                print(f"save the topic {topic}, with the list of tweets: {tweets}")
+                processed_data[trend].append(Claim(topic.name, tweets,topic.id))
 
         time.sleep(1)
         results['pred'] = results['pred'].apply(lambda x:"True" if x else "Fake")
@@ -208,7 +208,7 @@ class ClassifierAdapter:
             return [Claim(claim_text,trends_tweets,0)]
         print("build bertopic")
         bt = BERTopic()
-        print("fit bertopic") 
+        print("fit bertopic")
         topics = bt.fit_transform(df['content'].str.replace("RT", '').values)
         print("done fitting")
         df['topic_id'] = topics[0]
@@ -223,7 +223,7 @@ class ClassifierAdapter:
         claims = []
         print("attaching tweet object for topics")
         for t in topic_info.keys():
-            
+
             fitered = df[df['topic_id'] == t]
             tweets = list(filter(lambda t:t.id in fitered['id'].values,trends_tweets))
             claims.append(Claim(topics_text[t], tweets,0))

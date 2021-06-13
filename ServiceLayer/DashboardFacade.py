@@ -21,14 +21,14 @@ class DashboardFacade:
 # ------------------------------- Retrieve Data & External Systems -----------------------------
 
     # gets all data related to the dashboard
-    def retrieveFakeNewsData(self):
-        return self.analysisManager.retrieveFakeNewsData()
+    # def retrieveFakeNewsData(self):
+    #     return self.analysisManager.retrieveFakeNewsData()
 
     # gets all data related to the Google Trends window
     def googleTrendsStatistics(self):
-        # self.retrieveGoogleTrendsData() # new.. delete?
+        # self.retrieveGoogleTrendsData()
         ans = self.analysisManager.getGoogleTrendsStatistics()
-        print(f"get = {ans}")
+        # print(f"get = {ans}")
         return ans
         # return self.analysisManager.getGoogleTrendsStatistics()
 
@@ -39,7 +39,7 @@ class DashboardFacade:
     # each 12 hours retrieve the new Google Trends topics
     def retrieveGoogleTrendsData(self):
         new_trends= self.externalSystemsManager.retrieveGoogleTrendsData()
-        print(f"new trends are: {new_trends}")
+        # print(f"new trends are: {new_trends}")
         return self.analysisManager.classifyTrends(new_trends)
 
     # each 12 hours retrieve the new Snopes claims
@@ -47,10 +47,10 @@ class DashboardFacade:
         new_claims= self.externalSystemsManager.retrieveSnopesData()
         return self.analysisManager.classifySnopes(new_claims)
 
-    def configClassifier(self, username, classifier, configuration):
-        if self.usersManager.is_admin(username):
-            return self.analysisManager.configClassifier(classifier, configuration)
-        return False # maybe exception?
+    # def configClassifier(self, username, classifier, configuration):
+    #     if self.usersManager.is_admin(username):
+    #         return self.analysisManager.configClassifier(classifier, configuration)
+    #     return False # maybe exception?
 
     def getTemperature(self):
         return self.analysisManager.getTemperature()
@@ -64,31 +64,33 @@ class DashboardFacade:
     def get_topic(self, topic_id):
         return self.analysisManager.get_topic(topic_id)
 
+    def get_topics(self, trend_id):
+        return self.analysisManager.get_topics(trend_id)
+
     def get_emotion_tweets(self, emotion):
         return self.analysisManager.get_emotion_tweets(emotion)
 
 # ----------------------------------- Users Options ------------------------------------------
 
-    def searchTweetsByKeywords(self, username, keyword, token=None):
-        if (self.usersManager.userExists(username)):
-            search_id= self.externalSystemsManager.searchTweetsByKeywords(keyword, token)
-            self.usersManager.saveSearchTweetsByKeywords(username, search_id)
-            return True
-        return False
+    # def searchTweetsByKeywords(self, username, keyword, token=None):
+    #     if (self.usersManager.userExists(username)):
+    #         search_id= self.externalSystemsManager.searchTweetsByKeywords(keyword, token)
+    #         self.usersManager.saveSearchTweetsByKeywords(username, search_id)
+    #         return True
+    #     return False
 
-    def tagTweet(self, username, tweet_id, isFake):
-        if self.usersManager.userExists(username):
-            self.analysisManager.tagTweets(tweet_id, isFake)
-            self.usersManager.tagTweet(username, tweet_id)
-            # TODO- what to return?
+    # def tagTweet(self, username, tweet_id, isFake):
+    #     if self.usersManager.userExists(username):
+    #         self.analysisManager.tagTweets(tweet_id, isFake)
+    #         self.usersManager.tagTweet(username, tweet_id)
 
-    def viewUserSearchHistory (self, username, username_to_view):
-        return self.usersManager.viewUserSearchHistory(username,username_to_view)
+    # def viewUserSearchHistory (self, username, username_to_view):
+    #     return self.usersManager.viewUserSearchHistory(username,username_to_view)
 
     def editTwittersTokens(self, username, tokens):
         if self.usersManager.is_admin(username):
             return self.externalSystemsManager.editTwittersTokens(tokens)
-        return False #TODO- exception?
+        return False
 
     def classifyTweets(self, username, file):
         if (self.usersManager.userExists(username)):
@@ -106,6 +108,8 @@ class DashboardFacade:
 
     def deleteUser(self, admin_username, username_to_delete):
         return self.usersManager.deleteUser(admin_username, username_to_delete)
+
+
 
 
 

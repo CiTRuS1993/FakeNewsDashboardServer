@@ -73,21 +73,17 @@ class TestExternalSystems_PersistenceLayer(unittest.TestCase):
 
 # ------------------------- ORMF & Snopes -------------------------------
 
-    # TODO
     def test_add_snopes(self):
         pass
 
 # --------------------------- others ----------------------------------------
 
-    # TODO
     def test_add_search(self):
         pass
 
-    # TODO
     def test_add_author(self):
         pass
 
-    # TODO
     def test_add_tweet_to_author(self):
         pass
 

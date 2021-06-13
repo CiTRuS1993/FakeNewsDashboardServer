@@ -20,8 +20,8 @@ class Statistics:
 
     def calc_avg_prediction(self, prediction):
         fake_amount = self.avg_fake * self.amount
-        return round(
-            (prediction['true'] + fake_amount > prediction['fake'] + (self.amount - fake_amount)) / self.amount)
+        return round((prediction['true'] + fake_amount > prediction['fake'] + (self.amount - fake_amount)) / self.amount)
+
 
     def calc_emotions(self, emotions):
         emotions_counter = {"Angry": 0, "Sad": 0, "Happy": 0, "Surprise": 0, "Fear": 0}
@@ -37,18 +37,15 @@ class Statistics:
         if self.amount < statistics.amount:
             self.emotion = statistics.emotion
 
-
 @dataclass
 class WordCloud:
     text: str
     value: int
 
-
 @dataclass
 class TrendStatistic:
     words: list
     statistics: Statistics
-
 
 @dataclass
 class Trend:
@@ -56,13 +53,9 @@ class Trend:
     keywords: str
     claims: list
 
-
-
-
 @dataclass
 class AnalysedTrend(Trend):
     statistics: TrendStatistic
-
 
 @dataclass
 class Claim:
@@ -70,10 +63,12 @@ class Claim:
     tweets: list
     id: int
 
+    def setID(self, topic_id):
+        self.id: topic_id
 
 @dataclass
 class AnalysedClaim(Claim):
-    statistics: Statistics  # maybe use the ClaimStatistics instead (like the TrendStatistics)
+    statistics: Statistics # maybe use the ClaimStatistics instead (like the TrendStatistics)
 
     def get_all_emotions(self):
         emotions_counter = {"Anger": 0, "Disgust": 0, "Sad": 0, "Happy": 0, "Surprise": 0, "Fear": 0}
@@ -102,19 +97,16 @@ class AnalyzedTweet(Tweet):
     sentiment: int
     is_fake: str
 
-
 @dataclass
 class SentimentByDate:
     sentiment: int
     label: str
-
 
 @dataclass
 class Sentiment:
     topics: list
     trends: list
     claims: list
-
 
 @dataclass
 class Temperature:

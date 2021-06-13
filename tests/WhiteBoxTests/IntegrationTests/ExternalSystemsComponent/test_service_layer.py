@@ -8,10 +8,6 @@ class MyTestCase(TestCase):
     def setUp(self) -> None:
         self.manager = ExternalSystemsAPIsManagerInterface()
 
-    def test_searchTweetsByKeywords(self):
-        # return self.manager.searchTweetsByKeywords(keyword, token)        Yarin: probably bug TODO?
-        pass
-
 
     @mock.patch("BuisnessLayer.ExternalSystemsAPIsManager.TwitterManager")
     @mock.patch("BuisnessLayer.ExternalSystemsAPIsManager.GoogleTrendsManager")
@@ -24,15 +20,16 @@ class MyTestCase(TestCase):
         return
 
     def retrieveSnopesData(self):
-        # TODO
         pass
 
 
     def editTwittersTokens(self, tokens):
-        # TODO- its written with bugs
         pass
 
 
+    # def test_searchTweetsByKeywords(self):
+    #     # return self.manager.searchTweetsByKeywords(keyword, token)        Yarin: probably bug
+    #     pass
 
 if __name__ == '__main__':
     unittest.main()

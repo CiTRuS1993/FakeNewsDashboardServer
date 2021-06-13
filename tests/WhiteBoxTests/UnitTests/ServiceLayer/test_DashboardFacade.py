@@ -24,9 +24,9 @@ class MyTestCase(unittest.TestCase):
                   'tweets': (self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3)},
             '3': {'id': 3, 'keyword': 'Elections',
                   'tweets': (self.analysed_tweet1, self.analysed_tweet2, self.analysed_tweet3)}}
-        self.temp = [] # TODO- create temp objects
-        self.emotions = [] # TODO- create emotions objects
-        self.sentiment = [] # TODO- create sentiment objects
+        self.temp = []
+        self.emotions = []
+        self.sentiment = []
 
 
     # ------------------------------- Retrieve Data & External Systems -----------------------------
@@ -131,7 +131,6 @@ class MyTestCase(unittest.TestCase):
     #     if self.usersManager.userExists(username):
     #         self.analysisManager.tagTweets(tweet_id, isFake)
     #         self.usersManager.tagTweet(username, tweet_id)
-    #         # TODO- what to return? also activate the test
     #
 
     # @mock.patch("ServiceLayer.UsersManagerInterface")

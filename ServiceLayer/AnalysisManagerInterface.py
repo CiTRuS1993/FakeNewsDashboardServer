@@ -15,11 +15,11 @@ class AnalysisManagerInterface:
     def classifyTweets(self, file):
         return self.analysisManagerLogic.classifyTweets(file)
 
-    def retrieveFakeNewsData(self):
-        return self.analysisManagerLogic.retrieveFakeNewsData()
-
-    def configClassifier(self, classifier, configuration):
-        return self.analysisManagerLogic.configClassifier(classifier, configuration)
+    # def retrieveFakeNewsData(self):
+    #     return self.analysisManagerLogic.retrieveFakeNewsData()
+    #
+    # def configClassifier(self, classifier, configuration):
+    #     return self.analysisManagerLogic.configClassifier(classifier, configuration)
 
     def classifyTrends(self, trends_tweets):
         self.analysisManagerLogic.classifyTrends(trends_tweets)
@@ -29,10 +29,10 @@ class AnalysisManagerInterface:
         self.analysisManagerLogic.classifySnopes(claims_tweets)
         return self.analysisManagerLogic.getSnopesStatistics()
 
-    def tagTweets(self, tweet_id, isFake):
-        # return self.analysisManagerLogic.tagTweets(tweet_id, isFake)
-        # maybe just add it to the ORM from here? does it have to pass throw the analysisManagerLogic?
-        pass
+    # def tagTweets(self, tweet_id, isFake):
+    #     # return self.analysisManagerLogic.tagTweets(tweet_id, isFake)
+    #     # maybe just add it to the ORM from here? does it have to pass throw the analysisManagerLogic?
+    #     pass
 
     def getTemperature(self):
         return self.analysisManagerLogic.getTemperature()
@@ -48,3 +48,7 @@ class AnalysisManagerInterface:
 
     def get_emotion_tweets(self, emotion):
         return self.analysisManagerLogic.get_emotion_tweets(emotion)
+
+    def get_topics(self, trend_id):
+        return self.analysisManagerLogic.get_topics(trend_id)
+

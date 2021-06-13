@@ -28,12 +28,12 @@ class UsersManagerInterface:
     def deleteUser(self, admin_username, username_to_delete):
         if self.userManagerLogic.is_admin(admin_username):
             return self.userManagerLogic.delete_user(username_to_delete)
-        return False # TODO- exception?
+        return False
 
     def viewUserSearchHistory(self, username, username_to_view):
         if self.userManagerLogic.is_admin(username) or username == username_to_view:
             return self.userManagerLogic.view_user_search_history(username_to_view)
-        return False # TODO- exception?
+        return False
 
     def is_admin(self, username):
         return self.userManagerLogic.is_admin(username)
