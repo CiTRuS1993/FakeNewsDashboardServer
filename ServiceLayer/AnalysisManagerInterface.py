@@ -1,6 +1,5 @@
 from BuisnessLayer.AnalysisManager.AnalysisManager import AnalysisManager
 
-
 class AnalysisManagerInterface:
 
     def __init__(self):
@@ -22,8 +21,8 @@ class AnalysisManagerInterface:
     #     return self.analysisManagerLogic.configClassifier(classifier, configuration)
 
     def classifyTrends(self, trends_tweets):
-        self.analysisManagerLogic.classifyTrends(trends_tweets)
-        return self.analysisManagerLogic.getGoogleTrendsStatistics()
+        empty_trends= self.analysisManagerLogic.classifyTrends(trends_tweets)
+        return self.analysisManagerLogic.getGoogleTrendsStatistics(), empty_trends
 
     def classifySnopes(self, claims_tweets):
         self.analysisManagerLogic.classifySnopes(claims_tweets)

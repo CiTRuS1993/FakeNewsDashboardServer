@@ -20,3 +20,8 @@ class ExternalSystemsAPIsManagerInterface:
         return self.extrenalManagerLogic.edit_twitters_tokens(tokens)
 
 
+    def search_for_empty_trends(self, empty_trends):
+        trend = {}
+        for (trend_id, keywords) in empty_trends:
+            print("at search_for_empty_trends, should search for trend={keywords} with id={trend_id}")
+            # TODO

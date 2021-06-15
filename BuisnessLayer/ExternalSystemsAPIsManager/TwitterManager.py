@@ -46,7 +46,7 @@ class TwitterManager:
         self.token_ids = list(self.tokens.keys())
         self.api = None
         self.orm = ExternalAPIsORMFacade()
-        self.all_tweets = self.orm.get_all_tweets_dict()
+        self.all_tweets = {}
         self.unprocessed_tweets = self.orm.get_unprocessed_tweets()
     def connect(self):
         to_select = self.tokens.keys()
@@ -91,6 +91,7 @@ class TwitterManager:
                         self.all_tweets[tweet.id] = tweet
                     if i >= 900:
                         time.sleep(900)
+                        return tweets
             except:
                 self.connect()
                 j+=1
