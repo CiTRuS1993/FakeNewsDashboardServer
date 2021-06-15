@@ -348,8 +348,9 @@ class AnalysisManager:
         #     for topic in self.trends_statistics[trend_name]:
         for trend in self.trends_statistics.keys():
             for topic in self.trends_statistics[trend].claims:
-                if topic.id == topic_id:
-                    return {'tweets': topic.tweets, 'emotions': topic.get_all_emotions}
+                if topic.id == int(topic_id):
+                    tweets = topic.tweets[:10]
+                    return {'tweets': tweets, 'emotions':[t.emotion for t in tweets]}
         # error case (stub)
         print("Error on AnalysisManager.get_topic()")
         return {'tweets': [{'id': "1361577298282094592", 'emotion': "happy", 'real': "fake", 'sentiment': 3},
@@ -529,12 +530,13 @@ class AnalysisManager:
 
     def calc_words_cloud(self, topic):
         words_cloud = dict()
+        for word in topic.name.split():
+            words_cloud[word] = 0
         for tweet in topic.tweets:
             for word in tweet.content.split():
                 if word in words_cloud:
                     words_cloud[word] = words_cloud[word] + 1
-                else:
-                    words_cloud[word] = 1
+                
         words_cloud_statistics = list()
         for word in words_cloud.keys():
             words_cloud_statistics.append(WordCloud(word, words_cloud[word]))

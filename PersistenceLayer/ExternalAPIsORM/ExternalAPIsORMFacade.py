@@ -168,7 +168,7 @@ class ExternalAPIsORMFacade:
         for t in trends:
             if self.compare_dates(t.date, date) >= 0:
                 topics = []
-                if len(t.topics)>0:
+                if len(t.topics)>0 and all(len(top.tweets)>0 for top in t.topics):
                     for topic in t.topics:
                         tweets = []
                         for tw in topic.tweets:
