@@ -28,21 +28,17 @@ class Tweet:
     favorite_count:int
 
 
-#consumer_key = 'nMRLa7RAv9lT6j8akRWCy6UGD'
-#consumer_secret = 'jHZYUnXNj6oSQTXqMicZ077NCOfMD7atDcjBLszAy6qfDlJBml'
-#access_token = '1315318156509040641-CM8vvE8fApKSpq8NKgXES4HCYAJK3X'
-#access_secret = 'rQSQvP8RYn36vP6uN49lEquujq9muVYwOGmcyv9pFkAxA'
 
 class TwitterManager:
     def __init__(self):
         self.unprocessed_tweets = {}
         self.tokens = {}
         self.search = False
-        self.token = Token(id=0, consumer_key= 'tWsXjgFakSqxuoB1lfRaJMBX4',consumer_secret = 'CmyellBME94ZCmU2MxcSrd0qcj9BZMWRnIApnoOAQC8oXJqkeQ',
-                        access_token = '1353027459139174401-pe4YnxZsHfFav8ZbmZIXuyyNbhgAwd',access_secret = 'fAvqCeXtcCK6iYZFNVJkbLYBPPJaUjmfyBBtPfhSe956B')
+        self.token = Token(id=0, consumer_key= '',consumer_secret = '',
+                        access_token = '1353027459139174401-',access_secret = '')
         self.tokens[0]=self.token
-        self.tokens[1]= Token(id=1, consumer_key= 'nMRLa7RAv9lT6j8akRWCy6UGD',consumer_secret = 'jHZYUnXNj6oSQTXqMicZ077NCOfMD7atDcjBLszAy6qfDlJBml',
-                        access_token = '1315318156509040641-CM8vvE8fApKSpq8NKgXES4HCYAJK3X',access_secret = 'rQSQvP8RYn36vP6uN49lEquujq9muVYwOGmcyv9pFkAxA')
+        self.tokens[1]= Token(id=1, consumer_key= '',consumer_secret = '',
+                        access_token = '',access_secret = '')
         self.token_ids = list(self.tokens.keys())
         self.api = None
         self.orm = ExternalAPIsORMFacade()
